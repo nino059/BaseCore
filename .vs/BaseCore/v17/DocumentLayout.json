@@ -1,0 +1,1408 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{19540157-8E18-4C2D-A482-34832430B612}|BaseCore.Services\\BaseCore.Services.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.services\\authen\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19540157-8E18-4C2D-A482-34832430B612}|BaseCore.Services\\BaseCore.Services.csproj|solutionrelative:basecore.services\\authen\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3934463F-480E-4BE1-8796-E79F458CAEE7}|BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.apigateway\\ocelot.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{3934463F-480E-4BE1-8796-E79F458CAEE7}|BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj|solutionrelative:basecore.apigateway\\ocelot.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3934463F-480E-4BE1-8796-E79F458CAEE7}|BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.apigateway\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{3934463F-480E-4BE1-8796-E79F458CAEE7}|BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj|solutionrelative:basecore.apigateway\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B1C2D3E4-F5A6-7890-BCDE-F12345678901}|BaseCore.APIService\\BaseCore.APIService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.apiservice\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{B1C2D3E4-F5A6-7890-BCDE-F12345678901}|BaseCore.APIService\\BaseCore.APIService.csproj|solutionrelative:basecore.apiservice\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B1C2D3E4-F5A6-7890-BCDE-F12345678901}|BaseCore.APIService\\BaseCore.APIService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.apiservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B1C2D3E4-F5A6-7890-BCDE-F12345678901}|BaseCore.APIService\\BaseCore.APIService.csproj|solutionrelative:basecore.apiservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\clientapp\\src\\pages\\products.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\clientapp\\src\\pages\\products.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Windows\\Documents\\CNW\\FW\\FW\\BaseCore\\BaseCore.Repository\\Migrations\\20260416162437_ChangeUserIdToString.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.entities\\rolemodulefunction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|solutionrelative:basecore.entities\\rolemodulefunction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.repository\\authen\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|solutionrelative:basecore.repository\\authen\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\clientapp\\src\\pages\\orders.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\clientapp\\src\\pages\\orders.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\clientapp\\src\\services\\api.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\clientapp\\src\\services\\api.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B1C2D3E4-F5A6-7890-BCDE-F12345678901}|BaseCore.APIService\\BaseCore.APIService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.apiservice\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B1C2D3E4-F5A6-7890-BCDE-F12345678901}|BaseCore.APIService\\BaseCore.APIService.csproj|solutionrelative:basecore.apiservice\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3934463F-480E-4BE1-8796-E79F458CAEE7}|BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.apigateway\\basecore.apigateway.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{3934463F-480E-4BE1-8796-E79F458CAEE7}|BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj|solutionrelative:basecore.apigateway\\basecore.apigateway.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\clientapp\\src\\pages\\users.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\clientapp\\src\\pages\\users.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|solutionrelative:basecore.entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.entities\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|solutionrelative:basecore.entities\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.entities\\seedconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|solutionrelative:basecore.entities\\seedconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.entities\\userrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|solutionrelative:basecore.entities\\userrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.entities\\usermodule.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|solutionrelative:basecore.entities\\usermodule.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\clientapp\\src\\pages\\dashboard.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\clientapp\\src\\pages\\dashboard.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{748A2479-E8AC-453C-9FC2-AAE28B9F1AFA}|BaseCore.DTO\\BaseCore.DTO.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.dto\\response\\jsonrestapiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{748A2479-E8AC-453C-9FC2-AAE28B9F1AFA}|BaseCore.DTO\\BaseCore.DTO.csproj|solutionrelative:basecore.dto\\response\\jsonrestapiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{748A2479-E8AC-453C-9FC2-AAE28B9F1AFA}|BaseCore.DTO\\BaseCore.DTO.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.dto\\response\\constantresponsemessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{748A2479-E8AC-453C-9FC2-AAE28B9F1AFA}|BaseCore.DTO\\BaseCore.DTO.csproj|solutionrelative:basecore.dto\\response\\constantresponsemessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{748A2479-E8AC-453C-9FC2-AAE28B9F1AFA}|BaseCore.DTO\\BaseCore.DTO.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.dto\\response\\apiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{748A2479-E8AC-453C-9FC2-AAE28B9F1AFA}|BaseCore.DTO\\BaseCore.DTO.csproj|solutionrelative:basecore.dto\\response\\apiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\clientapp\\src\\pages\\login.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\clientapp\\src\\pages\\login.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19540157-8E18-4C2D-A482-34832430B612}|BaseCore.Services\\BaseCore.Services.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.services\\iorderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19540157-8E18-4C2D-A482-34832430B612}|BaseCore.Services\\BaseCore.Services.csproj|solutionrelative:basecore.services\\iorderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\clientapp\\src\\app.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\clientapp\\src\\app.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B1C2D3E4-F5A6-7890-BCDE-F12345678901}|BaseCore.APIService\\BaseCore.APIService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.apiservice\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{B1C2D3E4-F5A6-7890-BCDE-F12345678901}|BaseCore.APIService\\BaseCore.APIService.csproj|solutionrelative:basecore.apiservice\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19540157-8E18-4C2D-A482-34832430B612}|BaseCore.Services\\BaseCore.Services.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.services\\orderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19540157-8E18-4C2D-A482-34832430B612}|BaseCore.Services\\BaseCore.Services.csproj|solutionrelative:basecore.services\\orderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.repository\\efcore\\orderrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|solutionrelative:basecore.repository\\efcore\\orderrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.repository\\migrations\\20260416162838_syncdatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|solutionrelative:basecore.repository\\migrations\\20260416162838_syncdatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.repository\\migrations\\20260416162916_convertuseridtostring.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|solutionrelative:basecore.repository\\migrations\\20260416162916_convertuseridtostring.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.repository\\migrations\\20260416163741_syncinitial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|solutionrelative:basecore.repository\\migrations\\20260416163741_syncinitial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.repository\\migrations\\20260416163832_changeuseridtostringfinal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|solutionrelative:basecore.repository\\migrations\\20260416163832_changeuseridtostringfinal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.entities\\orderdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|solutionrelative:basecore.entities\\orderdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.entities\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|solutionrelative:basecore.entities\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.entities\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|solutionrelative:basecore.entities\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.entities\\function.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|solutionrelative:basecore.entities\\function.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.entities\\modulefunction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|solutionrelative:basecore.entities\\modulefunction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B1C2D3E4-F5A6-7890-BCDE-F12345678901}|BaseCore.APIService\\BaseCore.APIService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.apiservice\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{B1C2D3E4-F5A6-7890-BCDE-F12345678901}|BaseCore.APIService\\BaseCore.APIService.csproj|solutionrelative:basecore.apiservice\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.entities\\module.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|solutionrelative:basecore.entities\\module.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.entities\\setting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|solutionrelative:basecore.entities\\setting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.repository\\mysqldbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|solutionrelative:basecore.repository\\mysqldbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.repository\\basecore.repository.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|solutionrelative:basecore.repository\\basecore.repository.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8514CBD2-CCA4-46FC-8CD3-93A16E5F2F0A}|BaseCore.Libs\\BaseCore.Libs.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.libs\\utils\\enumhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8514CBD2-CCA4-46FC-8CD3-93A16E5F2F0A}|BaseCore.Libs\\BaseCore.Libs.csproj|solutionrelative:basecore.libs\\utils\\enumhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8514CBD2-CCA4-46FC-8CD3-93A16E5F2F0A}|BaseCore.Libs\\BaseCore.Libs.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.libs\\utils\\linqextension.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8514CBD2-CCA4-46FC-8CD3-93A16E5F2F0A}|BaseCore.Libs\\BaseCore.Libs.csproj|solutionrelative:basecore.libs\\utils\\linqextension.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8514CBD2-CCA4-46FC-8CD3-93A16E5F2F0A}|BaseCore.Libs\\BaseCore.Libs.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.libs\\utils\\utils.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8514CBD2-CCA4-46FC-8CD3-93A16E5F2F0A}|BaseCore.Libs\\BaseCore.Libs.csproj|solutionrelative:basecore.libs\\utils\\utils.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.repository\\efcore\\categoryrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|solutionrelative:basecore.repository\\efcore\\categoryrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6F1CD8F3-B7CA-4385-B68E-67B2DC77C6D4}|BaseCore.Common\\BaseCore.Common.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.common\\enums.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6F1CD8F3-B7CA-4385-B68E-67B2DC77C6D4}|BaseCore.Common\\BaseCore.Common.csproj|solutionrelative:basecore.common\\enums.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6F1CD8F3-B7CA-4385-B68E-67B2DC77C6D4}|BaseCore.Common\\BaseCore.Common.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.common\\entity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6F1CD8F3-B7CA-4385-B68E-67B2DC77C6D4}|BaseCore.Common\\BaseCore.Common.csproj|solutionrelative:basecore.common\\entity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8514CBD2-CCA4-46FC-8CD3-93A16E5F2F0A}|BaseCore.Libs\\BaseCore.Libs.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.libs\\basecore.libs.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{8514CBD2-CCA4-46FC-8CD3-93A16E5F2F0A}|BaseCore.Libs\\BaseCore.Libs.csproj|solutionrelative:basecore.libs\\basecore.libs.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.entities\\grouproleagency.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|solutionrelative:basecore.entities\\grouproleagency.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.entities\\role.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|solutionrelative:basecore.entities\\role.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.entities\\accesstoken.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|solutionrelative:basecore.entities\\accesstoken.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19540157-8E18-4C2D-A482-34832430B612}|BaseCore.Services\\BaseCore.Services.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.services\\icategoryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19540157-8E18-4C2D-A482-34832430B612}|BaseCore.Services\\BaseCore.Services.csproj|solutionrelative:basecore.services\\icategoryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3934463F-480E-4BE1-8796-E79F458CAEE7}|BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.apigateway\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{3934463F-480E-4BE1-8796-E79F458CAEE7}|BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj|solutionrelative:basecore.apigateway\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3934463F-480E-4BE1-8796-E79F458CAEE7}|BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.apigateway\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3934463F-480E-4BE1-8796-E79F458CAEE7}|BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj|solutionrelative:basecore.apigateway\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\clientapp\\src\\contexts\\authcontext.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\clientapp\\src\\contexts\\authcontext.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\clientapp\\src\\components\\mainlayout.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\clientapp\\src\\components\\mainlayout.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B1C2D3E4-F5A6-7890-BCDE-F12345678901}|BaseCore.APIService\\BaseCore.APIService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.apiservice\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B1C2D3E4-F5A6-7890-BCDE-F12345678901}|BaseCore.APIService\\BaseCore.APIService.csproj|solutionrelative:basecore.apiservice\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B1C2D3E4-F5A6-7890-BCDE-F12345678901}|BaseCore.APIService\\BaseCore.APIService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.apiservice\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B1C2D3E4-F5A6-7890-BCDE-F12345678901}|BaseCore.APIService\\BaseCore.APIService.csproj|solutionrelative:basecore.apiservice\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\clientapp\\src\\pages\\categories.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\clientapp\\src\\pages\\categories.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\controllers\\rolescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\controllers\\rolescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\clientapp\\package.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\clientapp\\package.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\basecore.authservice.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\basecore.authservice.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\clientapp\\src\\index.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\clientapp\\src\\index.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19540157-8E18-4C2D-A482-34832430B612}|BaseCore.Services\\BaseCore.Services.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.services\\iproductservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19540157-8E18-4C2D-A482-34832430B612}|BaseCore.Services\\BaseCore.Services.csproj|solutionrelative:basecore.services\\iproductservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19540157-8E18-4C2D-A482-34832430B612}|BaseCore.Services\\BaseCore.Services.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.services\\productservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19540157-8E18-4C2D-A482-34832430B612}|BaseCore.Services\\BaseCore.Services.csproj|solutionrelative:basecore.services\\productservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.entities\\basecore.entities.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{FDA236EF-0483-4535-AD20-6B3FA474369C}|BaseCore.Entities\\BaseCore.Entities.csproj|solutionrelative:basecore.entities\\basecore.entities.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B1C2D3E4-F5A6-7890-BCDE-F12345678901}|BaseCore.APIService\\BaseCore.APIService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.apiservice\\basecore.apiservice.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{B1C2D3E4-F5A6-7890-BCDE-F12345678901}|BaseCore.APIService\\BaseCore.APIService.csproj|solutionrelative:basecore.apiservice\\basecore.apiservice.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19540157-8E18-4C2D-A482-34832430B612}|BaseCore.Services\\BaseCore.Services.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.services\\categoryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19540157-8E18-4C2D-A482-34832430B612}|BaseCore.Services\\BaseCore.Services.csproj|solutionrelative:basecore.services\\categoryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{748A2479-E8AC-453C-9FC2-AAE28B9F1AFA}|BaseCore.DTO\\BaseCore.DTO.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.dto\\common\\sortcolumn.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{748A2479-E8AC-453C-9FC2-AAE28B9F1AFA}|BaseCore.DTO\\BaseCore.DTO.csproj|solutionrelative:basecore.dto\\common\\sortcolumn.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{748A2479-E8AC-453C-9FC2-AAE28B9F1AFA}|BaseCore.DTO\\BaseCore.DTO.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.dto\\common\\searchresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{748A2479-E8AC-453C-9FC2-AAE28B9F1AFA}|BaseCore.DTO\\BaseCore.DTO.csproj|solutionrelative:basecore.dto\\common\\searchresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{748A2479-E8AC-453C-9FC2-AAE28B9F1AFA}|BaseCore.DTO\\BaseCore.DTO.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.dto\\authplatform\\moduledto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{748A2479-E8AC-453C-9FC2-AAE28B9F1AFA}|BaseCore.DTO\\BaseCore.DTO.csproj|solutionrelative:basecore.dto\\authplatform\\moduledto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{748A2479-E8AC-453C-9FC2-AAE28B9F1AFA}|BaseCore.DTO\\BaseCore.DTO.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.dto\\authplatform\\functionsearchdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{748A2479-E8AC-453C-9FC2-AAE28B9F1AFA}|BaseCore.DTO\\BaseCore.DTO.csproj|solutionrelative:basecore.dto\\authplatform\\functionsearchdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19540157-8E18-4C2D-A482-34832430B612}|BaseCore.Services\\BaseCore.Services.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.services\\basecore.services.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{19540157-8E18-4C2D-A482-34832430B612}|BaseCore.Services\\BaseCore.Services.csproj|solutionrelative:basecore.services\\basecore.services.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{748A2479-E8AC-453C-9FC2-AAE28B9F1AFA}|BaseCore.DTO\\BaseCore.DTO.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.dto\\basecore.dto.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{748A2479-E8AC-453C-9FC2-AAE28B9F1AFA}|BaseCore.DTO\\BaseCore.DTO.csproj|solutionrelative:basecore.dto\\basecore.dto.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\clientapp\\public\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\clientapp\\public\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|c:\\users\\asus-laptop\\downloads\\basecore\\basecore.authservice\\wwwroot\\js\\site.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\wwwroot\\js\\site.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 23,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{e8b06f52-6d01-11d2-aa7d-00c04f990343}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{e5c86464-96be-4d7c-9a8b-abcb3bbf5f92}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Products.jsx",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\pages\\Products.jsx",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\ClientApp\\src\\pages\\Products.jsx",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\pages\\Products.jsx",
+              "RelativeToolTip": "BaseCore.AuthService\\ClientApp\\src\\pages\\Products.jsx",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAL8BAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
+              "WhenOpened": "2026-04-16T04:06:08.483Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "api.js",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\services\\api.js",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\ClientApp\\src\\services\\api.js",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\services\\api.js",
+              "RelativeToolTip": "BaseCore.AuthService\\ClientApp\\src\\services\\api.js",
+              "ViewState": "AgIAADwAAAAAAAAAAAAkwEQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-04-16T09:42:39.591Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "OrdersController.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.APIService\\Controllers\\OrdersController.cs",
+              "RelativeDocumentMoniker": "BaseCore.APIService\\Controllers\\OrdersController.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.APIService\\Controllers\\OrdersController.cs",
+              "RelativeToolTip": "BaseCore.APIService\\Controllers\\OrdersController.cs",
+              "ViewState": "AgIAAC0AAAAAAAAAAAAowDsAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T10:25:47.788Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "BaseCore.ApiGateway.csproj",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
+              "RelativeDocumentMoniker": "BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
+              "RelativeToolTip": "BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-04-14T09:02:59.157Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Users.jsx",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\pages\\Users.jsx",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\ClientApp\\src\\pages\\Users.jsx",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\pages\\Users.jsx",
+              "RelativeToolTip": "BaseCore.AuthService\\ClientApp\\src\\pages\\Users.jsx",
+              "ViewState": "AgIAALkBAAAAAAAAAAAiwOsBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
+              "WhenOpened": "2026-04-17T02:24:08.342Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\User.cs",
+              "RelativeDocumentMoniker": "BaseCore.Entities\\User.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\User.cs",
+              "RelativeToolTip": "BaseCore.Entities\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAABEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T10:20:03.309Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Product.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\Product.cs",
+              "RelativeDocumentMoniker": "BaseCore.Entities\\Product.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\Product.cs",
+              "RelativeToolTip": "BaseCore.Entities\\Product.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T15:58:40.759Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "SeedConfiguration.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\SeedConfiguration.cs",
+              "RelativeDocumentMoniker": "BaseCore.Entities\\SeedConfiguration.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\SeedConfiguration.cs",
+              "RelativeToolTip": "BaseCore.Entities\\SeedConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T12:27:30.671Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "UserRole.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\UserRole.cs",
+              "RelativeDocumentMoniker": "BaseCore.Entities\\UserRole.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\UserRole.cs",
+              "RelativeToolTip": "BaseCore.Entities\\UserRole.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAA0AAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T12:32:28.249Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "UserModule.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\UserModule.cs",
+              "RelativeDocumentMoniker": "BaseCore.Entities\\UserModule.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\UserModule.cs",
+              "RelativeToolTip": "BaseCore.Entities\\UserModule.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T12:29:05.857Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "Dashboard.jsx",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\pages\\Dashboard.jsx",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\ClientApp\\src\\pages\\Dashboard.jsx",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\pages\\Dashboard.jsx",
+              "RelativeToolTip": "BaseCore.AuthService\\ClientApp\\src\\pages\\Dashboard.jsx",
+              "ViewState": "AgIAAHYAAAAAAAAAAAAiwKgAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
+              "WhenOpened": "2026-04-16T00:46:44.075Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.APIService\\Program.cs",
+              "RelativeDocumentMoniker": "BaseCore.APIService\\Program.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.APIService\\Program.cs",
+              "RelativeToolTip": "BaseCore.APIService\\Program.cs",
+              "ViewState": "AgIAAF4AAAAAAAAAAAAiwG4AAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T00:47:23.275Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "JsonRestApiResponse.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.DTO\\Response\\JsonRestApiResponse.cs",
+              "RelativeDocumentMoniker": "BaseCore.DTO\\Response\\JsonRestApiResponse.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.DTO\\Response\\JsonRestApiResponse.cs",
+              "RelativeToolTip": "BaseCore.DTO\\Response\\JsonRestApiResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T09:26:23.641Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "ConstantResponseMessage.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.DTO\\Response\\ConstantResponseMessage.cs",
+              "RelativeDocumentMoniker": "BaseCore.DTO\\Response\\ConstantResponseMessage.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.DTO\\Response\\ConstantResponseMessage.cs",
+              "RelativeToolTip": "BaseCore.DTO\\Response\\ConstantResponseMessage.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T09:26:22.109Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "ApiResponse.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.DTO\\Response\\ApiResponse.cs",
+              "RelativeDocumentMoniker": "BaseCore.DTO\\Response\\ApiResponse.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.DTO\\Response\\ApiResponse.cs",
+              "RelativeToolTip": "BaseCore.DTO\\Response\\ApiResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T09:26:20.854Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.APIService\\appsettings.json",
+              "RelativeDocumentMoniker": "BaseCore.APIService\\appsettings.json",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.APIService\\appsettings.json",
+              "RelativeToolTip": "BaseCore.APIService\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-15T00:47:33.283Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "Login.jsx",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\pages\\Login.jsx",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\ClientApp\\src\\pages\\Login.jsx",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\pages\\Login.jsx",
+              "RelativeToolTip": "BaseCore.AuthService\\ClientApp\\src\\pages\\Login.jsx",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
+              "WhenOpened": "2026-04-16T04:21:42.026Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ocelot.json",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.ApiGateway\\ocelot.json",
+              "RelativeDocumentMoniker": "BaseCore.ApiGateway\\ocelot.json",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.ApiGateway\\ocelot.json",
+              "RelativeToolTip": "BaseCore.ApiGateway\\ocelot.json",
+              "ViewState": "AgIAAG4AAAAAAAAAAAAswI4AAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-15T01:21:57.097Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UserService.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Services\\Authen\\UserService.cs",
+              "RelativeDocumentMoniker": "BaseCore.Services\\Authen\\UserService.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Services\\Authen\\UserService.cs",
+              "RelativeToolTip": "BaseCore.Services\\Authen\\UserService.cs",
+              "ViewState": "AgIAAB0AAAAAAAAAAAAUwDEAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T07:55:39.615Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\appsettings.json",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\appsettings.json",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\appsettings.json",
+              "RelativeToolTip": "BaseCore.AuthService\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAACKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-14T13:30:54.455Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.ApiGateway\\appsettings.json",
+              "RelativeDocumentMoniker": "BaseCore.ApiGateway\\appsettings.json",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.ApiGateway\\appsettings.json",
+              "RelativeToolTip": "BaseCore.ApiGateway\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-15T01:22:01.944Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\Controllers\\AuthController.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "BaseCore.AuthService\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T02:15:04.537Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Orders.jsx",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\pages\\Orders.jsx",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\ClientApp\\src\\pages\\Orders.jsx",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\pages\\Orders.jsx",
+              "RelativeToolTip": "BaseCore.AuthService\\ClientApp\\src\\pages\\Orders.jsx",
+              "ViewState": "AgIAAMYAAAAAAAAAAAAiwPgAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
+              "WhenOpened": "2026-04-16T01:17:08.161Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "UserRepository.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Repository\\Authen\\UserRepository.cs",
+              "RelativeDocumentMoniker": "BaseCore.Repository\\Authen\\UserRepository.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Repository\\Authen\\UserRepository.cs",
+              "RelativeToolTip": "BaseCore.Repository\\Authen\\UserRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEEAAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T09:30:32.885Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\Program.cs",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\Program.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\Program.cs",
+              "RelativeToolTip": "BaseCore.AuthService\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T13:30:26.887Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "RoleModuleFunction.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\RoleModuleFunction.cs",
+              "RelativeDocumentMoniker": "BaseCore.Entities\\RoleModuleFunction.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\RoleModuleFunction.cs",
+              "RelativeToolTip": "BaseCore.Entities\\RoleModuleFunction.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T12:25:00.857Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "IOrderService.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Services\\IOrderService.cs",
+              "RelativeDocumentMoniker": "BaseCore.Services\\IOrderService.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Services\\IOrderService.cs",
+              "RelativeToolTip": "BaseCore.Services\\IOrderService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAYAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T10:06:14.589Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "App.jsx",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\App.jsx",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\ClientApp\\src\\App.jsx",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\App.jsx",
+              "RelativeToolTip": "BaseCore.AuthService\\ClientApp\\src\\App.jsx",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
+              "WhenOpened": "2026-04-15T00:55:34.446Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.APIService\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "BaseCore.APIService\\Properties\\launchSettings.json",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.APIService\\Properties\\launchSettings.json",
+              "RelativeToolTip": "BaseCore.APIService\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-15T01:22:33.766Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "OrderService.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Services\\OrderService.cs",
+              "RelativeDocumentMoniker": "BaseCore.Services\\OrderService.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Services\\OrderService.cs",
+              "RelativeToolTip": "BaseCore.Services\\OrderService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAsAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T10:01:23.179Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "OrderRepository.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Repository\\EFCore\\OrderRepository.cs",
+              "RelativeDocumentMoniker": "BaseCore.Repository\\EFCore\\OrderRepository.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Repository\\EFCore\\OrderRepository.cs",
+              "RelativeToolTip": "BaseCore.Repository\\EFCore\\OrderRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAgAAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T16:17:16.92Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "20260416162437_ChangeUserIdToString.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Documents\\CNW\\FW\\FW\\BaseCore\\BaseCore.Repository\\Migrations\\20260416162437_ChangeUserIdToString.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\Windows\\Documents\\CNW\\FW\\FW\\BaseCore\\BaseCore.Repository\\Migrations\\20260416162437_ChangeUserIdToString.cs",
+              "ToolTip": "C:\\Users\\Windows\\Documents\\CNW\\FW\\FW\\BaseCore\\BaseCore.Repository\\Migrations\\20260416162437_ChangeUserIdToString.cs",
+              "RelativeToolTip": "..\\..\\..\\Windows\\Documents\\CNW\\FW\\FW\\BaseCore\\BaseCore.Repository\\Migrations\\20260416162437_ChangeUserIdToString.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T16:24:37.412Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "20260416162838_SyncDatabase.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Repository\\Migrations\\20260416162838_SyncDatabase.cs",
+              "RelativeDocumentMoniker": "BaseCore.Repository\\Migrations\\20260416162838_SyncDatabase.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Repository\\Migrations\\20260416162838_SyncDatabase.cs",
+              "RelativeToolTip": "BaseCore.Repository\\Migrations\\20260416162838_SyncDatabase.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T16:28:38.188Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "20260416162916_ConvertUserIdToString.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Repository\\Migrations\\20260416162916_ConvertUserIdToString.cs",
+              "RelativeDocumentMoniker": "BaseCore.Repository\\Migrations\\20260416162916_ConvertUserIdToString.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Repository\\Migrations\\20260416162916_ConvertUserIdToString.cs",
+              "RelativeToolTip": "BaseCore.Repository\\Migrations\\20260416162916_ConvertUserIdToString.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T16:29:16.922Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "20260416163741_SyncInitial.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Repository\\Migrations\\20260416163741_SyncInitial.cs",
+              "RelativeDocumentMoniker": "BaseCore.Repository\\Migrations\\20260416163741_SyncInitial.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Repository\\Migrations\\20260416163741_SyncInitial.cs",
+              "RelativeToolTip": "BaseCore.Repository\\Migrations\\20260416163741_SyncInitial.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T16:37:42.029Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "20260416163832_ChangeUserIdToStringFinal.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Repository\\Migrations\\20260416163832_ChangeUserIdToStringFinal.cs",
+              "RelativeDocumentMoniker": "BaseCore.Repository\\Migrations\\20260416163832_ChangeUserIdToStringFinal.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Repository\\Migrations\\20260416163832_ChangeUserIdToStringFinal.cs",
+              "RelativeToolTip": "BaseCore.Repository\\Migrations\\20260416163832_ChangeUserIdToStringFinal.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T16:38:32.582Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\Properties\\launchSettings.json",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\Properties\\launchSettings.json",
+              "RelativeToolTip": "BaseCore.AuthService\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-15T00:54:32.928Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "OrderDetail.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\OrderDetail.cs",
+              "RelativeDocumentMoniker": "BaseCore.Entities\\OrderDetail.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\OrderDetail.cs",
+              "RelativeToolTip": "BaseCore.Entities\\OrderDetail.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAQwBkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T10:19:37.414Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "Order.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\Order.cs",
+              "RelativeDocumentMoniker": "BaseCore.Entities\\Order.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\Order.cs",
+              "RelativeToolTip": "BaseCore.Entities\\Order.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAqwA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T15:58:35.369Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "Category.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\Category.cs",
+              "RelativeDocumentMoniker": "BaseCore.Entities\\Category.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\Category.cs",
+              "RelativeToolTip": "BaseCore.Entities\\Category.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T12:11:06.688Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "Function.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\Function.cs",
+              "RelativeDocumentMoniker": "BaseCore.Entities\\Function.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\Function.cs",
+              "RelativeToolTip": "BaseCore.Entities\\Function.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T12:14:20.218Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "ModuleFunction.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\ModuleFunction.cs",
+              "RelativeDocumentMoniker": "BaseCore.Entities\\ModuleFunction.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\ModuleFunction.cs",
+              "RelativeToolTip": "BaseCore.Entities\\ModuleFunction.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAQwBUAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T12:15:28.295Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.APIService\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "BaseCore.APIService\\appsettings.Development.json",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.APIService\\appsettings.Development.json",
+              "RelativeToolTip": "BaseCore.APIService\\appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-16T14:55:42.945Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "Module.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\Module.cs",
+              "RelativeDocumentMoniker": "BaseCore.Entities\\Module.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\Module.cs",
+              "RelativeToolTip": "BaseCore.Entities\\Module.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T12:15:20.737Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
+              "Title": "Setting.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\Setting.cs",
+              "RelativeDocumentMoniker": "BaseCore.Entities\\Setting.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\Setting.cs",
+              "RelativeToolTip": "BaseCore.Entities\\Setting.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T12:27:33.879Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 45,
+              "Title": "MySqlDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Repository\\MySqlDbContext.cs",
+              "RelativeDocumentMoniker": "BaseCore.Repository\\MySqlDbContext.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Repository\\MySqlDbContext.cs",
+              "RelativeToolTip": "BaseCore.Repository\\MySqlDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEoAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T12:47:26.637Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 46,
+              "Title": "BaseCore.Repository.csproj",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Repository\\BaseCore.Repository.csproj",
+              "RelativeDocumentMoniker": "BaseCore.Repository\\BaseCore.Repository.csproj",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Repository\\BaseCore.Repository.csproj",
+              "RelativeToolTip": "BaseCore.Repository\\BaseCore.Repository.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-04-14T09:03:01.08Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 47,
+              "Title": "EnumHelper.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Libs\\Utils\\EnumHelper.cs",
+              "RelativeDocumentMoniker": "BaseCore.Libs\\Utils\\EnumHelper.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Libs\\Utils\\EnumHelper.cs",
+              "RelativeToolTip": "BaseCore.Libs\\Utils\\EnumHelper.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T12:36:23.37Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 48,
+              "Title": "LinqExtension.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Libs\\Utils\\LinqExtension.cs",
+              "RelativeDocumentMoniker": "BaseCore.Libs\\Utils\\LinqExtension.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Libs\\Utils\\LinqExtension.cs",
+              "RelativeToolTip": "BaseCore.Libs\\Utils\\LinqExtension.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T12:36:27.272Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 49,
+              "Title": "Utils.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Libs\\Utils\\Utils.cs",
+              "RelativeDocumentMoniker": "BaseCore.Libs\\Utils\\Utils.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Libs\\Utils\\Utils.cs",
+              "RelativeToolTip": "BaseCore.Libs\\Utils\\Utils.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T12:36:30.31Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 50,
+              "Title": "CategoryRepository.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Repository\\EFCore\\CategoryRepository.cs",
+              "RelativeDocumentMoniker": "BaseCore.Repository\\EFCore\\CategoryRepository.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Repository\\EFCore\\CategoryRepository.cs",
+              "RelativeToolTip": "BaseCore.Repository\\EFCore\\CategoryRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T12:45:31.167Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 51,
+              "Title": "Enums.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Common\\Enums.cs",
+              "RelativeDocumentMoniker": "BaseCore.Common\\Enums.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Common\\Enums.cs",
+              "RelativeToolTip": "BaseCore.Common\\Enums.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T12:57:29.128Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 52,
+              "Title": "Entity.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Common\\Entity.cs",
+              "RelativeDocumentMoniker": "BaseCore.Common\\Entity.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Common\\Entity.cs",
+              "RelativeToolTip": "BaseCore.Common\\Entity.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T12:57:32.276Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 53,
+              "Title": "BaseCore.Libs.csproj",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Libs\\BaseCore.Libs.csproj",
+              "RelativeDocumentMoniker": "BaseCore.Libs\\BaseCore.Libs.csproj",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Libs\\BaseCore.Libs.csproj",
+              "RelativeToolTip": "BaseCore.Libs\\BaseCore.Libs.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-04-16T01:53:11.264Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 54,
+              "Title": "GroupRoleAgency.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\GroupRoleAgency.cs",
+              "RelativeDocumentMoniker": "BaseCore.Entities\\GroupRoleAgency.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\GroupRoleAgency.cs",
+              "RelativeToolTip": "BaseCore.Entities\\GroupRoleAgency.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T12:15:14.186Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 55,
+              "Title": "Role.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\Role.cs",
+              "RelativeDocumentMoniker": "BaseCore.Entities\\Role.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\Role.cs",
+              "RelativeToolTip": "BaseCore.Entities\\Role.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T15:58:48.8Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 56,
+              "Title": "AccessToken.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\AccessToken.cs",
+              "RelativeDocumentMoniker": "BaseCore.Entities\\AccessToken.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\AccessToken.cs",
+              "RelativeToolTip": "BaseCore.Entities\\AccessToken.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T10:19:44.181Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 57,
+              "Title": "ICategoryService.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Services\\ICategoryService.cs",
+              "RelativeDocumentMoniker": "BaseCore.Services\\ICategoryService.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Services\\ICategoryService.cs",
+              "RelativeToolTip": "BaseCore.Services\\ICategoryService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T08:27:56.878Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 58,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.ApiGateway\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "BaseCore.ApiGateway\\Properties\\launchSettings.json",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.ApiGateway\\Properties\\launchSettings.json",
+              "RelativeToolTip": "BaseCore.ApiGateway\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-15T01:22:21.427Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 59,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.ApiGateway\\Program.cs",
+              "RelativeDocumentMoniker": "BaseCore.ApiGateway\\Program.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.ApiGateway\\Program.cs",
+              "RelativeToolTip": "BaseCore.ApiGateway\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T01:22:06.57Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 60,
+              "Title": "AuthContext.jsx",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\contexts\\AuthContext.jsx",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\ClientApp\\src\\contexts\\AuthContext.jsx",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\contexts\\AuthContext.jsx",
+              "RelativeToolTip": "BaseCore.AuthService\\ClientApp\\src\\contexts\\AuthContext.jsx",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
+              "WhenOpened": "2026-04-16T01:30:48.551Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 61,
+              "Title": "MainLayout.jsx",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\components\\MainLayout.jsx",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\ClientApp\\src\\components\\MainLayout.jsx",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\components\\MainLayout.jsx",
+              "RelativeToolTip": "BaseCore.AuthService\\ClientApp\\src\\components\\MainLayout.jsx",
+              "ViewState": "AgIAACoAAAAAAAAAAAAAAE0AAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
+              "WhenOpened": "2026-04-16T00:56:05.677Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 62,
+              "Title": "ProductsController.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.APIService\\Controllers\\ProductsController.cs",
+              "RelativeDocumentMoniker": "BaseCore.APIService\\Controllers\\ProductsController.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.APIService\\Controllers\\ProductsController.cs",
+              "RelativeToolTip": "BaseCore.APIService\\Controllers\\ProductsController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T01:35:12.619Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 63,
+              "Title": "CategoriesController.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.APIService\\Controllers\\CategoriesController.cs",
+              "RelativeDocumentMoniker": "BaseCore.APIService\\Controllers\\CategoriesController.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.APIService\\Controllers\\CategoriesController.cs",
+              "RelativeToolTip": "BaseCore.APIService\\Controllers\\CategoriesController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T09:14:12.883Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 64,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\Controllers\\UserController.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\Controllers\\UserController.cs",
+              "RelativeToolTip": "BaseCore.AuthService\\Controllers\\UserController.cs",
+              "ViewState": "AgIAALEAAAAAAAAAAAA9wNEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T01:04:33.859Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 65,
+              "Title": "Categories.jsx",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\pages\\Categories.jsx",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\ClientApp\\src\\pages\\Categories.jsx",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\pages\\Categories.jsx",
+              "RelativeToolTip": "BaseCore.AuthService\\ClientApp\\src\\pages\\Categories.jsx",
+              "ViewState": "AgIAAHMAAAAAAAAAAAAiwKUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
+              "WhenOpened": "2026-04-16T00:46:25.381Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 66,
+              "Title": "RolesController.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\Controllers\\RolesController.cs",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\Controllers\\RolesController.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\Controllers\\RolesController.cs",
+              "RelativeToolTip": "BaseCore.AuthService\\Controllers\\RolesController.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAUwFcAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T02:15:03.346Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 67,
+              "Title": "package.json",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\package.json",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\ClientApp\\package.json",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\package.json",
+              "RelativeToolTip": "BaseCore.AuthService\\ClientApp\\package.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-15T00:55:46.754Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 68,
+              "Title": "BaseCore.AuthService.csproj",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\BaseCore.AuthService.csproj",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\BaseCore.AuthService.csproj",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\BaseCore.AuthService.csproj",
+              "RelativeToolTip": "BaseCore.AuthService\\BaseCore.AuthService.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-04-14T09:02:51.528Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 69,
+              "Title": "index.js",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\index.js",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\ClientApp\\src\\index.js",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\src\\index.js",
+              "RelativeToolTip": "BaseCore.AuthService\\ClientApp\\src\\index.js",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-04-15T00:55:39.65Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 70,
+              "Title": "IProductService.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Services\\IProductService.cs",
+              "RelativeDocumentMoniker": "BaseCore.Services\\IProductService.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Services\\IProductService.cs",
+              "RelativeToolTip": "BaseCore.Services\\IProductService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T10:11:22.719Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 71,
+              "Title": "ProductService.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Services\\ProductService.cs",
+              "RelativeDocumentMoniker": "BaseCore.Services\\ProductService.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Services\\ProductService.cs",
+              "RelativeToolTip": "BaseCore.Services\\ProductService.cs",
+              "ViewState": "AgIAACMAAAAAAAAAAAAowFUAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T09:03:22.788Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 72,
+              "Title": "BaseCore.Entities.csproj",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj",
+              "RelativeDocumentMoniker": "BaseCore.Entities\\BaseCore.Entities.csproj",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj",
+              "RelativeToolTip": "BaseCore.Entities\\BaseCore.Entities.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-04-16T01:53:10.294Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 73,
+              "Title": "BaseCore.APIService.csproj",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj",
+              "RelativeDocumentMoniker": "BaseCore.APIService\\BaseCore.APIService.csproj",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj",
+              "RelativeToolTip": "BaseCore.APIService\\BaseCore.APIService.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-04-14T09:02:57.756Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 74,
+              "Title": "CategoryService.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Services\\CategoryService.cs",
+              "RelativeDocumentMoniker": "BaseCore.Services\\CategoryService.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Services\\CategoryService.cs",
+              "RelativeToolTip": "BaseCore.Services\\CategoryService.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAowDQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T10:11:30.754Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 75,
+              "Title": "SortColumn.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.DTO\\Common\\SortColumn.cs",
+              "RelativeDocumentMoniker": "BaseCore.DTO\\Common\\SortColumn.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.DTO\\Common\\SortColumn.cs",
+              "RelativeToolTip": "BaseCore.DTO\\Common\\SortColumn.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T10:14:12.975Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 76,
+              "Title": "SearchResult.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.DTO\\Common\\SearchResult.cs",
+              "RelativeDocumentMoniker": "BaseCore.DTO\\Common\\SearchResult.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.DTO\\Common\\SearchResult.cs",
+              "RelativeToolTip": "BaseCore.DTO\\Common\\SearchResult.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T10:14:14.561Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 77,
+              "Title": "ModuleDto.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.DTO\\AuthPlatform\\ModuleDto.cs",
+              "RelativeDocumentMoniker": "BaseCore.DTO\\AuthPlatform\\ModuleDto.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.DTO\\AuthPlatform\\ModuleDto.cs",
+              "RelativeToolTip": "BaseCore.DTO\\AuthPlatform\\ModuleDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T10:14:22.663Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 78,
+              "Title": "FunctionSearchDto.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.DTO\\AuthPlatform\\FunctionSearchDto.cs",
+              "RelativeDocumentMoniker": "BaseCore.DTO\\AuthPlatform\\FunctionSearchDto.cs",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.DTO\\AuthPlatform\\FunctionSearchDto.cs",
+              "RelativeToolTip": "BaseCore.DTO\\AuthPlatform\\FunctionSearchDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T10:14:23.671Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 79,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\appsettings.Development.json",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\appsettings.Development.json",
+              "RelativeToolTip": "BaseCore.AuthService\\appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-15T01:03:37.949Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 80,
+              "Title": "BaseCore.Services.csproj",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Services\\BaseCore.Services.csproj",
+              "RelativeDocumentMoniker": "BaseCore.Services\\BaseCore.Services.csproj",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.Services\\BaseCore.Services.csproj",
+              "RelativeToolTip": "BaseCore.Services\\BaseCore.Services.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-04-14T09:02:48.634Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 81,
+              "Title": "BaseCore.DTO.csproj",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
+              "RelativeDocumentMoniker": "BaseCore.DTO\\BaseCore.DTO.csproj",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
+              "RelativeToolTip": "BaseCore.DTO\\BaseCore.DTO.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-04-14T09:02:46.001Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 82,
+              "Title": "index.html",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\public\\index.html",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\ClientApp\\public\\index.html",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\ClientApp\\public\\index.html",
+              "RelativeToolTip": "BaseCore.AuthService\\ClientApp\\public\\index.html",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-04-15T00:55:27.29Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 83,
+              "Title": "site.css",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\wwwroot\\css\\site.css",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\wwwroot\\css\\site.css",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\wwwroot\\css\\site.css",
+              "RelativeToolTip": "BaseCore.AuthService\\wwwroot\\css\\site.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-04-15T01:02:38.86Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 84,
+              "Title": "site.js",
+              "DocumentMoniker": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\wwwroot\\js\\site.js",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\wwwroot\\js\\site.js",
+              "ToolTip": "C:\\Users\\ASUS-laptop\\Downloads\\BaseCore\\BaseCore.AuthService\\wwwroot\\js\\site.js",
+              "RelativeToolTip": "BaseCore.AuthService\\wwwroot\\js\\site.js",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-04-15T01:02:44.095Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
