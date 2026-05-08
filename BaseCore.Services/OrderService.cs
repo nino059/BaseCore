@@ -11,9 +11,9 @@ namespace BaseCore.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly MySqlDbContext _context;
+        private readonly AppDbContext _context;
 
-        public OrderService(MySqlDbContext context)
+        public OrderService(AppDbContext context)
         {
             _context = context;
         }

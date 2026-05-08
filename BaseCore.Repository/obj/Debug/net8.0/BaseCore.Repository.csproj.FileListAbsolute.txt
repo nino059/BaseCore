@@ -159,3 +159,27 @@ C:\Users\ASUS-laptop\Downloads\BaseCore\BaseCore.Repository\obj\Debug\net8.0\ref
 C:\Users\ASUS-laptop\Downloads\BaseCore\BaseCore.Repository\obj\Debug\net8.0\BaseCore.Repository.pdb
 C:\Users\ASUS-laptop\Downloads\BaseCore\BaseCore.Repository\obj\Debug\net8.0\BaseCore.Repository.genruntimeconfig.cache
 C:\Users\ASUS-laptop\Downloads\BaseCore\BaseCore.Repository\obj\Debug\net8.0\ref\BaseCore.Repository.dll
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\obj\Debug\net8.0\BaseCore.Repository.csproj.AssemblyReference.cache
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\obj\Debug\net8.0\BaseCore.Repository.GeneratedMSBuildEditorConfig.editorconfig
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\obj\Debug\net8.0\BaseCore.Repository.AssemblyInfoInputs.cache
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\obj\Debug\net8.0\BaseCore.Repository.AssemblyInfo.cs
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\obj\Debug\net8.0\BaseCore.Repository.csproj.CoreCompileInputs.cache
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\obj\Debug\net8.0\BaseCore.Repository.sourcelink.json
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\obj\Debug\net8.0\BaseCore.Repository.dll
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\obj\Debug\net8.0\refint\BaseCore.Repository.dll
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\obj\Debug\net8.0\BaseCore.Repository.pdb
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\bin\Debug\net8.0\BaseCore.Repository.deps.json
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\bin\Debug\net8.0\BaseCore.Repository.runtimeconfig.json
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\bin\Debug\net8.0\BaseCore.Repository.dll
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\bin\Debug\net8.0\BaseCore.Repository.pdb
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\bin\Debug\net8.0\BaseCore.Common.dll
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\bin\Debug\net8.0\BaseCore.DTO.dll
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\bin\Debug\net8.0\BaseCore.Entities.dll
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\bin\Debug\net8.0\BaseCore.Libs.dll
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\bin\Debug\net8.0\BaseCore.Common.pdb
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\bin\Debug\net8.0\BaseCore.DTO.pdb
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\bin\Debug\net8.0\BaseCore.Entities.pdb
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\bin\Debug\net8.0\BaseCore.Libs.pdb
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\obj\Debug\net8.0\BaseCore.92782631.Up2Date
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\obj\Debug\net8.0\BaseCore.Repository.genruntimeconfig.cache
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.Repository\obj\Debug\net8.0\ref\BaseCore.Repository.dll

@@ -65,14 +65,10 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// MongoDB Configuration
-//var mongoConnectionString = builder.Configuration["MongoDB:ConnectionString"] ?? "mongodb://localhost:27017";
-//var mongoDatabaseName = builder.Configuration["MongoDB:Database"] ?? "BaseCoreSales";
-//builder.Services.AddSingleton(new MongoDbContext(mongoConnectionString, mongoDatabaseName));
 
 
 // Đăng ký SQL Server cho AuthService
-builder.Services.AddDbContext<MySqlDbContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectedDb")));
 
 
@@ -103,13 +99,6 @@ builder.Services.AddAuthentication(x =>
 
 var app = builder.Build();
 
-// Seed MongoDB data
-
-//using (var scope = app.Services.CreateScope())
-//{
-//    var dbContext = scope.ServiceProvider.GetRequiredService<MongoDbContext>();
-//    await dbContext.SeedDataAsync();
-//}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

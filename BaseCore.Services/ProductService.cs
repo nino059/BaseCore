@@ -9,9 +9,9 @@ namespace BaseCore.Services
 {
     public class ProductService : IProductService
     {
-        private readonly MySqlDbContext _context;
+        private readonly AppDbContext _context;
 
-        public ProductService(MySqlDbContext context)
+        public ProductService(AppDbContext context)
         {
             _context = context;
         }

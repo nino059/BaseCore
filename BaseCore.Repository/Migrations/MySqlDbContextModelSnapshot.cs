@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BaseCore.Repository.Migrations
 {
-    [DbContext(typeof(MySqlDbContext))]
+    [DbContext(typeof(AppDbContext))]
     partial class MySqlDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

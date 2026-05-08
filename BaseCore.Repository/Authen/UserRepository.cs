@@ -20,9 +20,9 @@ namespace BaseCore.Repository.Authen
 
     public class UserRepository : IUserRepository
     {
-        private readonly MySqlDbContext _context;
+        private readonly AppDbContext _context;
 
-        public UserRepository(MySqlDbContext context)
+        public UserRepository(AppDbContext context)
         {
             _context = context;
         }
@@ -63,7 +63,7 @@ namespace BaseCore.Repository.Authen
         {
             var user = await GetByIdAsync(id);
             if (user != null)
-            {// Xóa m?m: Chuy?n tr?ng thái IsActive v? false
+            {// Xï¿½a m?m: Chuy?n tr?ng thï¿½i IsActive v? false
                 user.IsActive = false; 
                 _context.Users.Update(user);
                 await _context.SaveChangesAsync();

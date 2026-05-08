@@ -8,9 +8,9 @@ namespace BaseCore.Services
 {
     public class CategoryService : ICategoryService
     {
-        private readonly MySqlDbContext _context;
+        private readonly AppDbContext _context;
 
-        public CategoryService(MySqlDbContext context)
+        public CategoryService(AppDbContext context)
         {
             _context = context;
         }

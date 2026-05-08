@@ -58,15 +58,9 @@ builder.Services.AddCors(options =>
     });
 });
 
-//MySQL Configuration with EF Core
-//var connectionString = builder.Configuration.GetConnectionString("MySQL")
-//    ?? "Server=localhost;Database=BaseCoreSales;User=root;Password=;";
-//builder.Services.AddDbContext<MySqlDbContext>(options =>
-//    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 
-
-builder.Services.AddDbContext<MySqlDbContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectedDb"));
 });
@@ -107,7 +101,7 @@ var app = builder.Build();
 // Auto migrate database
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<MySqlDbContext>();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
 }
 

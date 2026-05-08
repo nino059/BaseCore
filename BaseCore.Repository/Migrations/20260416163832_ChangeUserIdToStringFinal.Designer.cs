@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BaseCore.Repository.Migrations
 {
-    [DbContext(typeof(MySqlDbContext))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20260416163832_ChangeUserIdToStringFinal")]
     partial class ChangeUserIdToStringFinal
     {
