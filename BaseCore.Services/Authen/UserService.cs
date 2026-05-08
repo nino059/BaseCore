@@ -56,11 +56,11 @@ namespace BaseCore.Services.Authen
                 // Hashed password
                 isValidPassword = TokenHelper.IsValidPassword(password, user.Salt, user.Password);
             }
-            //else
-            //{
-            //    // Plain text password (for seeded/legacy users)
-            //    isValidPassword = (user.Password == password);
-            //}
+            else
+            {
+                // Plain text password (for seeded/legacy users)
+                isValidPassword = (user.Password == password);
+            }
 
             if (!isValidPassword)
             {
