@@ -32,8 +32,12 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -42,7 +46,7 @@
               "RelativeDocumentMoniker": "BaseCore.Services\\Authen\\UserService.cs",
               "ToolTip": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Services\\Authen\\UserService.cs",
               "RelativeToolTip": "BaseCore.Services\\Authen\\UserService.cs",
-              "ViewState": "AgIAACQAAAAAAAAAAAAkwEEAAAANAAAAAAAAAA==",
+              "ViewState": "AgIAADAAAAAAAAAAAAAAAEEAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-08T17:39:44.694Z",
               "EditorCaption": ""
@@ -55,51 +59,43 @@
               "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
               "ViewState": "AgIAAP0UAAAAAAAAAAAiwBIVAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2026-05-08T17:22:15.538Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-08T17:22:15.538Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "BaseCore.AuthService",
+              "Title": "BaseCore.AuthService.csproj",
               "DocumentMoniker": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.AuthService\\BaseCore.AuthService.csproj",
               "RelativeDocumentMoniker": "BaseCore.AuthService\\BaseCore.AuthService.csproj",
               "ToolTip": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.AuthService\\BaseCore.AuthService.csproj",
               "RelativeToolTip": "BaseCore.AuthService\\BaseCore.AuthService.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAC4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-05-08T16:58:47.066Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-08T16:58:47.066Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "BaseCore.APIService",
+              "Title": "BaseCore.APIService.csproj",
               "DocumentMoniker": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj",
               "RelativeDocumentMoniker": "BaseCore.APIService\\BaseCore.APIService.csproj",
               "ToolTip": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj",
               "RelativeToolTip": "BaseCore.APIService\\BaseCore.APIService.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-05-08T16:58:39.975Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-08T16:58:39.975Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "BaseCore.DTO",
+              "Title": "BaseCore.DTO.csproj",
               "DocumentMoniker": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
               "RelativeDocumentMoniker": "BaseCore.DTO\\BaseCore.DTO.csproj",
               "ToolTip": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
               "RelativeToolTip": "BaseCore.DTO\\BaseCore.DTO.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-05-08T16:57:57.289Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+              "WhenOpened": "2026-05-08T16:57:57.289Z"
             },
             {
               "$type": "Document",
@@ -109,8 +105,7 @@
               "ToolTip": "C:\\Program Files\\dotnet\\sdk\\10.0.202\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets",
               "ViewState": "AgIAAG8AAAAAAAAAAAAgwHkAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2026-05-08T16:48:00.494Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-08T16:48:00.494Z"
             }
           ]
         }
