@@ -1,0 +1,23 @@
+/* Tùy chỉnh Bootstrap variables */
+:root {
+  --bs-primary: #1a1a1a;
+  --bs-font-sans-serif: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.btn {
+  border-radius: 50px;
+  padding: 12px 28px;
+  font-weight: 600;
+}
+
+.card {
+  border: none;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
