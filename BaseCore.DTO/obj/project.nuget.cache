@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "mAVwLxpwJW0=",
+  "dgSpecHash": "UnP8a/qx+7E=",
   "success": true,
   "projectFilePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
   "expectedPackageFiles": [
@@ -114,6 +114,18 @@
       "warningLevel": 1,
       "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
       "libraryId": "Microsoft.Extensions.Caching.Memory",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    },
+    {
+      "code": "NU1902",
+      "level": "Warning",
+      "message": "Package 'SharpCompress' 0.30.1 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-6c8g-7p36-r338",
+      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
+      "warningLevel": 1,
+      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
+      "libraryId": "SharpCompress",
       "targetGraphs": [
         "net10.0"
       ]
