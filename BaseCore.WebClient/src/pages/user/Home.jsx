@@ -12,7 +12,7 @@ const Home = () => {
       try {
         const [catRes, prodRes] = await Promise.all([
           api.get('/categories'),
-          api.get('/products?status=Available&_limit=8')
+          api.get('/products?pageSize=8')
         ]);
         setCategories(catRes.data || []);
         setFeatured(prodRes.data || []);

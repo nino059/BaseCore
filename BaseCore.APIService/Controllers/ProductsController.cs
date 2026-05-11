@@ -79,6 +79,17 @@ namespace BaseCore.APIService.Controllers
         {
             var (products, totalCount) = await _productRepository.SearchAsync(keyword, categoryId, page, pageSize);
 
+            var items = products.Select(p => new {
+                p.Id,
+                p.Name,
+                p.Price,
+                p.Stock,
+                p.Description,
+                p.ImageUrl,
+                p.CategoryId,
+                categoryName = p.Category?.Name ?? ""
+            });
+
             return Ok(new
             {
                 items = products,
