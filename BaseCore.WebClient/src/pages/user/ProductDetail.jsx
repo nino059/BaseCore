@@ -83,7 +83,10 @@ const ProductDetail = () => {
                             justifyContent: 'center', minHeight: 380
                         }}>
                             {product.imageUrl
-                                ? <img src={product.imageUrl} alt={product.name}
+                                ? <img 
+                                    src={product.imageUrl.startsWith('http') ? product.imageUrl : `http://localhost:5000${product.imageUrl}`}
+                                    alt={product.name}
+                                    onError={e => { e.target.style.display='none'; }} 
                                     style={{ width: '100%', maxHeight: 420, objectFit: 'contain', padding: 20 }} />
                                 : <div style={{ textAlign: 'center', color: '#d1d5db' }}>
                                     <i className="fas fa-image fa-5x d-block mb-2"></i>
@@ -195,6 +198,19 @@ const ProductDetail = () => {
                                     <i className="fas fa-shopping-cart mr-2"></i>
                                     Xem giỏ hàng
                                 </Link>
+                                <button
+                                    onClick={() => { handleAddToCart(); navigate('/checkout'); }}
+                                    disabled={product.stock === 0}
+                                    style={{
+                                        width: '100%', marginTop: 10, padding: '13px 0',
+                                        background: product.stock > 0 ? 'linear-gradient(135deg, #f59e0b, #ef4444)' : '#e5e7eb',
+                                        color: product.stock > 0 ? 'white' : '#9ca3af',
+                                        border: 'none', borderRadius: 12,
+                                        fontWeight: 700, fontSize: '1rem',
+                                        cursor: product.stock > 0 ? 'pointer' : 'not-allowed',
+                                    }}>
+                                    ⚡ Mua ngay
+                                </button>
                             </div>
                         </div>
                     </div>

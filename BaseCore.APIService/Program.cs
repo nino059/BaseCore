@@ -6,7 +6,7 @@ using BaseCore.Repository;
 using BaseCore.Repository.EFCore;
 using System.Text;
 using BaseCore.Services;
-
+using CloudinaryDotNet;  // ← THÊM
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +26,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "BaseCore API Service",
         Version = "v1",
-        Description = "Business Logic Microservice - Products, Categories, Orders (Bài 10, 11)"
+        Description = "Business Logic Microservice - Products, Categories, Orders"
     });
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -58,23 +58,28 @@ builder.Services.AddCors(options =>
     });
 });
 
-
-
+// Database
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectedDb"));
 });
 
+// ✅ Cloudinary
+var cloudinarySection = builder.Configuration.GetSection("Cloudinary");
+var cloudinary = new Cloudinary(new Account(
+    cloudinarySection["CloudName"],
+    cloudinarySection["ApiKey"],
+    cloudinarySection["ApiSecret"]
+));
+cloudinary.Api.Secure = true;
+builder.Services.AddSingleton(cloudinary);
 
-// Repository Registration - Products, Categories, Orders
+// Repository Registration
 builder.Services.AddScoped<IProductRepositoryEF, ProductRepositoryEF>();
 builder.Services.AddScoped<ICategoryRepositoryEF, CategoryRepositoryEF>();
 builder.Services.AddScoped<IOrderRepositoryEF, OrderRepositoryEF>();
 builder.Services.AddScoped<IOrderDetailRepositoryEF, OrderDetailRepositoryEF>();
-
-// Thêm vào file Program.cs của ApiService
 builder.Services.AddScoped<IOrderService, OrderService>();
-builder.Services.AddScoped<IOrderRepositoryEF, OrderRepositoryEF>();
 
 // JWT Authentication
 var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:SecretKey"] ?? "YourSecretKeyForAuthenticationShouldBeLongEnough");
@@ -98,14 +103,13 @@ builder.Services.AddAuthentication(x =>
 
 var app = builder.Build();
 
-// Auto migrate database
+// Auto migrate + seed
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
 }
 
-// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -117,6 +121,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-Console.WriteLine("BaseCore API Service running on port 5001");
+Console.WriteLine("BaseCore API Service running");
 Console.WriteLine("Endpoints: /api/products, /api/categories, /api/orders");
 app.Run();

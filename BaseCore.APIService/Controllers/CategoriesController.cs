@@ -5,10 +5,6 @@ using BaseCore.Repository.EFCore;
 
 namespace BaseCore.APIService.Controllers
 {
-    /// <summary>
-    /// Category API Controller
-    /// Teaching: RESTful API, CRUD Operations (Bài 10)
-    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriesController : ControllerBase
@@ -20,9 +16,7 @@ namespace BaseCore.APIService.Controllers
             _categoryRepository = categoryRepository;
         }
 
-        /// <summary>
-        /// Get all categories
-        /// </summary>
+        /// <summary>Get all categories</summary>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -30,9 +24,7 @@ namespace BaseCore.APIService.Controllers
             return Ok(categories);
         }
 
-        /// <summary>
-        /// Get category by ID
-        /// </summary>
+        /// <summary>Get category by ID</summary>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -43,30 +35,28 @@ namespace BaseCore.APIService.Controllers
             return Ok(category);
         }
 
-        /// <summary>
-        /// Create new category
-        /// </summary>
+        /// <summary>Create new category</summary>
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Create([FromBody] CategoryDto dto)
         {
             var existing = await _categoryRepository.GetByNameAsync(dto.Name);
             if (existing != null)
-                return BadRequest(new { message = "Category name already exists" });
+                return BadRequest(new { message = "Tên danh mục đã tồn tại" });
 
             var category = new Category
             {
                 Name = dto.Name,
-                Description = dto.Description ?? ""
+                Description = dto.Description ?? "",
+                Slug = dto.Slug ?? dto.Name.ToLower().Replace(" ", "-"),
+                Icon = dto.Icon ?? ""
             };
 
             await _categoryRepository.AddAsync(category);
             return CreatedAtAction(nameof(GetById), new { id = category.Id }, category);
         }
 
-        /// <summary>
-        /// Update category
-        /// </summary>
+        /// <summary>Update category</summary>
         [HttpPut("{id}")]
         [Authorize]
         public async Task<IActionResult> Update(int id, [FromBody] CategoryDto dto)
@@ -77,14 +67,14 @@ namespace BaseCore.APIService.Controllers
 
             category.Name = dto.Name ?? category.Name;
             category.Description = dto.Description ?? category.Description;
+            category.Slug = dto.Slug ?? category.Slug;
+            category.Icon = dto.Icon ?? category.Icon;
 
             await _categoryRepository.UpdateAsync(category);
             return Ok(category);
         }
 
-        /// <summary>
-        /// Delete category
-        /// </summary>
+        /// <summary>Delete category</summary>
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> Delete(int id)
@@ -102,5 +92,7 @@ namespace BaseCore.APIService.Controllers
     {
         public string Name { get; set; } = "";
         public string? Description { get; set; }
+        public string? Slug { get; set; }   // ← THÊM
+        public string? Icon { get; set; }   // ← THÊM
     }
 }

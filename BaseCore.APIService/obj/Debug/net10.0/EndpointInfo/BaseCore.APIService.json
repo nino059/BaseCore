@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "BaseCore API Service",
-    "description": "Business Logic Microservice - Products, Categories, Orders (Bài 10, 11)",
+    "description": "Business Logic Microservice - Products, Categories, Orders",
     "version": "v1"
   },
   "paths": {
@@ -272,6 +272,38 @@
         }
       }
     },
+    "/api/Products/upload-image": {
+      "post": {
+        "tags": [
+          "Products"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/Products": {
       "get": {
         "tags": [
@@ -466,6 +498,14 @@
             "nullable": true
           },
           "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "slug": {
+            "type": "string",
+            "nullable": true
+          },
+          "icon": {
             "type": "string",
             "nullable": true
           }

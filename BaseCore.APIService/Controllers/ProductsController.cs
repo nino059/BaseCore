@@ -2,29 +2,74 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BaseCore.Entities;
 using BaseCore.Repository.EFCore;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 
 namespace BaseCore.APIService.Controllers
 {
-    /// <summary>
-    /// Product API Controller
-    /// Teaching: RESTful API, CRUD Operations, EF Core (Bài 10, 11)
-    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
         private readonly IProductRepositoryEF _productRepository;
         private readonly ICategoryRepositoryEF _categoryRepository;
+        private readonly Cloudinary _cloudinary;  // ← THÊM
 
-        public ProductsController(IProductRepositoryEF productRepository, ICategoryRepositoryEF categoryRepository)
+        public ProductsController(
+            IProductRepositoryEF productRepository,
+            ICategoryRepositoryEF categoryRepository,
+            Cloudinary cloudinary)                // ← THÊM
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
+            _cloudinary = cloudinary;             // ← THÊM
         }
 
-        /// <summary>
-        /// Get all products with pagination and search
-        /// </summary>
+        /// <summary>Upload ảnh lên Cloudinary, trả về URL</summary>
+        [HttpPost("upload-image")]
+        [Authorize]
+        public async Task<IActionResult> UploadImage(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest(new { message = "Chưa chọn file" });
+
+            var allowed = new[] { "image/jpeg", "image/png", "image/webp", "image/gif" };
+            if (!allowed.Contains(file.ContentType.ToLower()))
+                return BadRequest(new { message = "Chỉ chấp nhận JPG, PNG, WEBP, GIF" });
+
+            if (file.Length > 5 * 1024 * 1024)
+                return BadRequest(new { message = "File không được vượt quá 5MB" });
+
+            try
+            {
+                using var stream = file.OpenReadStream();
+                var uploadParams = new ImageUploadParams
+                {
+                    File = new FileDescription(file.FileName, stream),
+                    Folder = "basecore/products",
+                    Transformation = new Transformation()
+                        .Width(800).Height(800).Crop("limit")
+                        .Quality("auto").FetchFormat("auto")
+                };
+
+                var result = await _cloudinary.UploadAsync(uploadParams);
+
+                if (result.Error != null)
+                    return StatusCode(500, new { message = result.Error.Message });
+
+                return Ok(new
+                {
+                    url = result.SecureUrl.ToString(),
+                    publicId = result.PublicId
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Upload thất bại: {ex.Message}" });
+            }
+        }
+
+        /// <summary>Get all products with pagination and search</summary>
         [HttpGet]
         public async Task<IActionResult> GetAll(
             [FromQuery] string? keyword,
@@ -44,9 +89,7 @@ namespace BaseCore.APIService.Controllers
             });
         }
 
-        /// <summary>
-        /// Get product by ID
-        /// </summary>
+        /// <summary>Get product by ID</summary>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -57,14 +100,11 @@ namespace BaseCore.APIService.Controllers
             return Ok(product);
         }
 
-        /// <summary>
-        /// Create new product (requires authentication)
-        /// </summary>
+        /// <summary>Create new product (requires authentication)</summary>
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Create([FromBody] ProductCreateDto dto)
         {
-            // Validate category exists
             var category = await _categoryRepository.GetByIdAsync(dto.CategoryId);
             if (category == null)
                 return BadRequest(new { message = "Category not found" });
@@ -83,9 +123,7 @@ namespace BaseCore.APIService.Controllers
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
         }
 
-        /// <summary>
-        /// Update product (requires authentication)
-        /// </summary>
+        /// <summary>Update product (requires authentication)</summary>
         [HttpPut("{id}")]
         [Authorize]
         public async Task<IActionResult> Update(int id, [FromBody] ProductUpdateDto dto)
@@ -105,9 +143,7 @@ namespace BaseCore.APIService.Controllers
             return Ok(product);
         }
 
-        /// <summary>
-        /// Delete product (requires authentication)
-        /// </summary>
+        /// <summary>Delete product (requires authentication)</summary>
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> Delete(int id)
@@ -120,9 +156,7 @@ namespace BaseCore.APIService.Controllers
             return Ok(new { message = "Product deleted successfully" });
         }
 
-        /// <summary>
-        /// Get products by category
-        /// </summary>
+        /// <summary>Get products by category</summary>
         [HttpGet("category/{categoryId}")]
         public async Task<IActionResult> GetByCategory(int categoryId)
         {

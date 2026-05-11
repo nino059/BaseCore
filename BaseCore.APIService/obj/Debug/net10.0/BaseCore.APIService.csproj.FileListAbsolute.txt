@@ -182,4 +182,5 @@ D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.APIServ
 D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.APIService\obj\Debug\net10.0\BaseCore.APIService.pdb
 D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.APIService\obj\Debug\net10.0\BaseCore.APIService.genruntimeconfig.cache
 D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.APIService\obj\Debug\net10.0\ref\BaseCore.APIService.dll
+D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.APIService\bin\Debug\net10.0\CloudinaryDotNet.dll
 D:\Newfolder\Ky6\7. Công nghệ web\ngay14_4\BaseCore\BaseCore\BaseCore.APIService\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt

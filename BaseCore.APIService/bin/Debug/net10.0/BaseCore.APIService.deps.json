@@ -14,6 +14,7 @@
           "BaseCore.Entities": "1.0.0",
           "BaseCore.Repository": "1.0.0",
           "BaseCore.Services": "1.0.0",
+          "CloudinaryDotNet": "1.29.1",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.0",
           "Microsoft.Bcl.AsyncInterfaces": "11.0.0-preview.3.26207.106",
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.8",
@@ -89,6 +90,17 @@
           "lib/netstandard2.0/Azure.Identity.dll": {
             "assemblyVersion": "1.10.3.0",
             "fileVersion": "1.1000.323.51804"
+          }
+        }
+      },
+      "CloudinaryDotNet/1.29.1": {
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.5-beta1"
+        },
+        "runtime": {
+          "lib/netstandard2.0/CloudinaryDotNet.dll": {
+            "assemblyVersion": "1.29.1.0",
+            "fileVersion": "1.29.1.0"
           }
         }
       },
@@ -1280,6 +1292,13 @@
       "sha512": "sha512-l1Xm2MWOF2Mzcwuarlw8kWQXLZk3UeB55aQXVyjj23aBfDwOZ3gu5GP2kJ6KlmZeZv2TCzw7x4L3V36iNr3gww==",
       "path": "azure.identity/1.10.3",
       "hashPath": "azure.identity.1.10.3.nupkg.sha512"
+    },
+    "CloudinaryDotNet/1.29.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-JaV1JhjsvArTu1n7dzawflTGLqyNMGCEmGSNAiIlHOObqoIAh0cKIZOu5stG1CaPFgF3S1jv1Jn+vTmTqUvCNg==",
+      "path": "cloudinarydotnet/1.29.1",
+      "hashPath": "cloudinarydotnet.1.29.1.nupkg.sha512"
     },
     "DnsClient/1.6.1": {
       "type": "package",
