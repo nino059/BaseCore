@@ -78,6 +78,7 @@ export const orderApi = {
     //getMyOrders: () => api.get('/orders'),
     getById: (id) => api.get(`/orders/${id}`),
     update: (id, data) => api.put(`/orders/${id}`, data),
+    cancel: (id) => api.put(`/orders/${id}`, { status: 'Cancelled' }),
     delete: (id) => api.delete(`/orders/${id}`),
 };
 

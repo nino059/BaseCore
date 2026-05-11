@@ -1,347 +1,325 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { productApi, categoryApi } from '../services/api';
-import PublicLayout from '../components/PublicLayout';
-import { useCart } from './Cart';
+import { Link } from 'react-router-dom';
+import { paintingService } from '../services/paintingService';
+
+const fmt = (p) =>
+  new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p);
+
+const PRICE_RANGES = [
+  { label: 'Tất cả giá',       min: 0,          max: Infinity },
+  { label: 'Dưới 2 triệu',     min: 0,          max: 2_000_000 },
+  { label: '2 – 5 triệu',      min: 2_000_000,  max: 5_000_000 },
+  { label: '5 – 10 triệu',     min: 5_000_000,  max: 10_000_000 },
+  { label: 'Trên 10 triệu',    min: 10_000_000, max: Infinity },
+];
+
+const SORTS = [
+  { label: 'Mặc định',       value: 'default' },
+  { label: 'Giá tăng dần',   value: 'price_asc' },
+  { label: 'Giá giảm dần',   value: 'price_desc' },
+  { label: 'Mới nhất',       value: 'newest' },
+];
+
+const PER_PAGE = 12;
+
+const sortFn = (sort) => (a, b) => {
+  const pa = a.discountPrice ?? a.price;
+  const pb = b.discountPrice ?? b.price;
+  if (sort === 'price_asc')  return pa - pb;
+  if (sort === 'price_desc') return pb - pa;
+  if (sort === 'newest')     return (b.yearCreated || 0) - (a.yearCreated || 0);
+  return 0;
+};
 
 const Shop = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const queryParams = new URLSearchParams(location.search);
-
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [all, setAll]         = useState([]);
   const [loading, setLoading] = useState(true);
-  const [totalCount, setTotalCount] = useState(0);
-
-  const [filters, setFilters] = useState({
-    search: queryParams.get('search') || '',
-    categoryId: queryParams.get('category') || '',
-    sortBy: 'newest',
-    minPrice: '',
-    maxPrice: '',
-    page: 1,
-    pageSize: 12,
-  });
-  
-  const { addToCart, count } = useCart();
+  const [error, setError]     = useState(null);
+  const [search, setSearch]   = useState('');
+  const [priceIdx, setPriceIdx] = useState(0);
+  const [sort, setSort]       = useState('default');
+  const [saleOnly, setSaleOnly] = useState(false);
+  const [page, setPage]       = useState(1);
 
   useEffect(() => {
-    categoryApi.getAll().then(res => setCategories(res.data || []));
+    const load = async () => {
+      try {
+        setLoading(true); setError(null);
+        const res = await paintingService.getAll(1, 200);
+        setAll(Array.isArray(res) ? res : res.items || res.data || []);
+      } catch (e) {
+        console.error(e);
+        setError('Không thể tải danh sách tranh. Vui lòng thử lại.');
+      } finally { setLoading(false); }
+    };
+    load();
   }, []);
 
-  useEffect(() => {
-    fetchProducts();
-  }, [filters]);
+  const range = PRICE_RANGES[priceIdx];
 
-  const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      const params = {
-        status: 'Available',
-        pageNumber: filters.page,
-        pageSize: filters.pageSize,
-      };
-      if (filters.search) params.name = filters.search;
-      if (filters.categoryId) params.categoryId = filters.categoryId;
-      if (filters.minPrice) params.minPrice = filters.minPrice;
-      if (filters.maxPrice) params.maxPrice = filters.maxPrice;
-      if (filters.sortBy === 'price_asc') params.sortBy = 'price';
-      if (filters.sortBy === 'price_desc') { params.sortBy = 'price'; params.sortDesc = true; }
+  const filtered = all
+    .filter(p => {
+      const price = p.discountPrice ?? p.price;
+      return (
+        p.title.toLowerCase().includes(search.toLowerCase()) &&
+        price >= range.min && price <= range.max &&
+        (!saleOnly || !!p.discountPrice)
+      );
+    })
+    .sort(sortFn(sort));
 
-      const res = await productApi.getAll(params);
-      setProducts(res.data?.items || res.data || []);
-      setTotalCount(res.data?.totalCount || (res.data?.length ?? 0));
-    } catch (err) {
-      console.error(err);
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const totalPages = Math.ceil(filtered.length / PER_PAGE);
+  const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  const reset = () => setPage(1);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    setFilters(f => ({ ...f, page: 1 }));
-  };
+  // ---- Skeleton ----
+  if (loading) return (
+    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '48px 16px' }}>
+      <div style={{ height: 40, background: '#f3f4f6', borderRadius: 12, width: 280, margin: '0 auto 10px', animation: 'pulse 1.5s infinite' }} />
+      <div style={{ height: 20, background: '#f3f4f6', borderRadius: 8, width: 200, margin: '0 auto 40px', animation: 'pulse 1.5s infinite' }} />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 24 }}>
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} style={{ background: 'white', borderRadius: 20, overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+            <div style={{ height: 220, background: '#f3f4f6', animation: 'pulse 1.5s infinite' }} />
+            <div style={{ padding: 18 }}>
+              <div style={{ height: 16, background: '#f3f4f6', borderRadius: 8, marginBottom: 10, width: '75%' }} />
+              <div style={{ height: 14, background: '#f3f4f6', borderRadius: 8, width: '50%' }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
-  const totalPages = Math.ceil(totalCount / filters.pageSize) || 1;
-
-  // Placeholder khi chưa có data
-  const placeholders = Array.from({ length: 8 }, (_, i) => ({
-    id: i + 1, name: `Tranh mẫu ${i + 1}`,
-    theme: ['Phong cảnh', 'Chân dung', 'Tĩnh vật', 'Trừu tượng'][i % 4],
-    price: [1500000, 2000000, 2800000, 3500000][i % 4],
-    imageUrl: null,
-  }));
-
-  const displayProducts = products.length > 0 ? products : placeholders;
+  if (error) return (
+    <div style={{ textAlign: 'center', padding: '80px 16px' }}>
+      <div style={{ fontSize: '3rem', marginBottom: 16 }}>⚠️</div>
+      <p style={{ color: '#dc2626', fontWeight: 600, fontSize: '1rem' }}>{error}</p>
+      <button onClick={() => window.location.reload()} style={{
+        marginTop: 20, padding: '10px 24px', borderRadius: 12, border: 'none',
+        background: '#7c3aed', color: 'white', fontWeight: 700, cursor: 'pointer',
+      }}>
+        Thử lại
+      </button>
+    </div>
+  );
 
   return (
-    <PublicLayout cartCount={count}>
+    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '48px 16px' }}>
 
-      {/* HERO NHỎ */}
-      <div style={{
-        background: 'linear-gradient(135deg, #1a1a2e, #533483)',
-        padding: '60px 0 40px', color: 'white', textAlign: 'center'
-      }}>
-        <h1 style={{ fontWeight: 300, fontSize: '2.5rem', marginBottom: 8 }}>Cửa Hàng Tranh</h1>
-        <p style={{ color: 'rgba(255,255,255,0.7)' }}>
-          Khám phá {totalCount > 0 ? totalCount : 'hàng trăm'} tác phẩm từ các nghệ sĩ Việt Nam
+      {/* Header */}
+      <div style={{ textAlign: 'center', marginBottom: 36 }}>
+        <h1 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: 8 }}>Bộ Sưu Tập Tranh</h1>
+        <p style={{ color: '#6b7280', fontSize: '1.05rem' }}>
+          Khám phá {all.length}+ tác phẩm nghệ thuật độc đáo
         </p>
-
-        {/* SEARCH BAR */}
-        <form onSubmit={handleSearch} className="d-flex justify-content-center mt-4" style={{ gap: 0 }}>
-          <div style={{ width: '100%', maxWidth: 500, display: 'flex' }}>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Tìm kiếm tranh, nghệ sĩ..."
-              value={filters.search}
-              onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
-              style={{ borderRadius: '30px 0 0 30px', padding: '12px 20px', border: 'none', fontSize: '0.95rem' }}
-            />
-            <button type="submit" className="btn" style={{
-              background: '#a78bfa', color: 'white',
-              borderRadius: '0 30px 30px 0', padding: '0 24px', border: 'none', fontWeight: 600
-            }}>
-              <i className="fas fa-search"></i>
-            </button>
-          </div>
-        </form>
       </div>
 
-      <div className="container py-5">
-        <div className="row">
+      {/* Toolbar */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 20, alignItems: 'center' }}>
+        {/* Search */}
+        <input
+          type="text"
+          placeholder="🔍 Tìm tranh..."
+          value={search}
+          onChange={e => { setSearch(e.target.value); reset(); }}
+          style={{
+            flex: '1 1 200px', padding: '10px 16px', border: '1.5px solid #e5e7eb',
+            borderRadius: 12, fontSize: '0.9rem', outline: 'none', minWidth: 180,
+          }}
+        />
 
-          {/* ===== SIDEBAR FILTER ===== */}
-          <div className="col-md-3 mb-4">
-            <div style={{ background: 'white', borderRadius: 16, padding: 24, boxShadow: '0 2px 16px rgba(0,0,0,0.07)', position: 'sticky', top: 80 }}>
+        {/* Lọc giá */}
+        <select
+          value={priceIdx}
+          onChange={e => { setPriceIdx(+e.target.value); reset(); }}
+          style={{
+            padding: '10px 14px', border: '1.5px solid #e5e7eb', borderRadius: 12,
+            fontSize: '0.9rem', outline: 'none', cursor: 'pointer', background: 'white',
+          }}
+        >
+          {PRICE_RANGES.map((r, i) => <option key={i} value={i}>{r.label}</option>)}
+        </select>
 
-              {/* Category filter */}
-              <h6 style={{ fontWeight: 700, marginBottom: 16, color: '#1a1a2e' }}>
-                <i className="fas fa-layer-group mr-2" style={{ color: '#a78bfa' }}></i>Thể loại
-              </h6>
-              <div className="list-group list-group-flush mb-4">
-                <button
-                  className={`list-group-item list-group-item-action ${!filters.categoryId ? 'active' : ''}`}
-                  onClick={() => setFilters(f => ({ ...f, categoryId: '', page: 1 }))}
-                  style={{
-                    borderRadius: 8, marginBottom: 4, border: 'none',
-                    background: !filters.categoryId ? '#533483' : 'transparent',
-                    color: !filters.categoryId ? 'white' : '#333',
-                  }}
-                >
-                  Tất cả
-                </button>
-                {categories.map(cat => (
-                  <button
-                    key={cat.id}
-                    className="list-group-item list-group-item-action"
-                    onClick={() => setFilters(f => ({ ...f, categoryId: cat.id, page: 1 }))}
-                    style={{
-                      borderRadius: 8, marginBottom: 4, border: 'none',
-                      background: filters.categoryId == cat.id ? '#533483' : 'transparent',
-                      color: filters.categoryId == cat.id ? 'white' : '#333',
-                    }}
-                  >
-                    {cat.name}
-                  </button>
-                ))}
-              </div>
+        {/* Sắp xếp */}
+        <select
+          value={sort}
+          onChange={e => { setSort(e.target.value); reset(); }}
+          style={{
+            padding: '10px 14px', border: '1.5px solid #e5e7eb', borderRadius: 12,
+            fontSize: '0.9rem', outline: 'none', cursor: 'pointer', background: 'white',
+          }}
+        >
+          {SORTS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+        </select>
 
-              {/* Sort */}
-              <h6 style={{ fontWeight: 700, marginBottom: 12, color: '#1a1a2e' }}>
-                <i className="fas fa-sort mr-2" style={{ color: '#a78bfa' }}></i>Sắp xếp
-              </h6>
-              <select
-                className="form-control mb-4"
-                value={filters.sortBy}
-                onChange={e => setFilters(f => ({ ...f, sortBy: e.target.value, page: 1 }))}
-                style={{ borderRadius: 8 }}
-              >
-                <option value="newest">Mới nhất</option>
-                <option value="price_asc">Giá tăng dần</option>
-                <option value="price_desc">Giá giảm dần</option>
-              </select>
+        {/* Sale toggle */}
+        <button
+          onClick={() => { setSaleOnly(s => !s); reset(); }}
+          style={{
+            padding: '10px 18px', borderRadius: 12, border: 'none', cursor: 'pointer',
+            fontWeight: 700, fontSize: '0.88rem', transition: 'all 0.2s',
+            background: saleOnly ? '#dc2626' : '#f3f4f6',
+            color: saleOnly ? 'white' : '#6b7280',
+          }}
+        >
+          🏷️ SALE
+        </button>
+      </div>
 
-              {/* Price range */}
-              <h6 style={{ fontWeight: 700, marginBottom: 12, color: '#1a1a2e' }}>
-                <i className="fas fa-tag mr-2" style={{ color: '#a78bfa' }}></i>Khoảng giá (₫)
-              </h6>
-              <div className="d-flex" style={{ gap: 8 }}>
-                <input
-                  type="number"
-                  className="form-control"
-                  placeholder="Từ"
-                  value={filters.minPrice}
-                  onChange={e => setFilters(f => ({ ...f, minPrice: e.target.value }))}
-                  style={{ borderRadius: 8 }}
-                />
-                <input
-                  type="number"
-                  className="form-control"
-                  placeholder="Đến"
-                  value={filters.maxPrice}
-                  onChange={e => setFilters(f => ({ ...f, maxPrice: e.target.value }))}
-                  style={{ borderRadius: 8 }}
-                />
-              </div>
-              <button
-                className="btn btn-block mt-3"
-                onClick={() => setFilters(f => ({ ...f, page: 1 }))}
-                style={{ background: '#1a1a2e', color: 'white', borderRadius: 8 }}
-              >
-                Áp dụng
-              </button>
+      {/* Kết quả + Xóa filter */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <p style={{ color: '#6b7280', fontSize: '0.88rem' }}>
+          {filtered.length} tác phẩm
+          {page > 1 && ` — Trang ${page}/${totalPages}`}
+        </p>
+        {(search || priceIdx > 0 || saleOnly || sort !== 'default') && (
+          <button onClick={() => { setSearch(''); setPriceIdx(0); setSort('default'); setSaleOnly(false); reset(); }}
+            style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>
+            Xóa bộ lọc ✕
+          </button>
+        )}
+      </div>
 
-              {/* Reset */}
-              <button
-                className="btn btn-block btn-outline-secondary mt-2"
-                onClick={() => setFilters({ search: '', categoryId: '', sortBy: 'newest', minPrice: '', maxPrice: '', page: 1, pageSize: 12 })}
-                style={{ borderRadius: 8 }}
-              >
-                <i className="fas fa-undo mr-1"></i> Xóa bộ lọc
-              </button>
-            </div>
-          </div>
-
-          {/* ===== PRODUCT GRID ===== */}
-          <div className="col-md-9">
-
-            {/* Toolbar */}
-            <div className="d-flex justify-content-between align-items-center mb-4">
-              <p className="mb-0 text-muted" style={{ fontSize: '0.9rem' }}>
-                {loading ? 'Đang tải...' : `Hiển thị ${displayProducts.length} tác phẩm`}
-              </p>
-              <div className="d-flex" style={{ gap: 8 }}>
-                <span className="badge" style={{ background: '#533483', color: 'white', padding: '6px 12px', borderRadius: 20, fontSize: '0.85rem' }}>
-                  {filters.categoryId ? categories.find(c => c.id == filters.categoryId)?.name || 'Đã lọc' : 'Tất cả'}
-                </span>
-              </div>
-            </div>
-
-            {/* Loading */}
-            {loading ? (
-              <div className="text-center py-5">
-                <div className="spinner-border" style={{ color: '#533483', width: '3rem', height: '3rem' }}></div>
-                <p className="mt-3 text-muted">Đang tải tranh...</p>
-              </div>
-            ) : (
-              <>
-                {/* Product cards */}
-                <div className="row">
-                  {displayProducts.map(product => (
-                    <div key={product.id} className="col-6 col-lg-4 mb-4">
-                      <div style={{
-                        background: 'white', borderRadius: 16,
-                        overflow: 'hidden', boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
-                        transition: 'transform 0.3s, box-shadow 0.3s',
-                        height: '100%', display: 'flex', flexDirection: 'column'
-                      }}
-                        onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 16px 40px rgba(0,0,0,0.15)'; }}
-                        onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 16px rgba(0,0,0,0.08)'; }}
-                      >
-                        {/* ✅ Ảnh bấm vào → ProductDetail */}
-                        <Link to={`/shop/${product.id}`} style={{ textDecoration: 'none' }}>
-                          <div style={{ position: 'relative', overflow: 'hidden', height: 220 }}>
-                            {product.imageUrl ? (
-                              <img src={product.imageUrl} alt={product.name}
-                                style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }}
-                                onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.08)'}
-                                onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-                              />
-                            ) : (
-                              <div style={{
-                                height: '100%',
-                                background: `linear-gradient(135deg, hsl(${240 + product.id * 30}, 45%, 28%), hsl(${260 + product.id * 20}, 55%, 42%))`,
-                                display: 'flex', alignItems: 'center', justifyContent: 'center'
-                              }}>
-                                <i className="fas fa-image" style={{ fontSize: '3rem', color: 'rgba(255,255,255,0.3)' }}></i>
-                              </div>
-                            )}
-                            <div style={{
-                              position: 'absolute', top: 12, left: 12,
-                              background: 'rgba(83,52,131,0.9)', color: 'white',
-                              borderRadius: 20, padding: '3px 12px', fontSize: '0.75rem', fontWeight: 600
-                            }}>
-                              {product.theme || product.categoryName || 'Nghệ thuật'}
-                            </div>
-                          </div>
-                        </Link>
-
-                        {/* Info */}
-                        <div style={{ padding: '16px 16px 20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                          {/* ✅ Tên bấm vào → ProductDetail */}
-                          <Link to={`/shop/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                            <h6 style={{ fontWeight: 600, marginBottom: 6, lineHeight: 1.4 }}>{product.name}</h6>
-                          </Link>
-
-                          {product.artistName && (
-                            <p style={{ color: '#6c757d', fontSize: '0.82rem', marginBottom: 8 }}>
-                              <i className="fas fa-palette mr-1" style={{ color: '#a78bfa' }}></i>
-                              {product.artistName}
-                            </p>
-                          )}
-
-                          <div className="d-flex justify-content-between align-items-center mt-auto">
-                            <span style={{ fontWeight: 700, color: '#533483', fontSize: '1.05rem' }}>
-                              {(product.price || 0).toLocaleString('vi-VN')}₫
-                            </span>
-                            {/* ✅ Nút Thêm → addToCart */}
-                            <button
-                              onClick={() => addToCart({
-                                id: product.id,
-                                name: product.name,
-                                price: product.price,
-                                imageUrl: product.imageUrl,
-                                categoryName: product.categoryName,
-                              })}
-                              className="btn btn-sm"
-                              style={{
-                                background: '#1a1a2e', color: 'white',
-                                borderRadius: 20, padding: '6px 16px', fontSize: '0.8rem'
-                              }}>
-                              <i className="fas fa-cart-plus mr-1"></i>Thêm
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="d-flex justify-content-center mt-4">
-                    <ul className="pagination">
-                      <li className={`page-item ${filters.page === 1 ? 'disabled' : ''}`}>
-                        <button className="page-link" onClick={() => setFilters(f => ({ ...f, page: f.page - 1 }))}>
-                          <i className="fas fa-chevron-left"></i>
-                        </button>
-                      </li>
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-                        <li key={p} className={`page-item ${filters.page === p ? 'active' : ''}`}>
-                          <button className="page-link"
-                            onClick={() => setFilters(f => ({ ...f, page: p }))}
-                            style={filters.page === p ? { background: '#533483', borderColor: '#533483' } : {}}
-                          >{p}</button>
-                        </li>
-                      ))}
-                      <li className={`page-item ${filters.page === totalPages ? 'disabled' : ''}`}>
-                        <button className="page-link" onClick={() => setFilters(f => ({ ...f, page: f.page + 1 }))}>
-                          <i className="fas fa-chevron-right"></i>
-                        </button>
-                      </li>
-                    </ul>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
+      {/* Empty */}
+      {paged.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '64px 0', color: '#9ca3af' }}>
+          <div style={{ fontSize: '3.5rem', marginBottom: 14 }}>🎨</div>
+          <p style={{ fontSize: '1.1rem', fontWeight: 600, color: '#374151' }}>Không tìm thấy tranh</p>
+          <p style={{ marginTop: 6 }}>Thử từ khóa hoặc bộ lọc khác</p>
         </div>
-      </div>
-    </PublicLayout>
+      ) : (
+        <>
+          {/* Grid tranh */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 24 }}>
+            {paged.map(painting => (
+              <Link
+                key={painting.id}
+                to={`/product/${painting.id}`}
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <div
+                  style={{
+                    background: 'white', borderRadius: 20, overflow: 'hidden',
+                    boxShadow: '0 2px 12px rgba(0,0,0,0.06)', transition: 'box-shadow 0.25s, transform 0.25s',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow='0 12px 40px rgba(124,58,237,0.18)'; e.currentTarget.style.transform='translateY(-4px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow='0 2px 12px rgba(0,0,0,0.06)'; e.currentTarget.style.transform='translateY(0)'; }}
+                >
+                  {/* Ảnh */}
+                  <div style={{ position: 'relative', height: 240, overflow: 'hidden' }}>
+                    <img
+                      src={painting.mainImageUrl || painting.imageUrl || `https://picsum.photos/seed/${painting.id}/400/300`}
+                      alt={painting.title}
+                      loading="lazy"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                    {painting.discountPrice && (
+                      <span style={{
+                        position: 'absolute', top: 12, right: 12,
+                        background: '#dc2626', color: 'white',
+                        padding: '3px 12px', borderRadius: 999, fontSize: '0.75rem', fontWeight: 700,
+                      }}>
+                        SALE
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Thông tin */}
+                  <div style={{ padding: '16px 18px' }}>
+                    <div style={{
+                      fontWeight: 700, fontSize: '0.95rem', marginBottom: 4,
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}>
+                      {painting.title}
+                    </div>
+                    <div style={{ color: '#9ca3af', fontSize: '0.82rem', marginBottom: 12 }}>
+                      {painting.artistName || 'Nghệ sĩ'}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div>
+                        {painting.discountPrice ? (
+                          <>
+                            <span style={{ fontWeight: 800, color: '#dc2626', fontSize: '0.95rem' }}>
+                              {fmt(painting.discountPrice)}
+                            </span>
+                            <span style={{ fontSize: '0.78rem', textDecoration: 'line-through', color: '#9ca3af', marginLeft: 6 }}>
+                              {fmt(painting.price)}
+                            </span>
+                          </>
+                        ) : (
+                          <span style={{ fontWeight: 800, fontSize: '0.95rem' }}>
+                            {fmt(painting.price)}
+                          </span>
+                        )}
+                      </div>
+                      <span style={{
+                        fontSize: '0.78rem', background: '#ede9fe', color: '#7c3aed',
+                        padding: '3px 10px', borderRadius: 999, fontWeight: 600,
+                      }}>
+                        {painting.medium || 'Tranh'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Phân trang */}
+          {totalPages > 1 && (
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 48, flexWrap: 'wrap' }}>
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                style={{
+                  padding: '9px 18px', borderRadius: 12, border: '1.5px solid #e5e7eb',
+                  background: 'white', cursor: page === 1 ? 'not-allowed' : 'pointer',
+                  color: page === 1 ? '#d1d5db' : '#374151', fontWeight: 600,
+                }}
+              >
+                ← Trước
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(n => n === 1 || n === totalPages || Math.abs(n - page) <= 1)
+                .reduce((acc, n, idx, arr) => {
+                  if (idx > 0 && n - arr[idx - 1] > 1) acc.push('...');
+                  acc.push(n);
+                  return acc;
+                }, [])
+                .map((n, i) =>
+                  n === '...' ? (
+                    <span key={`dot-${i}`} style={{ padding: '9px 6px', color: '#9ca3af' }}>…</span>
+                  ) : (
+                    <button key={n} onClick={() => setPage(n)} style={{
+                      padding: '9px 16px', borderRadius: 12, border: 'none', cursor: 'pointer',
+                      fontWeight: 700, fontSize: '0.9rem', transition: 'all 0.2s',
+                      background: page === n ? 'linear-gradient(135deg,#a78bfa,#7c3aed)' : '#f3f4f6',
+                      color: page === n ? 'white' : '#374151',
+                    }}>
+                      {n}
+                    </button>
+                  )
+                )
+              }
+
+              <button
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                style={{
+                  padding: '9px 18px', borderRadius: 12, border: '1.5px solid #e5e7eb',
+                  background: 'white', cursor: page === totalPages ? 'not-allowed' : 'pointer',
+                  color: page === totalPages ? '#d1d5db' : '#374151', fontWeight: 600,
+                }}
+              >
+                Sau →
+              </button>
+            </div>
+          )}
+        </>
+      )}
+    </div>
   );
 };
 

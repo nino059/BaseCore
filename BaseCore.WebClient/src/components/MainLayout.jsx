@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+//import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -18,6 +19,18 @@ const MainLayout = ({ children }) => {
     const { user, logout, isAdmin } = useAuth();
     const [collapsed, setCollapsed] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
+
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        const handler = (e) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target))
+                setDropdownOpen(false);
+        };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, []);
 
     const handleLogout = () => {
         logout();
@@ -239,44 +252,44 @@ const MainLayout = ({ children }) => {
                         </Link>
 
                         {/* Avatar + dropdown */}
-                        <div className="dropdown" style={{ position: 'relative' }}>
+                        <div ref={dropdownRef} style={{ position: 'relative' }}>
                             <div
-                                data-toggle="dropdown"
-                                style={{
-                                    display: 'flex', alignItems: 'center', gap: 8,
-                                    cursor: 'pointer', padding: '4px 8px',
-                                    borderRadius: 8,
-                                }}
+                                onClick={() => setDropdownOpen(o => !o)}
+                                style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '4px 8px', borderRadius: 8, userSelect: 'none' }}
                             >
-                                <div style={{
-                                    width: 34, height: 34, borderRadius: '50%',
-                                    background: 'linear-gradient(135deg, #a78bfa, #7c3aed)',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                }}>
+                                <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg, #a78bfa, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <span style={{ color: 'white', fontWeight: 700, fontSize: '0.9rem' }}>
-                                        {(user?.username || user?.name || 'A')[0].toUpperCase()}
+                                        {(user?.username || user?.fullName || 'A')[0].toUpperCase()}
                                     </span>
                                 </div>
                                 <div style={{ lineHeight: 1.2 }}>
-                                    <div style={{ fontWeight: 600, fontSize: '0.88rem', color: '#1f2937' }}>
-                                        {user?.name || user?.username}
-                                    </div>
-                                    <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>
-                                        {isAdmin() ? 'Quản trị viên' : 'Nhân viên'}
-                                    </div>
+                                    <div style={{ fontWeight: 600, fontSize: '0.88rem', color: '#1f2937' }}>{user?.fullName || user?.username}</div>
+                                    <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{isAdmin() ? 'Quản trị viên' : 'Nhân viên'}</div>
                                 </div>
-                                <i className="fas fa-chevron-down" style={{ color: '#9ca3af', fontSize: '0.7rem' }}></i>
+                                <i className={`fas fa-chevron-${dropdownOpen ? 'up' : 'down'}`} style={{ color: '#9ca3af', fontSize: '0.7rem' }}></i>
                             </div>
-                            <div className="dropdown-menu dropdown-menu-right" style={{ borderRadius: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.12)', border: 'none', minWidth: 180 }}>
-                                <div style={{ padding: '10px 16px 8px', borderBottom: '1px solid #f3f4f6' }}>
-                                    <div style={{ fontWeight: 600, fontSize: '0.88rem' }}>{user?.name || user?.username}</div>
-                                    <div style={{ fontSize: '0.78rem', color: '#9ca3af' }}>{user?.email}</div>
+
+                            {dropdownOpen && (
+                                <div style={{
+                                    position: 'absolute', right: 0, top: '110%',
+                                    background: 'white', borderRadius: 12,
+                                    boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                                    minWidth: 180, zIndex: 200, overflow: 'hidden',
+                                    border: '1px solid #f3f4f6',
+                                }}>
+                                    <div style={{ padding: '10px 16px 8px', borderBottom: '1px solid #f3f4f6' }}>
+                                        <div style={{ fontWeight: 600, fontSize: '0.88rem' }}>{user?.fullName || user?.username}</div>
+                                        <div style={{ fontSize: '0.78rem', color: '#9ca3af' }}>{user?.email}</div>
+                                    </div>
+                                    <button onClick={handleLogout} style={{
+                                        display: 'block', width: '100%', textAlign: 'left',
+                                        padding: '10px 16px', fontSize: '0.88rem',
+                                        color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer',
+                                    }}>
+                                        <i className="fas fa-sign-out-alt mr-2"></i>Đăng xuất
+                                    </button>
                                 </div>
-                                <button className="dropdown-item" onClick={handleLogout}
-                                    style={{ color: '#ef4444', padding: '10px 16px', fontSize: '0.88rem' }}>
-                                    <i className="fas fa-sign-out-alt mr-2"></i>Đăng xuất
-                                </button>
-                            </div>
+                            )}
                         </div>
                     </div>
                 </header>

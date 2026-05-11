@@ -5,29 +5,8 @@ const AuthContext = createContext(null);
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider');
-    }
+    if (!context) throw new Error('useAuth must be used within an AuthProvider');
     return context;
-};
-
-const login = async (username, password, remember = false) => {
-    try {
-        const response = await authApi.login(username, password);
-        const userData = response.data;
-
-        // remember = true → dùng localStorage (tồn tại lâu dài)
-        // remember = false → dùng sessionStorage (xóa khi đóng tab)
-        const storage = remember ? localStorage : sessionStorage;
-        storage.setItem('token', userData.token);
-        storage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
-
-        return { success: true };
-    } catch (error) {
-        const message = error.response?.data?.message || 'Đăng nhập thất bại';
-        return { success: false, message };
-    }
 };
 
 export const AuthProvider = ({ children }) => {
@@ -35,55 +14,43 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Check for stored user on mount
-        const storedUser = localStorage.getItem('user');
-        const token = localStorage.getItem('token');
+        const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (storedUser && token) {
-            setUser(JSON.parse(storedUser));
+            try { setUser(JSON.parse(storedUser)); } catch { }
         }
         setLoading(false);
     }, []);
 
-    const login = async (username, password) => {
+    // login duy nhất — hỗ trợ "Ghi nhớ đăng nhập"
+    const login = async (username, password, remember = false) => {
         try {
             const response = await authApi.login(username, password);
             const userData = response.data;
-
-            localStorage.setItem('token', userData.token);
-            localStorage.setItem('user', JSON.stringify(userData));
+            const storage = remember ? localStorage : sessionStorage;
+            storage.setItem('token', userData.token);
+            storage.setItem('user', JSON.stringify(userData));
             setUser(userData);
-
             return { success: true };
         } catch (error) {
-            const message = error.response?.data?.message || 'Login failed';
+            const message = error.response?.data?.message || 'Đăng nhập thất bại';
             return { success: false, message };
         }
     };
 
     const logout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        localStorage.removeItem('token'); localStorage.removeItem('user');
+        sessionStorage.removeItem('token'); sessionStorage.removeItem('user');
         setUser(null);
     };
 
-    const isAdmin = () => {
-        return user?.role === 'Admin';
-    };
+    const isAdmin = () => user?.role === 'Admin';
 
-    const value = {
-        user,
-        login,
-        logout,
-        isAdmin,
-        isAuthenticated: !!user,
-        loading,
-    };
+    const value = { user, login, logout, isAdmin, isAuthenticated: !!user, loading };
 
-    return (
-        <AuthContext.Provider value={value}>
-            {children}
-        </AuthContext.Provider>
-    );
+    if (loading) return null;
+
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export default AuthContext;
