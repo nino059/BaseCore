@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { productApi, categoryApi } from '../services/api';
 import PublicLayout from '../components/PublicLayout';
+import { useCart } from './Cart';
 
 const Shop = () => {
   const location = useLocation();
@@ -22,6 +23,8 @@ const Shop = () => {
     page: 1,
     pageSize: 12,
   });
+  
+  const { addToCart, count } = useCart();
 
   useEffect(() => {
     categoryApi.getAll().then(res => setCategories(res.data || []));
@@ -75,7 +78,7 @@ const Shop = () => {
   const displayProducts = products.length > 0 ? products : placeholders;
 
   return (
-    <PublicLayout>
+    <PublicLayout cartCount={count}>
 
       {/* HERO NHỎ */}
       <div style={{
@@ -234,55 +237,71 @@ const Shop = () => {
                         background: 'white', borderRadius: 16,
                         overflow: 'hidden', boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
                         transition: 'transform 0.3s, box-shadow 0.3s',
-                        height: '100%', display: 'flex', flexDirection: 'column', cursor: 'pointer'
+                        height: '100%', display: 'flex', flexDirection: 'column'
                       }}
                         onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 16px 40px rgba(0,0,0,0.15)'; }}
                         onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 16px rgba(0,0,0,0.08)'; }}
                       >
-                        {/* Image */}
-                        <div style={{ position: 'relative', overflow: 'hidden', height: 220 }}>
-                          {product.imageUrl ? (
-                            <img src={product.imageUrl} alt={product.name}
-                              style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }}
-                              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.08)'}
-                              onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-                            />
-                          ) : (
+                        {/* ✅ Ảnh bấm vào → ProductDetail */}
+                        <Link to={`/shop/${product.id}`} style={{ textDecoration: 'none' }}>
+                          <div style={{ position: 'relative', overflow: 'hidden', height: 220 }}>
+                            {product.imageUrl ? (
+                              <img src={product.imageUrl} alt={product.name}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }}
+                                onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.08)'}
+                                onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                              />
+                            ) : (
+                              <div style={{
+                                height: '100%',
+                                background: `linear-gradient(135deg, hsl(${240 + product.id * 30}, 45%, 28%), hsl(${260 + product.id * 20}, 55%, 42%))`,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center'
+                              }}>
+                                <i className="fas fa-image" style={{ fontSize: '3rem', color: 'rgba(255,255,255,0.3)' }}></i>
+                              </div>
+                            )}
                             <div style={{
-                              height: '100%',
-                              background: `linear-gradient(135deg, hsl(${240 + product.id * 30}, 45%, 28%), hsl(${260 + product.id * 20}, 55%, 42%))`,
-                              display: 'flex', alignItems: 'center', justifyContent: 'center'
+                              position: 'absolute', top: 12, left: 12,
+                              background: 'rgba(83,52,131,0.9)', color: 'white',
+                              borderRadius: 20, padding: '3px 12px', fontSize: '0.75rem', fontWeight: 600
                             }}>
-                              <i className="fas fa-image" style={{ fontSize: '3rem', color: 'rgba(255,255,255,0.3)' }}></i>
+                              {product.theme || product.categoryName || 'Nghệ thuật'}
                             </div>
-                          )}
-                          {/* Badge */}
-                          <div style={{
-                            position: 'absolute', top: 12, left: 12,
-                            background: 'rgba(83,52,131,0.9)', color: 'white',
-                            borderRadius: 20, padding: '3px 12px', fontSize: '0.75rem', fontWeight: 600
-                          }}>
-                            {product.theme || 'Nghệ thuật'}
                           </div>
-                        </div>
+                        </Link>
 
                         {/* Info */}
                         <div style={{ padding: '16px 16px 20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                          <h6 style={{ fontWeight: 600, marginBottom: 6, lineHeight: 1.4 }}>{product.name}</h6>
+                          {/* ✅ Tên bấm vào → ProductDetail */}
+                          <Link to={`/shop/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <h6 style={{ fontWeight: 600, marginBottom: 6, lineHeight: 1.4 }}>{product.name}</h6>
+                          </Link>
+
                           {product.artistName && (
                             <p style={{ color: '#6c757d', fontSize: '0.82rem', marginBottom: 8 }}>
                               <i className="fas fa-palette mr-1" style={{ color: '#a78bfa' }}></i>
                               {product.artistName}
                             </p>
                           )}
+
                           <div className="d-flex justify-content-between align-items-center mt-auto">
                             <span style={{ fontWeight: 700, color: '#533483', fontSize: '1.05rem' }}>
                               {(product.price || 0).toLocaleString('vi-VN')}₫
                             </span>
-                            <button className="btn btn-sm" style={{
-                              background: '#1a1a2e', color: 'white',
-                              borderRadius: 20, padding: '6px 16px', fontSize: '0.8rem'
-                            }}>
+                            {/* ✅ Nút Thêm → addToCart */}
+                            <button
+                              onClick={() => addToCart({
+                                id: product.id,
+                                name: product.name,
+                                price: product.price,
+                                imageUrl: product.imageUrl,
+                                categoryName: product.categoryName,
+                              })}
+                              className="btn btn-sm"
+                              style={{
+                                background: '#1a1a2e', color: 'white',
+                                borderRadius: 20, padding: '6px 16px', fontSize: '0.8rem'
+                              }}>
                               <i className="fas fa-cart-plus mr-1"></i>Thêm
                             </button>
                           </div>
