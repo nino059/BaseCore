@@ -199,7 +199,7 @@ const Products = () => {
                   <span className="text-muted mr-3" style={{ fontSize: "0.9rem" }}>
                     Tổng: <strong>{totalCount}</strong> tác phẩm
                   </span>
-                  {isAdmin() && (
+                  {isAdmin && (
                     <button className="btn btn-success" onClick={() => openModal()}
                       style={{ borderRadius: 8 }}>
                       <i className="fas fa-plus mr-1"></i> Thêm tác phẩm
@@ -228,7 +228,7 @@ const Products = () => {
                         <th>Giá</th>
                         <th>Số lượng</th>
                         <th>Trạng thái</th>
-                        {isAdmin() && <th style={{ width: 100 }}>Thao tác</th>}
+                        {isAdmin && <th style={{ width: 100 }}>Thao tác</th>}
                       </tr>
                     </thead>
                     <tbody>
@@ -260,7 +260,7 @@ const Products = () => {
                               {statusLabel[p.status] || p.status}
                             </span>
                           </td>
-                          {isAdmin() && (
+                          {isAdmin && (
                             <td>
                               <button className="btn btn-sm btn-outline-primary mr-1" onClick={() => openModal(p)} title="Sửa">
                                 <i className="fas fa-edit"></i>

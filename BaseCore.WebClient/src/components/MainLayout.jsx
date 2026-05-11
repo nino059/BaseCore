@@ -120,7 +120,7 @@ const MainLayout = ({ children }) => {
                                 background: 'rgba(167,139,250,0.25)', color: '#a78bfa',
                                 borderRadius: 20, padding: '1px 8px', fontSize: '0.7rem', fontWeight: 600
                             }}>
-                                {isAdmin() ? 'Admin' : 'Staff'}
+                                {isAdmin ? 'Admin' : 'Staff'}
                             </div>
                         </div>
                     </div>
@@ -129,7 +129,7 @@ const MainLayout = ({ children }) => {
                 {/* Nav items */}
                 <nav style={{ flex: 1, padding: collapsed ? '12px 8px' : '12px 12px', overflowY: 'auto' }}>
                     {navItems
-                        .filter(item => !item.adminOnly || isAdmin())
+                        .filter(item => !item.adminOnly || isAdmin)
                         .map(item => {
                             const active = isActive(item.path);
                             return (
@@ -264,7 +264,7 @@ const MainLayout = ({ children }) => {
                                 </div>
                                 <div style={{ lineHeight: 1.2 }}>
                                     <div style={{ fontWeight: 600, fontSize: '0.88rem', color: '#1f2937' }}>{user?.fullName || user?.username}</div>
-                                    <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{isAdmin() ? 'Quản trị viên' : 'Nhân viên'}</div>
+                                    <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{isAdmin ? 'Quản trị viên' : 'Nhân viên'}</div>
                                 </div>
                                 <i className={`fas fa-chevron-${dropdownOpen ? 'up' : 'down'}`} style={{ color: '#9ca3af', fontSize: '0.7rem' }}></i>
                             </div>

@@ -25,7 +25,7 @@ const Dashboard = () => {
             let ordersCount = 0;
 
             // 2. Phân luồng gọi API theo vai trò để tránh lỗi 403 (Forbidden)
-            if (isAdmin()) {
+            if (isAdmin) {
                 // VAI TRÒ ADMIN: Lấy toàn bộ dữ liệu hệ thống
                 const [usersRes, ordersRes] = await Promise.all([
                     userApi.getAll({ page: 1, pageSize: 1 }),
@@ -54,7 +54,7 @@ const Dashboard = () => {
         } finally {
             setLoading(false);
         }
-    }, [isAdmin]);
+    }, []);
 
     useEffect(() => {
         loadStats();
@@ -113,7 +113,7 @@ const Dashboard = () => {
                                 <div className="small-box bg-danger">
                                     <div className="inner">
                                         <h3>{stats.orders}</h3>
-                                        <p>{isAdmin() ? "Tổng đơn hàng" : "Đơn hàng của tôi"}</p>
+                                        <p>{isAdmin ? "Tổng đơn hàng" : "Đơn hàng của tôi"}</p>
                                     </div>
                                     <div className="icon"><i className="fas fa-shopping-cart"></i></div>
                                     <a href="/orders" className="small-box-footer">Xem đơn <i className="fas fa-arrow-circle-right"></i></a>
@@ -121,7 +121,7 @@ const Dashboard = () => {
                             </div>
 
                             {/* Box Users - CHỈ HIỆN CHO ADMIN */}
-                            {isAdmin() && (
+                            {isAdmin && (
                                 <div className="col-lg-3 col-6">
                                     <div className="small-box bg-warning">
                                         <div className="inner">
@@ -147,11 +147,11 @@ const Dashboard = () => {
                                 </div>
                                 <div className="card-body">
                                     <p className="text-muted">
-                                        Hệ thống quản lý <strong>Revo Coffee</strong> phiên bản dành cho {isAdmin() ? "Quản trị viên" : "Khách hàng"}.
+                                        Hệ thống quản lý <strong>Revo Coffee</strong> phiên bản dành cho {isAdmin ? "Quản trị viên" : "Khách hàng"}.
                                     </p>
                                     <div className="alert alert-light border">
                                         <h5><i className="icon fas fa-info"></i> Ghi chú hệ thống:</h5>
-                                        {isAdmin() ?
+                                        {isAdmin ?
                                             "Bạn có toàn quyền quản lý kho hàng, người dùng và xử lý mọi đơn hàng trên hệ thống." :
                                             "Bạn có thể xem các sản phẩm mới nhất và theo dõi lộ trình đơn hàng mình đã đặt."
                                         }
