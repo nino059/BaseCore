@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import PublicLayout from '../components/PublicLayout';
+import PublicLayout from '../../components/PublicLayout';
 import { useCart } from './Cart';
-import { orderApi } from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import { orderApi } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 const fmt = (p) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p);
 

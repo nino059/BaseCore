@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { orderApi } from '../services/api';
+import { orderApi } from '../../services/api';
 import { useCart } from './Cart';
 
 const fmt = (p) =>

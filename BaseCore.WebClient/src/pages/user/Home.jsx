@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../services/api';
-import PublicLayout from '../components/PublicLayout';
+import api from '../../services/api';
+import PublicLayout from '../../components/PublicLayout';
 
 const Home = () => {
   const [featured, setFeatured] = useState([]);
@@ -11,8 +11,8 @@ const Home = () => {
     const fetchData = async () => {
       try {
         const [catRes, prodRes] = await Promise.all([
-          api.get('/api/categories'),
-          api.get('/api/products?status=Available&_limit=8')
+          api.get('/categories'),
+          api.get('/products?status=Available&_limit=8')
         ]);
         setCategories(catRes.data || []);
         setFeatured(prodRes.data || []);

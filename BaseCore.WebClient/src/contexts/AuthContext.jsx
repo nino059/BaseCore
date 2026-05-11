@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // Đọc cả localStorage (remember) và sessionStorage (không remember)
         const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (storedUser && token) {
@@ -22,7 +23,6 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    // login duy nhất — hỗ trợ "Ghi nhớ đăng nhập"
     const login = async (username, password, remember = false) => {
         try {
             const response = await authApi.login(username, password);
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
             storage.setItem('token', userData.token);
             storage.setItem('user', JSON.stringify(userData));
             setUser(userData);
-            return { success: true };
+            return { success: true, user: userData }; // ← trả về user để Login.jsx biết role
         } catch (error) {
             const message = error.response?.data?.message || 'Đăng nhập thất bại';
             return { success: false, message };
@@ -39,14 +39,24 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
-        localStorage.removeItem('token'); localStorage.removeItem('user');
-        sessionStorage.removeItem('token'); sessionStorage.removeItem('user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
         setUser(null);
     };
 
-    const isAdmin = () => user?.role === 'Admin';
+    // ✅ isAdmin là BOOLEAN, không phải function
+    const isAdmin = user?.role === 'Admin' || user?.role === 'Staff';
 
-    const value = { user, login, logout, isAdmin, isAuthenticated: !!user, loading };
+    const value = {
+        user,
+        login,
+        logout,
+        isAdmin,           // boolean
+        isAuthenticated: !!user,
+        loading,
+    };
 
     if (loading) return null;
 

@@ -2,26 +2,32 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import { AuthProvider } from './contexts/AuthContext';
-import { CartProvider } from './pages/Cart';
+import { CartProvider } from './pages/user/Cart';
 import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './components/MainLayout';
 
-import Login             from './pages/Login';
-import Register          from './pages/Register';
-import Home              from './pages/Home';
-import Shop              from './pages/Shop';
-import Cart              from './pages/Cart';
-import ProductDetail     from './pages/ProductDetail';
-import MyOrders          from './pages/MyOrders';
-import Profile           from './pages/Profile';
-import Checkout          from './pages/Checkout';
-import OrderConfirmation from './pages/OrderConfirmation';
-import NotFound          from './pages/NotFound';
-import Dashboard         from './pages/Dashboard';
-import Products          from './pages/Products';
-import Categories        from './pages/Categories';
-import Users             from './pages/Users';
-import Orders            from './pages/Orders';
+// Shared
+import Login    from './pages/Login';
+import Register from './pages/Register';
+import NotFound from './pages/NotFound';
+
+// User pages
+import Home              from './pages/user/Home';
+import Shop              from './pages/user/Shop';
+import Cart              from './pages/user/Cart';
+import ProductDetail     from './pages/user/ProductDetail';
+import MyOrders          from './pages/user/MyOrders';
+import Profile           from './pages/user/Profile';
+import Checkout          from './pages/user/Checkout';
+import OrderConfirmation from './pages/user/OrderConfirmation';
+import Artists           from './pages/user/Artists';
+
+// Admin pages
+import Dashboard  from './pages/admin/Dashboard';
+import Products   from './pages/admin/Products';
+import Categories from './pages/admin/Categories';
+import Orders     from './pages/admin/Orders';
+import Users      from './pages/admin/Users';
 
 function AppRoutes() {
   return (
@@ -29,12 +35,15 @@ function AppRoutes() {
       {/* PUBLIC */}
       <Route path="/login"    element={<Login />} />
       <Route path="/register" element={<Register />} />
+
+      {/* USER PUBLIC */}
       <Route path="/"            element={<Home />} />
       <Route path="/shop"        element={<Shop />} />
       <Route path="/cart"        element={<Cart />} />
       <Route path="/product/:id" element={<ProductDetail />} />
+      <Route path="/artists"     element={<Artists />} />
 
-      {/* CUSTOMER */}
+      {/* USER PROTECTED */}
       <Route path="/profile" element={
         <ProtectedRoute><Profile /></ProtectedRoute>
       } />
@@ -48,7 +57,7 @@ function AppRoutes() {
         <ProtectedRoute><OrderConfirmation /></ProtectedRoute>
       } />
 
-      {/* ADMIN */}
+      {/* ADMIN PROTECTED */}
       <Route path="/dashboard" element={
         <ProtectedRoute adminOnly>
           <MainLayout><Dashboard /></MainLayout>

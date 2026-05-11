@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import PublicLayout from '../components/PublicLayout';
-import { useAuth } from '../contexts/AuthContext';
+import PublicLayout from '../../components/PublicLayout';
+import { useAuth } from '../../contexts/AuthContext';
 
 // ===== CartContext =====
 export const CartContext = createContext(null);
@@ -265,7 +265,7 @@ const Cart = () => {
                 <button
                   onClick={() =>
                     isAuthenticated
-                      ? navigate('/checkout')
+                       ? navigate('/checkout')
                       : navigate('/login', { state: { from: '/cart' } })
                   }
                   style={{

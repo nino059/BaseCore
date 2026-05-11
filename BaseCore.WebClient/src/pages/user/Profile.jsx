@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { userApi } from '../services/api';
+import { useAuth } from '../../contexts/AuthContext';
+import { userApi } from '../../services/api';
 import { useCart } from './Cart';
 
 const Profile = () => {

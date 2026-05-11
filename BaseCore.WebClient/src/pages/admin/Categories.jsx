@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { categoryApi } from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import { categoryApi } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Categories = () => {
     const [categories, setCategories] = useState([]);

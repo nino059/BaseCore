@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { orderApi } from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import { orderApi } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Orders = () => {
     const [orders, setOrders] = useState([]);

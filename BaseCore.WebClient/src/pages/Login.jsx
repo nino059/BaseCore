@@ -1,4 +1,3 @@
-// BaseCore.WebClient/src/pages/Login.jsx
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -21,7 +20,13 @@ const Login = () => {
         const result = await login(username, password, remember);
 
         if (result.success) {
-            navigate('/');
+            // ✅ Redirect đúng theo role
+            const role = result.user?.role;
+            if (role === 'Admin' || role === 'Staff') {
+                navigate('/dashboard');
+            } else {
+                navigate('/');
+            }
         } else {
             setError(result.message);
         }
@@ -49,7 +54,6 @@ const Login = () => {
                         )}
 
                         <form onSubmit={handleSubmit}>
-                            {/* Username */}
                             <div className="input-group mb-3">
                                 <input
                                     type="text"
@@ -57,8 +61,7 @@ const Login = () => {
                                     placeholder="Tên đăng nhập"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
-                                    required
-                                    autoFocus
+                                    required autoFocus
                                 />
                                 <div className="input-group-append">
                                     <div className="input-group-text">
@@ -67,7 +70,6 @@ const Login = () => {
                                 </div>
                             </div>
 
-                            {/* Password + toggle show/hide */}
                             <div className="input-group mb-3">
                                 <input
                                     type={showPassword ? 'text' : 'password'}
@@ -89,7 +91,6 @@ const Login = () => {
                             </div>
 
                             <div className="row align-items-center mb-2">
-                                {/* Remember Me — thực sự lưu vào localStorage lâu hơn */}
                                 <div className="col-7">
                                     <div className="icheck-primary">
                                         <input

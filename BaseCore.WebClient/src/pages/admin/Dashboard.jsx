@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { productApi, userApi, categoryApi, orderApi } from "../services/api";
-import { useAuth } from "../contexts/AuthContext";
+import { productApi, userApi, categoryApi, orderApi } from "../../services/api";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Dashboard = () => {
     const [stats, setStats] = useState({

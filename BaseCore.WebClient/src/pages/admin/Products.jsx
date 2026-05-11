@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { productApi, categoryApi } from "../services/api";
-import { useAuth } from "../contexts/AuthContext";
+import { productApi, categoryApi } from "../../services/api";
+import { useAuth } from "../../contexts/AuthContext";
 
 // ===== Cấu hình Cloudinary =====
 const CLOUD_NAME = "djt21q8ck";
