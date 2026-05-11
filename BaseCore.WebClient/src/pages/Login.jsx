@@ -1,10 +1,13 @@
+// BaseCore.WebClient/src/pages/Login.jsx
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [remember, setRemember] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -15,14 +18,13 @@ const Login = () => {
         setError('');
         setLoading(true);
 
-        const result = await login(username, password);
+        const result = await login(username, password, remember);
 
         if (result.success) {
             navigate('/');
         } else {
             setError(result.message);
         }
-
         setLoading(false);
     };
 
@@ -30,30 +32,33 @@ const Login = () => {
         <div className="login-page" style={{ minHeight: '100vh' }}>
             <div className="login-box">
                 <div className="login-logo">
-                    <a href="/">BaseCore Sales</a>
+                    <a href="/"><b>BaseCore</b> Sales</a>
                 </div>
                 <div className="card">
                     <div className="card-body login-card-body">
-                        <p className="login-box-msg">Sign in to start your session</p>
+                        <p className="login-box-msg">Đăng nhập để tiếp tục</p>
 
                         {error && (
                             <div className="alert alert-danger alert-dismissible">
                                 <button type="button" className="close" onClick={() => setError('')}>
                                     &times;
                                 </button>
+                                <i className="fas fa-exclamation-circle mr-1"></i>
                                 {error}
                             </div>
                         )}
 
                         <form onSubmit={handleSubmit}>
+                            {/* Username */}
                             <div className="input-group mb-3">
                                 <input
                                     type="text"
                                     className="form-control"
-                                    placeholder="Username"
+                                    placeholder="Tên đăng nhập"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
                                     required
+                                    autoFocus
                                 />
                                 <div className="input-group-append">
                                     <div className="input-group-text">
@@ -61,41 +66,62 @@ const Login = () => {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Password + toggle show/hide */}
                             <div className="input-group mb-3">
                                 <input
-                                    type="password"
+                                    type={showPassword ? 'text' : 'password'}
                                     className="form-control"
-                                    placeholder="Password"
+                                    placeholder="Mật khẩu"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
                                 />
                                 <div className="input-group-append">
-                                    <div className="input-group-text">
-                                        <span className="fas fa-lock"></span>
+                                    <div
+                                        className="input-group-text"
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        <span className={showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'}></span>
                                     </div>
                                 </div>
                             </div>
-                            <div className="row">
-                                <div className="col-8">
+
+                            <div className="row align-items-center mb-2">
+                                {/* Remember Me — thực sự lưu vào localStorage lâu hơn */}
+                                <div className="col-7">
                                     <div className="icheck-primary">
-                                        <input type="checkbox" id="remember" />
-                                        <label htmlFor="remember">Remember Me</label>
+                                        <input
+                                            type="checkbox"
+                                            id="remember"
+                                            checked={remember}
+                                            onChange={(e) => setRemember(e.target.checked)}
+                                        />
+                                        <label htmlFor="remember">Ghi nhớ đăng nhập</label>
                                     </div>
                                 </div>
-                                <div className="col-4">
+                                <div className="col-5">
                                     <button
                                         type="submit"
                                         className="btn btn-primary btn-block"
                                         disabled={loading}
                                     >
-                                        {loading ? (
-                                            <span className="spinner-border spinner-border-sm"></span>
-                                        ) : 'Sign In'}
+                                        {loading
+                                            ? <span className="spinner-border spinner-border-sm"></span>
+                                            : <><i className="fas fa-sign-in-alt mr-1"></i> Đăng nhập</>
+                                        }
                                     </button>
                                 </div>
                             </div>
                         </form>
+
+                        <p className="mb-1 text-center">
+                            <Link to="/forgot-password">Quên mật khẩu?</Link>
+                        </p>
+                        <p className="mb-0 text-center">
+                            Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
+                        </p>
                     </div>
                 </div>
             </div>

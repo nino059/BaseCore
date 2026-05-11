@@ -11,6 +11,25 @@ export const useAuth = () => {
     return context;
 };
 
+const login = async (username, password, remember = false) => {
+    try {
+        const response = await authApi.login(username, password);
+        const userData = response.data;
+
+        // remember = true → dùng localStorage (tồn tại lâu dài)
+        // remember = false → dùng sessionStorage (xóa khi đóng tab)
+        const storage = remember ? localStorage : sessionStorage;
+        storage.setItem('token', userData.token);
+        storage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+
+        return { success: true };
+    } catch (error) {
+        const message = error.response?.data?.message || 'Đăng nhập thất bại';
+        return { success: false, message };
+    }
+};
+
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
