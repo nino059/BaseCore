@@ -25,7 +25,10 @@ namespace BaseCore.APIService.Controllers
             _cloudinary = cloudinary;
         }
 
-        /// <summary>Upload ảnh lên Cloudinary, trả về URL</summary>
+        // ─────────────────────────────────────────────
+        // POST /api/products/upload-image
+        // Upload ảnh lên Cloudinary qua backend (có auth)
+        // ─────────────────────────────────────────────
         [HttpPost("upload-image")]
         [Authorize]
         public async Task<IActionResult> UploadImage(IFormFile file)
@@ -48,7 +51,7 @@ namespace BaseCore.APIService.Controllers
                     File = new FileDescription(file.FileName, stream),
                     Folder = "basecore/products",
                     Transformation = new Transformation()
-                        .Width(800).Height(800).Crop("limit")
+                        .Width(1200).Height(1200).Crop("limit")
                         .Quality("auto").FetchFormat("auto")
                 };
 
@@ -69,31 +72,23 @@ namespace BaseCore.APIService.Controllers
             }
         }
 
-        /// <summary>Get all products with pagination and search</summary>
+        // ─────────────────────────────────────────────
+        // GET /api/products
+        // ─────────────────────────────────────────────
         [HttpGet]
         public async Task<IActionResult> GetAll(
             [FromQuery] string? keyword,
             [FromQuery] int? categoryId,
             [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 10)
+            [FromQuery] int pageSize = 12)
         {
             var (products, totalCount) = await _productRepository.SearchAsync(keyword, categoryId, page, pageSize);
 
-            // ✅ Map sang DTO để tránh circular reference (Product → Category → Products → ...)
-            var items = products.Select(p => new {
-                p.Id,
-                p.Name,
-                p.Price,
-                p.Stock,
-                p.Description,
-                p.ImageUrl,
-                p.CategoryId,
-                categoryName = p.Category?.Name ?? ""
-            }).ToList();
+            var items = products.Select(p => ToDto(p)).ToList();
 
             return Ok(new
             {
-                items,          // ✅ trả items DTO, không phải products entity
+                items,
                 totalCount,
                 page,
                 pageSize,
@@ -101,140 +96,153 @@ namespace BaseCore.APIService.Controllers
             });
         }
 
-        /// <summary>Get product by ID</summary>
+        // ─────────────────────────────────────────────
+        // GET /api/products/{id}
+        // ─────────────────────────────────────────────
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var product = await _productRepository.GetByIdAsync(id);
             if (product == null)
-                return NotFound(new { message = "Product not found" });
+                return NotFound(new { message = "Không tìm thấy sản phẩm" });
 
-            // ✅ Map sang DTO tránh circular reference
-            return Ok(new {
-                product.Id,
-                product.Name,
-                product.Price,
-                product.Stock,
-                product.Description,
-                product.ImageUrl,
-                product.CategoryId,
-                categoryName = product.Category?.Name ?? ""
-            });
+            return Ok(ToDto(product));
         }
 
-        /// <summary>Create new product (requires authentication)</summary>
+        // ─────────────────────────────────────────────
+        // POST /api/products
+        // ─────────────────────────────────────────────
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Create([FromBody] ProductCreateDto dto)
         {
             var category = await _categoryRepository.GetByIdAsync(dto.CategoryId);
             if (category == null)
-                return BadRequest(new { message = "Category not found" });
+                return BadRequest(new { message = "Thể loại không tồn tại" });
 
             var product = new Product
             {
-                Name = dto.Name,
-                Price = dto.Price,
-                Stock = dto.Stock,
-                CategoryId = dto.CategoryId,
-                Description = dto.Description,
-                ImageUrl = dto.ImageUrl ?? ""
+                Name        = dto.Name,
+                ArtistName  = dto.ArtistName  ?? "",
+                Price       = dto.Price,
+                Stock       = dto.Stock,
+                CategoryId  = dto.CategoryId,
+                Description = dto.Description ?? "",
+                ImageUrl    = dto.ImageUrl    ?? "",
+                Material    = dto.Material    ?? "",
+                Dimensions  = dto.Dimensions  ?? "",
+                Year        = dto.Year,
+                Status      = dto.Status      ?? "Available"
             };
 
             await _productRepository.AddAsync(product);
-
-            // ✅ Trả DTO tránh circular reference
-            return CreatedAtAction(nameof(GetById), new { id = product.Id }, new {
-                product.Id,
-                product.Name,
-                product.Price,
-                product.Stock,
-                product.Description,
-                product.ImageUrl,
-                product.CategoryId
-            });
+            return CreatedAtAction(nameof(GetById), new { id = product.Id }, ToDto(product));
         }
 
-        /// <summary>Update product (requires authentication)</summary>
+        // ─────────────────────────────────────────────
+        // PUT /api/products/{id}
+        // ─────────────────────────────────────────────
         [HttpPut("{id}")]
         [Authorize]
         public async Task<IActionResult> Update(int id, [FromBody] ProductUpdateDto dto)
         {
             var product = await _productRepository.GetByIdAsync(id);
             if (product == null)
-                return NotFound(new { message = "Product not found" });
+                return NotFound(new { message = "Không tìm thấy sản phẩm" });
 
-            product.Name = dto.Name ?? product.Name;
-            product.Price = dto.Price ?? product.Price;
-            product.Stock = dto.Stock ?? product.Stock;
-            product.CategoryId = dto.CategoryId ?? product.CategoryId;
-            product.Description = dto.Description ?? product.Description;
-            product.ImageUrl = dto.ImageUrl ?? product.ImageUrl;
+            if (dto.Name        != null) product.Name        = dto.Name;
+            if (dto.ArtistName  != null) product.ArtistName  = dto.ArtistName;
+            if (dto.Price       != null) product.Price       = dto.Price.Value;
+            if (dto.Stock       != null) product.Stock       = dto.Stock.Value;
+            if (dto.CategoryId  != null) product.CategoryId  = dto.CategoryId.Value;
+            if (dto.Description != null) product.Description = dto.Description;
+            if (dto.ImageUrl    != null) product.ImageUrl    = dto.ImageUrl;
+            if (dto.ArtistName  != null) product.ArtistName  = dto.ArtistName;
+            if (dto.Material    != null) product.Material    = dto.Material;
+            if (dto.Dimensions  != null) product.Dimensions  = dto.Dimensions;
+            if (dto.Year        != null) product.Year        = dto.Year;
+            if (dto.Status      != null) product.Status      = dto.Status;
 
             await _productRepository.UpdateAsync(product);
-
-            // ✅ Trả DTO tránh circular reference
-            return Ok(new {
-                product.Id,
-                product.Name,
-                product.Price,
-                product.Stock,
-                product.Description,
-                product.ImageUrl,
-                product.CategoryId
-            });
+            return Ok(ToDto(product));
         }
 
-        /// <summary>Delete product (requires authentication)</summary>
+        // ─────────────────────────────────────────────
+        // DELETE /api/products/{id}
+        // ─────────────────────────────────────────────
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             var product = await _productRepository.GetByIdAsync(id);
             if (product == null)
-                return NotFound(new { message = "Product not found" });
+                return NotFound(new { message = "Không tìm thấy sản phẩm" });
 
             await _productRepository.DeleteAsync(product);
-            return Ok(new { message = "Product deleted successfully" });
+            return Ok(new { message = "Xóa thành công" });
         }
 
-        /// <summary>Get products by category — trả DTO tránh circular reference</summary>
+        // ─────────────────────────────────────────────
+        // GET /api/products/category/{categoryId}
+        // ─────────────────────────────────────────────
         [HttpGet("category/{categoryId}")]
         public async Task<IActionResult> GetByCategory(int categoryId)
         {
             var products = await _productRepository.GetByCategoryAsync(categoryId);
-            var items = products.Select(p => new {
-                p.Id,
-                p.Name,
-                p.Price,
-                p.Stock,
-                p.Description,
-                p.ImageUrl,
-                p.CategoryId,
-                categoryName = p.Category?.Name ?? ""
-            }).ToList();
-            return Ok(items);
+            return Ok(products.Select(p => ToDto(p)).ToList());
         }
+
+        // ─────────────────────────────────────────────
+        // Helper: map entity → DTO (tránh circular reference)
+        // ─────────────────────────────────────────────
+        private static object ToDto(Product p) => new
+        {
+            p.Id,
+            p.Name,
+            p.Price,
+            p.Stock,
+            p.Description,
+            p.ImageUrl,
+            p.CategoryId,
+            p.ArtistName,
+            p.Material,
+            p.Dimensions,
+            p.Year,
+            p.Status,
+            categoryName = p.Category?.Name ?? ""
+        };
     }
+
+    // ─── DTOs ───────────────────────────────────────
 
     // DTOs
     public class ProductCreateDto
     {
-        public string Name { get; set; } = "";
-        public decimal Price { get; set; }
-        public int Stock { get; set; }
-        public int CategoryId { get; set; }
+        public string Name         { get; set; } = "";
+        public string? ArtistName  { get; set; }
+        public decimal Price       { get; set; }
+        public int Stock           { get; set; }
+        public int CategoryId      { get; set; }
         public string? Description { get; set; }
-        public string? ImageUrl { get; set; }
+        public string? ImageUrl    { get; set; }
+        public string? Material    { get; set; }
+        public string? Dimensions  { get; set; }
+        public int? Year           { get; set; }
+        public string? Status      { get; set; }
     }
 
     public class ProductUpdateDto
     {
-        public string? Name { get; set; }
-        public decimal? Price { get; set; }
-        public int? Stock { get; set; }
-        public int? CategoryId { get; set; }
+        public string? Name        { get; set; }
+        public string? ArtistName  { get; set; }
+        public decimal? Price      { get; set; }
+        public int? Stock          { get; set; }
+        public int? CategoryId     { get; set; }
         public string? Description { get; set; }
-        public string? ImageUrl { get; set; }
+        public string? ImageUrl    { get; set; }
+        public string? Material    { get; set; }
+        public string? Dimensions  { get; set; }
+        public int? Year           { get; set; }
+        public string? Status      { get; set; }
     }
 }

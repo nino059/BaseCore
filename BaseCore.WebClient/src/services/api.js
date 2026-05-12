@@ -7,7 +7,7 @@ const api = axios.create({
     headers: { 'Content-Type': 'application/json' },
 });
 
-// ✅ Đọc token từ cả localStorage (remember) và sessionStorage
+// Đọc token từ localStorage (remember me) hoặc sessionStorage
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -30,42 +30,54 @@ api.interceptors.response.use(
 );
 
 export const authApi = {
-    login: (username, password) => api.post('/auth/login', { username, password }),
+    login:    (username, password) => api.post('/auth/login', { username, password }),
     register: (data) => api.post('/auth/register', data),
 };
 
 export const userApi = {
-    getAll: (params) => api.get('/users', { params }),
-    getById: (id) => api.get(`/users/${id}`),
-    create: (data) => api.post('/users', data),
-    update: (id, data) => api.put(`/users/${id}`, data),
-    delete: (id) => api.delete(`/users/${id}`),
+    getAll:  (params) => api.get('/users', { params }),
+    getById: (id)     => api.get(`/users/${id}`),
+    create:  (data)   => api.post('/users', data),
+    update:  (id, data) => api.put(`/users/${id}`, data),
+    delete:  (id)     => api.delete(`/users/${id}`),
 };
 
 export const productApi = {
-    getAll: (params) => api.get('/products', { params }),
-    getById: (id) => api.get(`/products/${id}`),
-    create: (data) => api.post('/products', data),
-    update: (id, data) => api.put(`/products/${id}`, data),
-    delete: (id) => api.delete(`/products/${id}`),
+    getAll:  (params) => api.get('/products', { params }),
+    // Alias search → getAll (dùng chung query params: keyword, categoryId, page, pageSize)
+    search:  (params) => api.get('/products', { params }),
+    getById: (id)     => api.get(`/products/${id}`),
+    create:  (data)   => api.post('/products', data),
+    update:  (id, data) => api.put(`/products/${id}`, data),
+    delete:  (id)     => api.delete(`/products/${id}`),
+    getByCategory: (categoryId) => api.get(`/products/category/${categoryId}`),
+
+    // Upload ảnh qua backend → Cloudinary (có auth)
+    uploadImage: (file) => {
+        const form = new FormData();
+        form.append('file', file);
+        return api.post('/products/upload-image', form, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
+    },
 };
 
 export const categoryApi = {
-    getAll: () => api.get('/categories'),
+    getAll:  () => api.get('/categories'),
     getById: (id) => api.get(`/categories/${id}`),
-    create: (data) => api.post('/categories', data),
-    update: (id, data) => api.put(`/categories/${id}`, data),
-    delete: (id) => api.delete(`/categories/${id}`),
+    create:  (data) => api.post('/categories', data),
+    update:  (id, data) => api.put(`/categories/${id}`, data),
+    delete:  (id) => api.delete(`/categories/${id}`),
 };
 
 export const orderApi = {
-    getAll: (params) => api.get('/orders/all', { params }),
-    getMyOrders: (params) => api.get('/orders', { params }),
-    create: (data) => api.post('/orders', data),
-    getById: (id) => api.get(`/orders/${id}`),
-    update: (id, data) => api.put(`/orders/${id}`, data),
-    cancel: (id) => api.put(`/orders/${id}`, { status: 'Cancelled' }),
-    delete: (id) => api.delete(`/orders/${id}`),
+    getAll:     (params) => api.get('/orders/all', { params }),
+    getMyOrders:(params) => api.get('/orders', { params }),
+    create:     (data)   => api.post('/orders', data),
+    getById:    (id)     => api.get(`/orders/${id}`),
+    update:     (id, data) => api.put(`/orders/${id}`, data),
+    cancel:     (id)     => api.put(`/orders/${id}`, { status: 'Cancelled' }),
+    delete:     (id)     => api.delete(`/orders/${id}`),
 };
 
 export default api;

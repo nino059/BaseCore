@@ -2,35 +2,32 @@ import React, { useState, useEffect, useRef } from "react";
 import { productApi, categoryApi } from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
 
-// ===== Cấu hình Cloudinary =====
-const CLOUD_NAME = "djt21q8ck";
-const UPLOAD_PRESET = "phwgta7_";
-
-const MATERIALS = ["Sơn dầu", "Acrylic", "Màu nước", "Mực", "Chì than", "Pastel", "Kỹ thuật số", "Khác"];
-const STATUSES  = ["Available", "Unavailable", "OutOfStock"];
+const MATERIALS = ["Sơn dầu","Acrylic","Màu nước","Mực","Chì than","Pastel","Kỹ thuật số","Khác"];
+const STATUSES  = ["Available","Unavailable","OutOfStock"];
+const STATUS_LABEL = { Available: "Đang bán", Unavailable: "Ẩn", OutOfStock: "Hết hàng" };
+const STATUS_COLOR = { Available: "success",  Unavailable: "secondary", OutOfStock: "danger" };
 
 const fmt = (p) => (p || 0).toLocaleString("vi-VN") + "₫";
 
-// ===================================================
-
 const Products = () => {
-  const [products, setProducts]         = useState([]);
-  const [categories, setCategories]     = useState([]);
-  const [loading, setLoading]           = useState(true);
-  const [keyword, setKeyword]           = useState("");
-  const [categoryId, setCategoryId]     = useState("");
-  const [page, setPage]                 = useState(1);
-  const [pageSize]                      = useState(10);
-  const [totalPages, setTotalPages]     = useState(0);
-  const [totalCount, setTotalCount]     = useState(0);
-  const [showModal, setShowModal]       = useState(false);
+  const [products, setProducts]     = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading]       = useState(true);
+  const [keyword, setKeyword]       = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [page, setPage]             = useState(1);
+  const [pageSize]                  = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+
+  const [showModal, setShowModal]           = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [error, setError]               = useState("");
-  const [uploading, setUploading]       = useState(false);
-  const [submitting, setSubmitting]     = useState(false);
-  const [imagePreview, setImagePreview] = useState(null);
-  const fileInputRef                    = useRef(null);
-  const { isAdmin }                     = useAuth();
+  const [error, setError]                   = useState("");
+  const [uploading, setUploading]           = useState(false);
+  const [submitting, setSubmitting]         = useState(false);
+  const [imagePreview, setImagePreview]     = useState(null);
+  const fileInputRef = useRef(null);
+  const { isAdmin } = useAuth();
 
   const emptyForm = {
     name: "", artistName: "", categoryId: "",
@@ -41,7 +38,7 @@ const Products = () => {
   const [formData, setFormData] = useState(emptyForm);
 
   useEffect(() => { loadCategories(); }, []);
-  useEffect(() => { loadProducts(); }, [page, keyword, categoryId]);
+  useEffect(() => { loadProducts();   }, [page, keyword, categoryId]);
 
   const loadCategories = async () => {
     try {
@@ -54,7 +51,7 @@ const Products = () => {
     setLoading(true);
     try {
       const res = await productApi.search({ keyword, categoryId: categoryId || undefined, page, pageSize });
-      setProducts(res.data?.items || res.data?.data || []);
+      setProducts(res.data?.items || []);
       setTotalPages(res.data?.totalPages || 0);
       setTotalCount(res.data?.totalCount || 0);
     } catch (e) { console.error(e); }
@@ -65,17 +62,17 @@ const Products = () => {
     if (product) {
       setEditingProduct(product);
       setFormData({
-        name:        product.name || "",
-        artistName:  product.artistName || "",
-        categoryId:  product.categoryId || "",
-        price:       product.price || "",
-        stock:       product.stock ?? 1,
-        material:    product.material || "",
-        dimensions:  product.dimensions || "",
-        year:        product.year || "",
+        name:        product.name        || "",
+        artistName:  product.artistName  || "",
+        categoryId:  product.categoryId  || "",
+        price:       product.price       || "",
+        stock:       product.stock       ?? 1,
+        material:    product.material    || "",
+        dimensions:  product.dimensions  || "",
+        year:        product.year        || "",
         description: product.description || "",
-        imageUrl:    product.imageUrl || "",
-        status:      product.status || "Available",
+        imageUrl:    product.imageUrl    || "",
+        status:      product.status      || "Available",
       });
       setImagePreview(product.imageUrl || null);
     } else {
@@ -94,28 +91,21 @@ const Products = () => {
     setError("");
   };
 
-  // ===== Upload ảnh lên Cloudinary =====
+  // ── Upload ảnh qua backend → Cloudinary ──
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    // Preview local trước
     setImagePreview(URL.createObjectURL(file));
     setUploading(true);
-
+    setError("");
     try {
-      const data = new FormData();
-      data.append("file", file);
-      data.append("upload_preset", UPLOAD_PRESET);
-
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-        { method: "POST", body: data }
-      );
-      const json = await res.json();
-      setFormData(f => ({ ...f, imageUrl: json.secure_url }));
-    } catch {
-      setError("Upload ảnh thất bại. Vui lòng thử lại!");
+      const res = await productApi.uploadImage(file);
+      const url = res.data?.url;
+      if (!url) throw new Error("Không nhận được URL từ server");
+      setFormData(f => ({ ...f, imageUrl: url }));
+    } catch (err) {
+      setError(err.response?.data?.message || "Upload ảnh thất bại. Vui lòng thử lại!");
+      setImagePreview(formData.imageUrl || null);
     }
     setUploading(false);
   };
@@ -148,20 +138,14 @@ const Products = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Xác nhận xóa tác phẩm này?")) return;
-    try {
-      await productApi.delete(id);
-      loadProducts();
-    } catch { alert("Xóa thất bại!"); }
+    try { await productApi.delete(id); loadProducts(); }
+    catch { alert("Xóa thất bại!"); }
   };
 
   const set = (field) => (e) => setFormData(f => ({ ...f, [field]: e.target.value }));
 
-  // ===== STYLE =====
-  const inputCls = "form-control";
+  const inputCls   = "form-control";
   const labelStyle = { fontWeight: 600, fontSize: "0.88rem", color: "#374151", marginBottom: 4 };
-
-  const statusColor = { Available: "success", Unavailable: "secondary", OutOfStock: "danger" };
-  const statusLabel = { Available: "Đang bán", Unavailable: "Ẩn", OutOfStock: "Hết hàng" };
 
   return (
     <div className="content-wrapper">
@@ -177,11 +161,15 @@ const Products = () => {
       <section className="content">
         <div className="container-fluid">
           <div className="card" style={{ borderRadius: 12, boxShadow: "0 2px 16px rgba(0,0,0,0.07)" }}>
+
+            {/* Toolbar */}
             <div className="card-header" style={{ background: "white", borderBottom: "1px solid #f3f4f6" }}>
               <div className="row align-items-center">
                 <div className="col-md-7">
-                  <form onSubmit={(e) => { e.preventDefault(); setPage(1); loadProducts(); }} className="form-inline" style={{ gap: 8 }}>
-                    <input type="text" className="form-control mr-2" placeholder="Tìm tên tranh, nghệ sĩ..."
+                  <form onSubmit={(e) => { e.preventDefault(); setPage(1); loadProducts(); }}
+                    className="form-inline" style={{ gap: 8 }}>
+                    <input type="text" className="form-control mr-2"
+                      placeholder="Tìm tên tranh, nghệ sĩ..."
                       value={keyword} onChange={(e) => setKeyword(e.target.value)}
                       style={{ borderRadius: 8, minWidth: 200 }} />
                     <select className="form-control mr-2" value={categoryId}
@@ -209,6 +197,7 @@ const Products = () => {
               </div>
             </div>
 
+            {/* Table */}
             <div className="card-body p-0">
               {loading ? (
                 <div className="text-center py-5">
@@ -220,52 +209,66 @@ const Products = () => {
                   <table className="table table-hover mb-0">
                     <thead style={{ background: "#f9fafb" }}>
                       <tr>
-                        <th style={{ width: 60 }}>Ảnh</th>
+                        <th style={{ width: 64 }}>Ảnh</th>
                         <th>Tên tác phẩm</th>
                         <th>Nghệ sĩ</th>
                         <th>Thể loại</th>
                         <th>Chất liệu</th>
                         <th>Giá</th>
-                        <th>Số lượng</th>
+                        <th>SL</th>
                         <th>Trạng thái</th>
-                        {isAdmin && <th style={{ width: 100 }}>Thao tác</th>}
+                        {isAdmin && <th style={{ width: 110 }}>Thao tác</th>}
                       </tr>
                     </thead>
                     <tbody>
                       {products.length === 0 ? (
-                        <tr><td colSpan={9} className="text-center py-4 text-muted">Chưa có tác phẩm nào</td></tr>
+                        <tr>
+                          <td colSpan={9} className="text-center py-5 text-muted">
+                            <i className="fas fa-palette"
+                              style={{ fontSize: "2rem", marginBottom: 8, display: "block", color: "#e5e7eb" }}></i>
+                            Chưa có tác phẩm nào
+                          </td>
+                        </tr>
                       ) : products.map((p) => (
                         <tr key={p.id}>
                           <td>
                             {p.imageUrl ? (
                               <img src={p.imageUrl} alt={p.name}
-                                style={{ width: 52, height: 52, objectFit: "cover", borderRadius: 8, boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }} />
-                            ) : (
-                              <div style={{ width: 52, height: 52, background: "#f3f4f6", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                <i className="fas fa-image text-muted"></i>
-                              </div>
-                            )}
+                                style={{ width: 56, height: 56, objectFit: "cover", borderRadius: 10, boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}
+                                onError={e => { e.target.style.display = "none"; e.target.nextSibling.style.display = "flex"; }} />
+                            ) : null}
+                            <div style={{
+                              display: p.imageUrl ? "none" : "flex",
+                              width: 56, height: 56, background: "#f3f4f6",
+                              borderRadius: 10, alignItems: "center", justifyContent: "center"
+                            }}>
+                              <i className="fas fa-image text-muted"></i>
+                            </div>
                           </td>
                           <td>
                             <strong>{p.name}</strong>
-                            {p.dimensions && <div style={{ fontSize: "0.78rem", color: "#9ca3af" }}>{p.dimensions}</div>}
+                            {p.dimensions && (
+                              <div style={{ fontSize: "0.78rem", color: "#9ca3af" }}>{p.dimensions}</div>
+                            )}
                           </td>
                           <td>{p.artistName || <span className="text-muted">—</span>}</td>
-                          <td>{p.category?.name || p.categoryName || "—"}</td>
+                          <td>{p.categoryName || "—"}</td>
                           <td>{p.material || <span className="text-muted">—</span>}</td>
                           <td style={{ fontWeight: 700, color: "#7c3aed" }}>{fmt(p.price)}</td>
                           <td>{p.stock}</td>
                           <td>
-                            <span className={`badge badge-${statusColor[p.status] || "secondary"}`}>
-                              {statusLabel[p.status] || p.status}
+                            <span className={`badge badge-${STATUS_COLOR[p.status] || "secondary"}`}>
+                              {STATUS_LABEL[p.status] || p.status}
                             </span>
                           </td>
                           {isAdmin && (
                             <td>
-                              <button className="btn btn-sm btn-outline-primary mr-1" onClick={() => openModal(p)} title="Sửa">
+                              <button className="btn btn-sm btn-outline-primary mr-1"
+                                onClick={() => openModal(p)} title="Sửa">
                                 <i className="fas fa-edit"></i>
                               </button>
-                              <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(p.id)} title="Xóa">
+                              <button className="btn btn-sm btn-outline-danger"
+                                onClick={() => handleDelete(p.id)} title="Xóa">
                                 <i className="fas fa-trash"></i>
                               </button>
                             </td>
@@ -287,7 +290,9 @@ const Products = () => {
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map(i => (
                       <li key={i} className={`page-item ${page === i ? "active" : ""}`}>
                         <button className="page-link" onClick={() => setPage(i)}
-                          style={page === i ? { background: "#7c3aed", borderColor: "#7c3aed" } : {}}>{i}</button>
+                          style={page === i ? { background: "#7c3aed", borderColor: "#7c3aed" } : {}}>
+                          {i}
+                        </button>
                       </li>
                     ))}
                     <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
@@ -301,14 +306,16 @@ const Products = () => {
         </div>
       </section>
 
-      {/* ===== MODAL THÊM / SỬA ===== */}
+      {/* ═══════ MODAL THÊM / SỬA ═══════ */}
       {showModal && (
         <>
           <div className="modal fade show" style={{ display: "block", zIndex: 1050 }} tabIndex="-1">
             <div className="modal-dialog modal-lg">
-              <div className="modal-content" style={{ borderRadius: 16, border: "none", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }}>
+              <div className="modal-content"
+                style={{ borderRadius: 16, border: "none", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }}>
 
-                <div className="modal-header" style={{ background: "linear-gradient(135deg, #1a1a2e, #533483)", color: "white", borderRadius: "16px 16px 0 0" }}>
+                <div className="modal-header"
+                  style={{ background: "linear-gradient(135deg,#1a1a2e,#533483)", color: "white", borderRadius: "16px 16px 0 0" }}>
                   <h5 className="modal-title" style={{ fontWeight: 700 }}>
                     <i className={`fas fa-${editingProduct ? "edit" : "plus-circle"} mr-2`}></i>
                     {editingProduct ? "Cập nhật tác phẩm" : "Thêm tác phẩm mới"}
@@ -320,24 +327,25 @@ const Products = () => {
                 <form onSubmit={handleSubmit}>
                   <div className="modal-body" style={{ padding: "24px 28px" }}>
                     {error && (
-                      <div className="alert" style={{ background: "#fee2e2", color: "#991b1b", borderRadius: 10, border: "none" }}>
+                      <div className="alert"
+                        style={{ background: "#fee2e2", color: "#991b1b", borderRadius: 10, border: "none" }}>
                         <i className="fas fa-exclamation-circle mr-2"></i>{error}
                       </div>
                     )}
 
                     <div className="row">
-                      {/* ===== CỘT TRÁI: Upload ảnh ===== */}
+                      {/* Cột trái: Upload ảnh */}
                       <div className="col-md-4">
                         <label style={labelStyle}>Ảnh tác phẩm</label>
                         <div
-                          onClick={() => fileInputRef.current?.click()}
+                          onClick={() => !uploading && fileInputRef.current?.click()}
                           style={{
-                            border: "2px dashed #a78bfa", borderRadius: 12,
-                            minHeight: 200, display: "flex", flexDirection: "column",
+                            border: `2px dashed ${uploading ? "#d1d5db" : "#a78bfa"}`,
+                            borderRadius: 12, minHeight: 200,
+                            display: "flex", flexDirection: "column",
                             alignItems: "center", justifyContent: "center",
-                            cursor: "pointer", background: "#faf5ff",
-                            overflow: "hidden", position: "relative",
-                            transition: "border-color 0.2s",
+                            cursor: uploading ? "not-allowed" : "pointer",
+                            background: "#faf5ff", overflow: "hidden", position: "relative",
                           }}>
                           {uploading ? (
                             <div className="text-center">
@@ -358,16 +366,19 @@ const Products = () => {
                             </>
                           ) : (
                             <div className="text-center" style={{ color: "#a78bfa", padding: 20 }}>
-                              <i className="fas fa-cloud-upload-alt" style={{ fontSize: "2.5rem", marginBottom: 8, display: "block" }}></i>
+                              <i className="fas fa-cloud-upload-alt"
+                                style={{ fontSize: "2.5rem", marginBottom: 8, display: "block" }}></i>
                               <span style={{ fontSize: "0.85rem", fontWeight: 600 }}>Click để tải ảnh lên</span>
-                              <span style={{ display: "block", fontSize: "0.75rem", color: "#9ca3af", marginTop: 4 }}>JPG, PNG, WEBP</span>
+                              <span style={{ display: "block", fontSize: "0.75rem", color: "#9ca3af", marginTop: 4 }}>
+                                JPG, PNG, WEBP – tối đa 5MB
+                              </span>
                             </div>
                           )}
                         </div>
+
                         <input ref={fileInputRef} type="file" accept="image/*"
                           style={{ display: "none" }} onChange={handleImageChange} />
 
-                        {/* Hoặc nhập URL */}
                         <div className="mt-2">
                           <input className={inputCls} placeholder="Hoặc nhập URL ảnh..."
                             value={formData.imageUrl}
@@ -377,9 +388,18 @@ const Products = () => {
                             }}
                             style={{ borderRadius: 8, fontSize: "0.82rem" }} />
                         </div>
+
+                        {formData.imageUrl && !uploading && (
+                          <div style={{
+                            marginTop: 6, padding: "4px 10px", background: "#d1fae5",
+                            color: "#065f46", borderRadius: 8, fontSize: "0.78rem", fontWeight: 600
+                          }}>
+                            <i className="fas fa-check-circle mr-1"></i> Ảnh đã sẵn sàng
+                          </div>
+                        )}
                       </div>
 
-                      {/* ===== CỘT PHẢI: Thông tin ===== */}
+                      {/* Cột phải: Thông tin */}
                       <div className="col-md-8">
                         <div className="row">
                           <div className="col-12 form-group mb-3">
@@ -417,7 +437,7 @@ const Products = () => {
                           <div className="col-md-6 form-group mb-3">
                             <label style={labelStyle}>Kích thước</label>
                             <input className={inputCls} value={formData.dimensions}
-                              onChange={set("dimensions")} placeholder="VD: 60x80cm"
+                              onChange={set("dimensions")} placeholder="VD: 60×80cm"
                               style={{ borderRadius: 8 }} />
                           </div>
 
@@ -446,9 +466,9 @@ const Products = () => {
                             <label style={labelStyle}>Trạng thái</label>
                             <select className={inputCls} value={formData.status}
                               onChange={set("status")} style={{ borderRadius: 8 }}>
-                              <option value="Available">Đang bán</option>
-                              <option value="Unavailable">Ẩn</option>
-                              <option value="OutOfStock">Hết hàng</option>
+                              {STATUSES.map(s => (
+                                <option key={s} value={s}>{STATUS_LABEL[s]}</option>
+                              ))}
                             </select>
                           </div>
 
@@ -471,9 +491,11 @@ const Products = () => {
                     </button>
                     <button type="submit" disabled={submitting || uploading}
                       style={{
-                        background: "linear-gradient(135deg, #a78bfa, #7c3aed)",
+                        background: "linear-gradient(135deg,#a78bfa,#7c3aed)",
                         color: "white", border: "none", borderRadius: 8,
-                        padding: "8px 28px", fontWeight: 700, cursor: submitting ? "not-allowed" : "pointer"
+                        padding: "8px 28px", fontWeight: 700,
+                        cursor: (submitting || uploading) ? "not-allowed" : "pointer",
+                        opacity: (submitting || uploading) ? 0.7 : 1,
                       }}>
                       {submitting
                         ? <><span className="spinner-border spinner-border-sm mr-2"></span>Đang lưu...</>

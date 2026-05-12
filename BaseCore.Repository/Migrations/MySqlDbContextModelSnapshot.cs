@@ -42,7 +42,7 @@ namespace BaseCore.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
 
                     b.HasData(
                         new
@@ -127,7 +127,7 @@ namespace BaseCore.Repository.Migrations
 
                     b.HasIndex("ModuleId");
 
-                    b.ToTable("Function");
+                    b.ToTable("Function", (string)null);
                 });
 
             modelBuilder.Entity("BaseCore.Entities.Module", b =>
@@ -183,7 +183,7 @@ namespace BaseCore.Repository.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Module");
+                    b.ToTable("Module", (string)null);
                 });
 
             modelBuilder.Entity("BaseCore.Entities.ModuleFunction", b =>
@@ -232,7 +232,7 @@ namespace BaseCore.Repository.Migrations
 
                     b.HasIndex("ModuleId");
 
-                    b.ToTable("ModuleFunction");
+                    b.ToTable("ModuleFunction", (string)null);
                 });
 
             modelBuilder.Entity("BaseCore.Entities.Order", b =>
@@ -265,7 +265,7 @@ namespace BaseCore.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("BaseCore.Entities.OrderDetail", b =>
@@ -300,7 +300,7 @@ namespace BaseCore.Repository.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderDetails");
+                    b.ToTable("OrderDetails", (string)null);
                 });
 
             modelBuilder.Entity("BaseCore.Entities.Product", b =>
@@ -340,7 +340,7 @@ namespace BaseCore.Repository.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
 
                     b.HasData(
                         new
@@ -443,7 +443,7 @@ namespace BaseCore.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("BaseCore.Entities.RoleModuleFunction", b =>
@@ -495,7 +495,7 @@ namespace BaseCore.Repository.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("RoleModuleFunction");
+                    b.ToTable("RoleModuleFunction", (string)null);
                 });
 
             modelBuilder.Entity("BaseCore.Entities.User", b =>
@@ -558,7 +558,7 @@ namespace BaseCore.Repository.Migrations
                     b.HasIndex("UserName")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("BaseCore.Entities.UserModule", b =>
@@ -607,7 +607,7 @@ namespace BaseCore.Repository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserModule");
+                    b.ToTable("UserModule", (string)null);
                 });
 
             modelBuilder.Entity("BaseCore.Entities.UserRole", b =>
@@ -659,7 +659,7 @@ namespace BaseCore.Repository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("BaseCore.Entities.Function", b =>
