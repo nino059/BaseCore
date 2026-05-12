@@ -574,17 +574,36 @@
             "type": "string",
             "nullable": true
           },
+          "sellerId": {
+            "type": "string",
+            "nullable": true
+          },
+          "theme": {
+            "type": "string",
+            "nullable": true
+          },
+          "technique": {
+            "type": "string",
+            "nullable": true
+          },
           "material": {
             "type": "string",
             "nullable": true
           },
-          "dimensions": {
+          "size": {
             "type": "string",
             "nullable": true
           },
           "year": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          },
+          "isOriginal": {
+            "type": "boolean"
+          },
+          "condition": {
+            "type": "string",
             "nullable": true
           },
           "status": {
@@ -628,17 +647,37 @@
             "type": "string",
             "nullable": true
           },
+          "sellerId": {
+            "type": "string",
+            "nullable": true
+          },
+          "theme": {
+            "type": "string",
+            "nullable": true
+          },
+          "technique": {
+            "type": "string",
+            "nullable": true
+          },
           "material": {
             "type": "string",
             "nullable": true
           },
-          "dimensions": {
+          "size": {
             "type": "string",
             "nullable": true
           },
           "year": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          },
+          "isOriginal": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "condition": {
+            "type": "string",
             "nullable": true
           },
           "status": {

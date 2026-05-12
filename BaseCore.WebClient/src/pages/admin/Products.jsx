@@ -2,517 +2,476 @@ import React, { useState, useEffect, useRef } from "react";
 import { productApi, categoryApi } from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
 
-const MATERIALS = ["Sơn dầu","Acrylic","Màu nước","Mực","Chì than","Pastel","Kỹ thuật số","Khác"];
-const STATUSES  = ["Available","Unavailable","OutOfStock"];
-const STATUS_LABEL = { Available: "Đang bán", Unavailable: "Ẩn", OutOfStock: "Hết hàng" };
-const STATUS_COLOR = { Available: "success",  Unavailable: "secondary", OutOfStock: "danger" };
+// Khớp đúng với Categories DB (Name, Slug, Icon)
+const TECHNIQUES = ["Sơn dầu","Acrylic","Màu nước","Mực","Chì than","Pastel","Kỹ thuật số","Khắc gỗ","Khác"];
+const THEMES     = ["Phong cảnh","Chân dung","Tĩnh vật","Trừu tượng","Động vật","Đô thị","Lịch sử","Tâm linh","Khác"];
+const CONDITIONS = ["Mới","Tốt","Khá tốt","Cũ"];
+const STATUSES   = ["Available","Unavailable","OutOfStock"];
+const STATUS_VI  = { Available:"Đang bán", Unavailable:"Ẩn", OutOfStock:"Hết hàng" };
+const STATUS_CLS = { Available:"success",  Unavailable:"secondary", OutOfStock:"danger" };
+const fmt = v => Number(v||0).toLocaleString("vi-VN") + "₫";
 
-const fmt = (p) => (p || 0).toLocaleString("vi-VN") + "₫";
+const emptyForm = {
+  name:"", artistName:"", categoryId:"",
+  price:"", stock:1,
+  theme:"", technique:"", material:"",
+  size:"", year:"", condition:"Mới",
+  description:"", imageUrl:"", isOriginal:true,
+  status:"Available",
+};
 
-const Products = () => {
-  const [products, setProducts]     = useState([]);
+export default function Products() {
+  const { user } = useAuth();
+  const [products,   setProducts]   = useState([]);
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading]       = useState(true);
-  const [keyword, setKeyword]       = useState("");
-  const [categoryId, setCategoryId] = useState("");
-  const [page, setPage]             = useState(1);
-  const [pageSize]                  = useState(10);
+  const [loading,    setLoading]    = useState(true);
+  const [keyword,    setKeyword]    = useState("");
+  const [catFilter,  setCatFilter]  = useState("");
+  const [page,       setPage]       = useState(1);
+  const PAGE_SIZE = 10;
   const [totalPages, setTotalPages] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
 
-  const [showModal, setShowModal]           = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
-  const [error, setError]                   = useState("");
-  const [uploading, setUploading]           = useState(false);
-  const [submitting, setSubmitting]         = useState(false);
-  const [imagePreview, setImagePreview]     = useState(null);
-  const fileInputRef = useRef(null);
-  const { isAdmin } = useAuth();
+  const [showModal,  setShowModal]  = useState(false);
+  const [editing,    setEditing]    = useState(null);
+  const [form,       setForm]       = useState(emptyForm);
+  const [uploading,  setUploading]  = useState(false);
+  const [saving,     setSaving]     = useState(false);
+  const [error,      setError]      = useState("");
+  const fileRef = useRef(null);
 
-  const emptyForm = {
-    name: "", artistName: "", categoryId: "",
-    price: "", stock: 1,
-    material: "", dimensions: "", year: "",
-    description: "", imageUrl: "", status: "Available",
-  };
-  const [formData, setFormData] = useState(emptyForm);
+  useEffect(() => { loadCats(); }, []);
+  useEffect(() => { loadProducts(); }, [page, keyword, catFilter]);
 
-  useEffect(() => { loadCategories(); }, []);
-  useEffect(() => { loadProducts();   }, [page, keyword, categoryId]);
-
-  const loadCategories = async () => {
-    try {
-      const res = await categoryApi.getAll();
-      setCategories(res.data || []);
-    } catch (e) { console.error(e); }
+  const loadCats = async () => {
+    try { const r = await categoryApi.getAll(); setCategories(r.data||[]); }
+    catch(e){ console.error(e); }
   };
 
   const loadProducts = async () => {
     setLoading(true);
     try {
-      const res = await productApi.search({ keyword, categoryId: categoryId || undefined, page, pageSize });
-      setProducts(res.data?.items || []);
-      setTotalPages(res.data?.totalPages || 0);
-      setTotalCount(res.data?.totalCount || 0);
-    } catch (e) { console.error(e); }
+      const r = await productApi.search({ keyword, categoryId: catFilter||undefined, page, pageSize: PAGE_SIZE });
+      setProducts(r.data?.items || []);
+      setTotalPages(r.data?.totalPages || 0);
+      setTotalCount(r.data?.totalCount || 0);
+    } catch(e){ console.error(e); }
     finally { setLoading(false); }
   };
 
-  const openModal = (product = null) => {
-    if (product) {
-      setEditingProduct(product);
-      setFormData({
-        name:        product.name        || "",
-        artistName:  product.artistName  || "",
-        categoryId:  product.categoryId  || "",
-        price:       product.price       || "",
-        stock:       product.stock       ?? 1,
-        material:    product.material    || "",
-        dimensions:  product.dimensions  || "",
-        year:        product.year        || "",
-        description: product.description || "",
-        imageUrl:    product.imageUrl    || "",
-        status:      product.status      || "Available",
-      });
-      setImagePreview(product.imageUrl || null);
-    } else {
-      setEditingProduct(null);
-      setFormData({ ...emptyForm, categoryId: categories[0]?.id || "" });
-      setImagePreview(null);
-    }
+  const openAdd = () => {
+    setEditing(null);
+    setForm({ ...emptyForm, sellerId: user?.id || "" });
     setError("");
     setShowModal(true);
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    setEditingProduct(null);
-    setImagePreview(null);
+  const openEdit = (p) => {
+    setEditing(p);
+    setForm({
+      name:       p.name        || "",
+      artistName: p.artistName  || "",
+      categoryId: p.categoryId  || "",
+      price:      p.price       || "",
+      stock:      p.stock       ?? 1,
+      theme:      p.theme       || "",
+      technique:  p.technique   || "",
+      material:   p.material    || "",
+      size:       p.size        || "",
+      year:       p.year        || "",
+      condition:  p.condition   || "Mới",
+      description:p.description || "",
+      imageUrl:   p.imageUrl    || "",
+      isOriginal: p.isOriginal  ?? true,
+      status:     p.status      || "Available",
+      sellerId:   p.sellerId    || user?.id || "",
+    });
     setError("");
+    setShowModal(true);
   };
 
-  // ── Upload ảnh qua backend → Cloudinary ──
-  const handleImageChange = async (e) => {
-    const file = e.target.files[0];
+    const handleUpload = async (e) => {
+    const file = e.target.files?.[0];
     if (!file) return;
-    setImagePreview(URL.createObjectURL(file));
     setUploading(true);
-    setError("");
     try {
-      const res = await productApi.uploadImage(file);
-      const url = res.data?.url;
-      if (!url) throw new Error("Không nhận được URL từ server");
-      setFormData(f => ({ ...f, imageUrl: url }));
-    } catch (err) {
-      setError(err.response?.data?.message || "Upload ảnh thất bại. Vui lòng thử lại!");
-      setImagePreview(formData.imageUrl || null);
-    }
-    setUploading(false);
+      const r = await productApi.uploadImage(file); // ← truyền file, KHÔNG phải FormData
+      setForm(f => ({ ...f, imageUrl: r.data.url }));
+    } catch (e) {
+      setError("Upload ảnh thất bại: " + (e.response?.data?.message || e.message));
+    } finally { setUploading(false); }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (uploading) return;
-    setSubmitting(true);
+  const handleSave = async () => {
     setError("");
+    if (!form.name.trim())      return setError("Vui lòng nhập tên tác phẩm");
+    if (!form.artistName.trim())return setError("Vui lòng nhập tên nghệ sĩ");
+    if (!form.categoryId)       return setError("Vui lòng chọn thể loại");
+    if (!form.price || Number(form.price) <= 0) return setError("Giá phải lớn hơn 0");
+    if (!form.imageUrl)         return setError("Vui lòng upload ảnh tác phẩm");
+
+    setSaving(true);
     try {
-      const data = {
-        ...formData,
-        price:      parseFloat(formData.price),
-        stock:      parseInt(formData.stock),
-        categoryId: parseInt(formData.categoryId),
-        year:       formData.year ? parseInt(formData.year) : null,
+      const payload = {
+        name:        form.name.trim(),
+        artistName:  form.artistName.trim(),
+        categoryId:  Number(form.categoryId),
+        price:       Number(form.price),
+        stock:       Number(form.stock) || 1,
+        theme:       form.theme       || null,
+        technique:   form.technique   || null,
+        material:    form.material    || null,
+        size:        form.size        || null,
+        year:        form.year        ? Number(form.year) : null,
+        condition:   form.condition   || null,
+        description: form.description || "",
+        imageUrl:    form.imageUrl,
+        isOriginal:  form.isOriginal,
+        status:      form.status,
+        sellerId:    user?.id || null,
       };
-      if (editingProduct) {
-        await productApi.update(editingProduct.id, { id: editingProduct.id, ...data });
+      if (editing) {
+        await productApi.update(editing.id, payload);
       } else {
-        await productApi.create(data);
+        await productApi.create(payload);
       }
-      closeModal();
+      setShowModal(false);
+      setPage(1);
       loadProducts();
-    } catch (err) {
-      setError(err.response?.data?.message || "Lưu thất bại, vui lòng thử lại!");
-    }
-    setSubmitting(false);
+    } catch(e) {
+      setError("Lưu thất bại: " + (e.response?.data?.message || e.message));
+    } finally { setSaving(false); }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Xác nhận xóa tác phẩm này?")) return;
-    try { await productApi.delete(id); loadProducts(); }
-    catch { alert("Xóa thất bại!"); }
+    if (!window.confirm("Xóa tác phẩm này?")) return;
+    try {
+      await productApi.delete(id);
+      loadProducts();
+    } catch(e) { alert("Xóa thất bại: " + (e.response?.data?.message || e.message)); }
   };
 
-  const set = (field) => (e) => setFormData(f => ({ ...f, [field]: e.target.value }));
-
-  const inputCls   = "form-control";
-  const labelStyle = { fontWeight: 600, fontSize: "0.88rem", color: "#374151", marginBottom: 4 };
+  const F = ({ label, children, required }) => (
+    <div className="mb-3">
+      <label className="form-label fw-semibold">
+        {label}{required && <span className="text-danger ms-1">*</span>}
+      </label>
+      {children}
+    </div>
+  );
 
   return (
-    <div className="content-wrapper">
-      <div className="content-header">
-        <div className="container-fluid">
-          <h1 className="m-0" style={{ fontWeight: 700 }}>
-            <i className="fas fa-palette mr-2" style={{ color: "#a78bfa" }}></i>
-            Quản lý Tác phẩm
-          </h1>
+    <div className="container-fluid py-4">
+      {/* Header */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h4 className="mb-0 fw-bold">🎨 Quản lý tác phẩm</h4>
+          <small className="text-muted">Tổng: {totalCount} tác phẩm</small>
+        </div>
+        <button className="btn btn-primary" onClick={openAdd}>
+          <i className="bi bi-plus-lg me-2"/>Thêm tác phẩm
+        </button>
+      </div>
+
+      {/* Filters */}
+      <div className="card mb-4 border-0 shadow-sm">
+        <div className="card-body">
+          <div className="row g-2">
+            <div className="col-md-6">
+              <input className="form-control" placeholder="🔍 Tìm theo tên, nghệ sĩ..."
+                value={keyword} onChange={e=>{setKeyword(e.target.value);setPage(1);}}/>
+            </div>
+            <div className="col-md-4">
+              <select className="form-select" value={catFilter}
+                onChange={e=>{setCatFilter(e.target.value);setPage(1);}}>
+                <option value="">Tất cả thể loại</option>
+                {categories.map(c=><option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
+              </select>
+            </div>
+            <div className="col-md-2">
+              <button className="btn btn-outline-secondary w-100"
+                onClick={()=>{setKeyword("");setCatFilter("");setPage(1);}}>
+                Xóa lọc
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <section className="content">
-        <div className="container-fluid">
-          <div className="card" style={{ borderRadius: 12, boxShadow: "0 2px 16px rgba(0,0,0,0.07)" }}>
-
-            {/* Toolbar */}
-            <div className="card-header" style={{ background: "white", borderBottom: "1px solid #f3f4f6" }}>
-              <div className="row align-items-center">
-                <div className="col-md-7">
-                  <form onSubmit={(e) => { e.preventDefault(); setPage(1); loadProducts(); }}
-                    className="form-inline" style={{ gap: 8 }}>
-                    <input type="text" className="form-control mr-2"
-                      placeholder="Tìm tên tranh, nghệ sĩ..."
-                      value={keyword} onChange={(e) => setKeyword(e.target.value)}
-                      style={{ borderRadius: 8, minWidth: 200 }} />
-                    <select className="form-control mr-2" value={categoryId}
-                      onChange={(e) => { setCategoryId(e.target.value); setPage(1); }}
-                      style={{ borderRadius: 8 }}>
-                      <option value="">Tất cả thể loại</option>
-                      {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                    </select>
-                    <button type="submit" className="btn btn-primary" style={{ borderRadius: 8 }}>
-                      <i className="fas fa-search mr-1"></i> Tìm
-                    </button>
-                  </form>
-                </div>
-                <div className="col-md-5 text-right">
-                  <span className="text-muted mr-3" style={{ fontSize: "0.9rem" }}>
-                    Tổng: <strong>{totalCount}</strong> tác phẩm
-                  </span>
-                  {isAdmin && (
-                    <button className="btn btn-success" onClick={() => openModal()}
-                      style={{ borderRadius: 8 }}>
-                      <i className="fas fa-plus mr-1"></i> Thêm tác phẩm
-                    </button>
-                  )}
-                </div>
-              </div>
+      {/* Table */}
+      <div className="card border-0 shadow-sm">
+        <div className="card-body p-0">
+          {loading ? (
+            <div className="text-center py-5">
+              <div className="spinner-border text-primary"/><p className="mt-2 text-muted">Đang tải...</p>
             </div>
-
-            {/* Table */}
-            <div className="card-body p-0">
-              {loading ? (
-                <div className="text-center py-5">
-                  <div className="spinner-border" style={{ color: "#a78bfa" }}></div>
-                  <p className="mt-2 text-muted">Đang tải...</p>
-                </div>
-              ) : (
-                <div className="table-responsive">
-                  <table className="table table-hover mb-0">
-                    <thead style={{ background: "#f9fafb" }}>
-                      <tr>
-                        <th style={{ width: 64 }}>Ảnh</th>
-                        <th>Tên tác phẩm</th>
-                        <th>Nghệ sĩ</th>
-                        <th>Thể loại</th>
-                        <th>Chất liệu</th>
-                        <th>Giá</th>
-                        <th>SL</th>
-                        <th>Trạng thái</th>
-                        {isAdmin && <th style={{ width: 110 }}>Thao tác</th>}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {products.length === 0 ? (
-                        <tr>
-                          <td colSpan={9} className="text-center py-5 text-muted">
-                            <i className="fas fa-palette"
-                              style={{ fontSize: "2rem", marginBottom: 8, display: "block", color: "#e5e7eb" }}></i>
-                            Chưa có tác phẩm nào
-                          </td>
-                        </tr>
-                      ) : products.map((p) => (
-                        <tr key={p.id}>
-                          <td>
-                            {p.imageUrl ? (
-                              <img src={p.imageUrl} alt={p.name}
-                                style={{ width: 56, height: 56, objectFit: "cover", borderRadius: 10, boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}
-                                onError={e => { e.target.style.display = "none"; e.target.nextSibling.style.display = "flex"; }} />
-                            ) : null}
-                            <div style={{
-                              display: p.imageUrl ? "none" : "flex",
-                              width: 56, height: 56, background: "#f3f4f6",
-                              borderRadius: 10, alignItems: "center", justifyContent: "center"
-                            }}>
-                              <i className="fas fa-image text-muted"></i>
+          ) : products.length === 0 ? (
+            <div className="text-center py-5 text-muted">
+              <i className="bi bi-image fs-1 d-block mb-2"/>Chưa có tác phẩm nào
+            </div>
+          ) : (
+            <div className="table-responsive">
+              <table className="table table-hover align-middle mb-0">
+                <thead className="table-light">
+                  <tr>
+                    <th style={{width:70}}>Ảnh</th>
+                    <th>Tác phẩm</th>
+                    <th>Nghệ sĩ</th>
+                    <th>Thể loại</th>
+                    <th>Kỹ thuật</th>
+                    <th>Kích thước</th>
+                    <th>Giá</th>
+                    <th>Kho</th>
+                    <th>Trạng thái</th>
+                    <th style={{width:100}}>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {products.map(p => (
+                    <tr key={p.id}>
+                      <td>
+                        {p.imageUrl
+                          ? <img src={p.imageUrl} alt={p.name}
+                              style={{width:56,height:56,objectFit:"cover",borderRadius:6}}/>
+                          : <div style={{width:56,height:56,background:"#f0f0f0",borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                              <i className="bi bi-image text-muted"/>
                             </div>
-                          </td>
-                          <td>
-                            <strong>{p.name}</strong>
-                            {p.dimensions && (
-                              <div style={{ fontSize: "0.78rem", color: "#9ca3af" }}>{p.dimensions}</div>
-                            )}
-                          </td>
-                          <td>{p.artistName || <span className="text-muted">—</span>}</td>
-                          <td>{p.categoryName || "—"}</td>
-                          <td>{p.material || <span className="text-muted">—</span>}</td>
-                          <td style={{ fontWeight: 700, color: "#7c3aed" }}>{fmt(p.price)}</td>
-                          <td>{p.stock}</td>
-                          <td>
-                            <span className={`badge badge-${STATUS_COLOR[p.status] || "secondary"}`}>
-                              {STATUS_LABEL[p.status] || p.status}
-                            </span>
-                          </td>
-                          {isAdmin && (
-                            <td>
-                              <button className="btn btn-sm btn-outline-primary mr-1"
-                                onClick={() => openModal(p)} title="Sửa">
-                                <i className="fas fa-edit"></i>
-                              </button>
-                              <button className="btn btn-sm btn-outline-danger"
-                                onClick={() => handleDelete(p.id)} title="Xóa">
-                                <i className="fas fa-trash"></i>
-                              </button>
-                            </td>
-                          )}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="d-flex justify-content-end p-3">
-                  <ul className="pagination mb-0">
-                    <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
-                      <button className="page-link" onClick={() => setPage(p => p - 1)}>‹</button>
-                    </li>
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(i => (
-                      <li key={i} className={`page-item ${page === i ? "active" : ""}`}>
-                        <button className="page-link" onClick={() => setPage(i)}
-                          style={page === i ? { background: "#7c3aed", borderColor: "#7c3aed" } : {}}>
-                          {i}
+                        }
+                      </td>
+                      <td>
+                        <div className="fw-semibold">{p.name}</div>
+                        {p.year && <small className="text-muted">{p.year}</small>}
+                        {p.isOriginal && <span className="badge bg-warning text-dark ms-1" style={{fontSize:10}}>Gốc</span>}
+                      </td>
+                      <td>{p.artistName || <span className="text-muted">—</span>}</td>
+                      <td>{p.categoryName || <span className="text-muted">—</span>}</td>
+                      <td>{p.technique || <span className="text-muted">—</span>}</td>
+                      <td>{p.size || <span className="text-muted">—</span>}</td>
+                      <td className="fw-semibold text-danger">{fmt(p.price)}</td>
+                      <td>
+                        <span className={`badge bg-${p.stock > 0 ? "success" : "danger"}`}>
+                          {p.stock}
+                        </span>
+                      </td>
+                      <td>
+                        <span className={`badge bg-${STATUS_CLS[p.status]||"secondary"}`}>
+                          {STATUS_VI[p.status]||p.status}
+                        </span>
+                      </td>
+                      <td>
+                        <button className="btn btn-sm btn-outline-primary me-1" onClick={()=>openEdit(p)} title="Sửa">
+                          <i className="bi bi-pencil"/>
                         </button>
-                      </li>
-                    ))}
-                    <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
-                      <button className="page-link" onClick={() => setPage(p => p + 1)}>›</button>
-                    </li>
-                  </ul>
-                </div>
-              )}
+                        <button className="btn btn-sm btn-outline-danger" onClick={()=>handleDelete(p.id)} title="Xóa">
+                          <i className="bi bi-trash"/>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </div>
+          )}
         </div>
-      </section>
+      </div>
 
-      {/* ═══════ MODAL THÊM / SỬA ═══════ */}
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <nav className="mt-3">
+          <ul className="pagination justify-content-center">
+            <li className={`page-item ${page===1?"disabled":""}`}>
+              <button className="page-link" onClick={()=>setPage(p=>p-1)}>‹</button>
+            </li>
+            {Array.from({length:totalPages},(_,i)=>i+1).map(n=>(
+              <li key={n} className={`page-item ${n===page?"active":""}`}>
+                <button className="page-link" onClick={()=>setPage(n)}>{n}</button>
+              </li>
+            ))}
+            <li className={`page-item ${page===totalPages?"disabled":""}`}>
+              <button className="page-link" onClick={()=>setPage(p=>p+1)}>›</button>
+            </li>
+          </ul>
+        </nav>
+      )}
+
+      {/* Modal */}
       {showModal && (
-        <>
-          <div className="modal fade show" style={{ display: "block", zIndex: 1050 }} tabIndex="-1">
-            <div className="modal-dialog modal-lg">
-              <div className="modal-content"
-                style={{ borderRadius: 16, border: "none", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }}>
+        <div className="modal show d-block" style={{background:"rgba(0,0,0,0.5)"}}>
+          <div className="modal-dialog modal-xl modal-dialog-scrollable">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title fw-bold">
+                  🎨 {editing ? "Chỉnh sửa tác phẩm" : "Thêm tác phẩm mới"}
+                </h5>
+                <button className="btn-close" onClick={()=>setShowModal(false)}/>
+              </div>
+              <div className="modal-body">
+                {error && <div className="alert alert-danger py-2">{error}</div>}
+                <div className="row g-4">
 
-                <div className="modal-header"
-                  style={{ background: "linear-gradient(135deg,#1a1a2e,#533483)", color: "white", borderRadius: "16px 16px 0 0" }}>
-                  <h5 className="modal-title" style={{ fontWeight: 700 }}>
-                    <i className={`fas fa-${editingProduct ? "edit" : "plus-circle"} mr-2`}></i>
-                    {editingProduct ? "Cập nhật tác phẩm" : "Thêm tác phẩm mới"}
-                  </h5>
-                  <button type="button" onClick={closeModal}
-                    style={{ background: "none", border: "none", color: "white", fontSize: "1.5rem", cursor: "pointer" }}>×</button>
-                </div>
-
-                <form onSubmit={handleSubmit}>
-                  <div className="modal-body" style={{ padding: "24px 28px" }}>
-                    {error && (
-                      <div className="alert"
-                        style={{ background: "#fee2e2", color: "#991b1b", borderRadius: 10, border: "none" }}>
-                        <i className="fas fa-exclamation-circle mr-2"></i>{error}
-                      </div>
-                    )}
-
-                    <div className="row">
-                      {/* Cột trái: Upload ảnh */}
-                      <div className="col-md-4">
-                        <label style={labelStyle}>Ảnh tác phẩm</label>
-                        <div
-                          onClick={() => !uploading && fileInputRef.current?.click()}
-                          style={{
-                            border: `2px dashed ${uploading ? "#d1d5db" : "#a78bfa"}`,
-                            borderRadius: 12, minHeight: 200,
-                            display: "flex", flexDirection: "column",
-                            alignItems: "center", justifyContent: "center",
-                            cursor: uploading ? "not-allowed" : "pointer",
-                            background: "#faf5ff", overflow: "hidden", position: "relative",
-                          }}>
-                          {uploading ? (
-                            <div className="text-center">
-                              <div className="spinner-border" style={{ color: "#a78bfa" }}></div>
-                              <p style={{ marginTop: 8, color: "#a78bfa", fontSize: "0.85rem" }}>Đang upload...</p>
-                            </div>
-                          ) : imagePreview ? (
-                            <>
-                              <img src={imagePreview} alt="preview"
-                                style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", top: 0, left: 0 }} />
-                              <div style={{
-                                position: "absolute", bottom: 0, left: 0, right: 0,
-                                background: "rgba(0,0,0,0.5)", color: "white",
-                                padding: "6px 0", textAlign: "center", fontSize: "0.8rem"
-                              }}>
-                                <i className="fas fa-camera mr-1"></i> Đổi ảnh
-                              </div>
-                            </>
-                          ) : (
-                            <div className="text-center" style={{ color: "#a78bfa", padding: 20 }}>
-                              <i className="fas fa-cloud-upload-alt"
-                                style={{ fontSize: "2.5rem", marginBottom: 8, display: "block" }}></i>
-                              <span style={{ fontSize: "0.85rem", fontWeight: 600 }}>Click để tải ảnh lên</span>
-                              <span style={{ display: "block", fontSize: "0.75rem", color: "#9ca3af", marginTop: 4 }}>
-                                JPG, PNG, WEBP – tối đa 5MB
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        <input ref={fileInputRef} type="file" accept="image/*"
-                          style={{ display: "none" }} onChange={handleImageChange} />
-
-                        <div className="mt-2">
-                          <input className={inputCls} placeholder="Hoặc nhập URL ảnh..."
-                            value={formData.imageUrl}
-                            onChange={(e) => {
-                              setFormData(f => ({ ...f, imageUrl: e.target.value }));
-                              setImagePreview(e.target.value || null);
-                            }}
-                            style={{ borderRadius: 8, fontSize: "0.82rem" }} />
-                        </div>
-
-                        {formData.imageUrl && !uploading && (
-                          <div style={{
-                            marginTop: 6, padding: "4px 10px", background: "#d1fae5",
-                            color: "#065f46", borderRadius: 8, fontSize: "0.78rem", fontWeight: 600
-                          }}>
-                            <i className="fas fa-check-circle mr-1"></i> Ảnh đã sẵn sàng
+                  {/* Cột trái — ảnh */}
+                  <div className="col-md-4">
+                    <F label="Ảnh tác phẩm" required>
+                      <div className="border rounded-3 p-3 text-center" style={{background:"#fafafa"}}>
+                        {form.imageUrl ? (
+                          <img src={form.imageUrl} alt="preview"
+                            className="img-fluid rounded mb-2"
+                            style={{maxHeight:280,objectFit:"contain"}}/>
+                        ) : (
+                          <div className="py-5 text-muted">
+                            <i className="bi bi-image fs-1 d-block mb-2"/>
+                            Chưa có ảnh
                           </div>
                         )}
+                        <input type="file" ref={fileRef} accept="image/*"
+                          className="d-none" onChange={handleUpload}/>
+                        <button className="btn btn-outline-primary btn-sm w-100"
+                          onClick={()=>fileRef.current?.click()}
+                          disabled={uploading}>
+                          {uploading
+                            ? <><span className="spinner-border spinner-border-sm me-1"/>Đang upload...</>
+                            : <><i className="bi bi-upload me-1"/>Chọn ảnh</>}
+                        </button>
                       </div>
+                    </F>
 
-                      {/* Cột phải: Thông tin */}
-                      <div className="col-md-8">
-                        <div className="row">
-                          <div className="col-12 form-group mb-3">
-                            <label style={labelStyle}>Tên tác phẩm *</label>
-                            <input className={inputCls} required value={formData.name}
-                              onChange={set("name")} placeholder="VD: Hoàng hôn trên phố cổ"
-                              style={{ borderRadius: 8 }} />
-                          </div>
+                    <F label="Trạng thái">
+                      <select className="form-select" value={form.status}
+                        onChange={e=>setForm(f=>({...f,status:e.target.value}))}>
+                        {STATUSES.map(s=><option key={s} value={s}>{STATUS_VI[s]}</option>)}
+                      </select>
+                    </F>
 
-                          <div className="col-md-6 form-group mb-3">
-                            <label style={labelStyle}>Nghệ sĩ / Tác giả</label>
-                            <input className={inputCls} value={formData.artistName}
-                              onChange={set("artistName")} placeholder="VD: Nguyễn Văn A"
-                              style={{ borderRadius: 8 }} />
-                          </div>
+                    <F label="Tranh gốc">
+                      <div className="form-check form-switch">
+                        <input className="form-check-input" type="checkbox" id="isOriginal"
+                          checked={form.isOriginal}
+                          onChange={e=>setForm(f=>({...f,isOriginal:e.target.checked}))}/>
+                        <label className="form-check-label" htmlFor="isOriginal">
+                          {form.isOriginal ? "✅ Tranh gốc (bản độc bản)" : "🖨️ Bản in / Copy"}
+                        </label>
+                      </div>
+                    </F>
+                  </div>
 
-                          <div className="col-md-6 form-group mb-3">
-                            <label style={labelStyle}>Thể loại *</label>
-                            <select className={inputCls} required value={formData.categoryId}
-                              onChange={set("categoryId")} style={{ borderRadius: 8 }}>
-                              <option value="">-- Chọn thể loại --</option>
-                              {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                            </select>
-                          </div>
-
-                          <div className="col-md-6 form-group mb-3">
-                            <label style={labelStyle}>Chất liệu</label>
-                            <select className={inputCls} value={formData.material}
-                              onChange={set("material")} style={{ borderRadius: 8 }}>
-                              <option value="">-- Chọn chất liệu --</option>
-                              {MATERIALS.map(m => <option key={m} value={m}>{m}</option>)}
-                            </select>
-                          </div>
-
-                          <div className="col-md-6 form-group mb-3">
-                            <label style={labelStyle}>Kích thước</label>
-                            <input className={inputCls} value={formData.dimensions}
-                              onChange={set("dimensions")} placeholder="VD: 60×80cm"
-                              style={{ borderRadius: 8 }} />
-                          </div>
-
-                          <div className="col-md-4 form-group mb-3">
-                            <label style={labelStyle}>Năm sáng tác</label>
-                            <input className={inputCls} type="number" value={formData.year}
-                              onChange={set("year")} placeholder="2024"
-                              min="1900" max={new Date().getFullYear()}
-                              style={{ borderRadius: 8 }} />
-                          </div>
-
-                          <div className="col-md-4 form-group mb-3">
-                            <label style={labelStyle}>Giá (VNĐ) *</label>
-                            <input className={inputCls} type="number" required
-                              value={formData.price} onChange={set("price")}
-                              placeholder="0" min="0" style={{ borderRadius: 8 }} />
-                          </div>
-
-                          <div className="col-md-4 form-group mb-3">
-                            <label style={labelStyle}>Số lượng</label>
-                            <input className={inputCls} type="number" value={formData.stock}
-                              onChange={set("stock")} min="0" style={{ borderRadius: 8 }} />
-                          </div>
-
-                          <div className="col-md-6 form-group mb-3">
-                            <label style={labelStyle}>Trạng thái</label>
-                            <select className={inputCls} value={formData.status}
-                              onChange={set("status")} style={{ borderRadius: 8 }}>
-                              {STATUSES.map(s => (
-                                <option key={s} value={s}>{STATUS_LABEL[s]}</option>
-                              ))}
-                            </select>
-                          </div>
-
-                          <div className="col-12 form-group mb-0">
-                            <label style={labelStyle}>Mô tả tác phẩm</label>
-                            <textarea className={inputCls} rows={3} value={formData.description}
-                              onChange={set("description")}
-                              placeholder="Mô tả về tác phẩm, cảm hứng sáng tác, ý nghĩa..."
-                              style={{ borderRadius: 8, resize: "vertical" }} />
-                          </div>
-                        </div>
+                  {/* Cột phải — thông tin */}
+                  <div className="col-md-8">
+                    <div className="row g-3">
+                      <div className="col-12">
+                        <F label="Tên tác phẩm" required>
+                          <input className="form-control" placeholder="VD: Hoàng hôn trên sông Hương"
+                            value={form.name}
+                            onChange={e=>setForm(f=>({...f,name:e.target.value}))}/>
+                        </F>
+                      </div>
+                      <div className="col-md-6">
+                        <F label="Tên nghệ sĩ / Tác giả" required>
+                          <input className="form-control" placeholder="VD: Nguyễn Văn An"
+                            value={form.artistName}
+                            onChange={e=>setForm(f=>({...f,artistName:e.target.value}))}/>
+                        </F>
+                      </div>
+                      <div className="col-md-6">
+                        <F label="Thể loại tranh" required>
+                          <select className="form-select" value={form.categoryId}
+                            onChange={e=>setForm(f=>({...f,categoryId:e.target.value}))}>
+                            <option value="">-- Chọn thể loại --</option>
+                            {categories.map(c=>(
+                              <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
+                            ))}
+                          </select>
+                        </F>
+                      </div>
+                      <div className="col-md-6">
+                        <F label="Kỹ thuật vẽ">
+                          <select className="form-select" value={form.technique}
+                            onChange={e=>setForm(f=>({...f,technique:e.target.value}))}>
+                            <option value="">-- Chọn kỹ thuật --</option>
+                            {TECHNIQUES.map(t=><option key={t} value={t}>{t}</option>)}
+                          </select>
+                        </F>
+                      </div>
+                      <div className="col-md-6">
+                        <F label="Chủ đề / Phong cách">
+                          <select className="form-select" value={form.theme}
+                            onChange={e=>setForm(f=>({...f,theme:e.target.value}))}>
+                            <option value="">-- Chọn chủ đề --</option>
+                            {THEMES.map(t=><option key={t} value={t}>{t}</option>)}
+                          </select>
+                        </F>
+                      </div>
+                      <div className="col-md-4">
+                        <F label="Chất liệu">
+                          <input className="form-control" placeholder="VD: Canvas, Giấy Fabriano"
+                            value={form.material}
+                            onChange={e=>setForm(f=>({...f,material:e.target.value}))}/>
+                        </F>
+                      </div>
+                      <div className="col-md-4">
+                        <F label="Kích thước">
+                          <input className="form-control" placeholder="VD: 60x80 cm"
+                            value={form.size}
+                            onChange={e=>setForm(f=>({...f,size:e.target.value}))}/>
+                        </F>
+                      </div>
+                      <div className="col-md-4">
+                        <F label="Năm sáng tác">
+                          <input className="form-control" type="number"
+                            placeholder={new Date().getFullYear()}
+                            min={1800} max={new Date().getFullYear()}
+                            value={form.year}
+                            onChange={e=>setForm(f=>({...f,year:e.target.value}))}/>
+                        </F>
+                      </div>
+                      <div className="col-md-6">
+                        <F label="Tình trạng tác phẩm">
+                          <select className="form-select" value={form.condition}
+                            onChange={e=>setForm(f=>({...f,condition:e.target.value}))}>
+                            {CONDITIONS.map(c=><option key={c} value={c}>{c}</option>)}
+                          </select>
+                        </F>
+                      </div>
+                      <div className="col-md-3">
+                        <F label="Giá bán (₫)" required>
+                          <input className="form-control" type="number" min={0}
+                            placeholder="VD: 5000000"
+                            value={form.price}
+                            onChange={e=>setForm(f=>({...f,price:e.target.value}))}/>
+                          {form.price > 0 &&
+                            <small className="text-muted">{fmt(form.price)}</small>}
+                        </F>
+                      </div>
+                      <div className="col-md-3">
+                        <F label="Số lượng">
+                          <input className="form-control" type="number" min={0}
+                            value={form.stock}
+                            onChange={e=>setForm(f=>({...f,stock:e.target.value}))}/>
+                        </F>
+                      </div>
+                      <div className="col-12">
+                        <F label="Mô tả tác phẩm">
+                          <textarea className="form-control" rows={4}
+                            placeholder="Câu chuyện, ý nghĩa, nguồn cảm hứng của tác phẩm..."
+                            value={form.description}
+                            onChange={e=>setForm(f=>({...f,description:e.target.value}))}/>
+                        </F>
                       </div>
                     </div>
                   </div>
-
-                  <div className="modal-footer" style={{ borderTop: "1px solid #f3f4f6", padding: "16px 28px" }}>
-                    <button type="button" className="btn btn-outline-secondary mr-2"
-                      onClick={closeModal} style={{ borderRadius: 8 }}>
-                      Hủy
-                    </button>
-                    <button type="submit" disabled={submitting || uploading}
-                      style={{
-                        background: "linear-gradient(135deg,#a78bfa,#7c3aed)",
-                        color: "white", border: "none", borderRadius: 8,
-                        padding: "8px 28px", fontWeight: 700,
-                        cursor: (submitting || uploading) ? "not-allowed" : "pointer",
-                        opacity: (submitting || uploading) ? 0.7 : 1,
-                      }}>
-                      {submitting
-                        ? <><span className="spinner-border spinner-border-sm mr-2"></span>Đang lưu...</>
-                        : <><i className={`fas fa-${editingProduct ? "save" : "plus"} mr-2`}></i>
-                            {editingProduct ? "Cập nhật" : "Thêm tác phẩm"}</>
-                      }
-                    </button>
-                  </div>
-                </form>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={()=>setShowModal(false)}>Hủy</button>
+                <button className="btn btn-primary px-4" onClick={handleSave} disabled={saving}>
+                  {saving
+                    ? <><span className="spinner-border spinner-border-sm me-1"/>Đang lưu...</>
+                    : <><i className="bi bi-check-lg me-1"/>{editing?"Cập nhật":"Thêm tác phẩm"}</>}
+                </button>
               </div>
             </div>
           </div>
-          <div className="modal-backdrop fade show" style={{ zIndex: 1040 }}></div>
-        </>
+        </div>
       )}
     </div>
   );
-};
-
-export default Products;
+}

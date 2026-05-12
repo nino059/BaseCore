@@ -30,7 +30,7 @@ namespace BaseCore.APIService.Controllers
         // Upload ảnh lên Cloudinary qua backend (có auth)
         // ─────────────────────────────────────────────
         [HttpPost("upload-image")]
-        [Authorize]
+
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -129,10 +129,15 @@ namespace BaseCore.APIService.Controllers
                 CategoryId  = dto.CategoryId,
                 Description = dto.Description ?? "",
                 ImageUrl    = dto.ImageUrl    ?? "",
-                Material    = dto.Material    ?? "",
-                Dimensions  = dto.Dimensions  ?? "",
+                SellerId    = dto.SellerId,
+                Theme       = dto.Theme,
+                Technique   = dto.Technique,
+                Material    = dto.Material,
+                Size        = dto.Size,
                 Year        = dto.Year,
-                Status      = dto.Status      ?? "Available"
+                IsOriginal  = dto.IsOriginal,
+                Condition   = dto.Condition,
+                Status      = dto.Status ?? "Available"
             };
 
             await _productRepository.AddAsync(product);
@@ -157,11 +162,16 @@ namespace BaseCore.APIService.Controllers
             if (dto.CategoryId  != null) product.CategoryId  = dto.CategoryId.Value;
             if (dto.Description != null) product.Description = dto.Description;
             if (dto.ImageUrl    != null) product.ImageUrl    = dto.ImageUrl;
-            if (dto.ArtistName  != null) product.ArtistName  = dto.ArtistName;
+            if (dto.SellerId    != null) product.SellerId    = dto.SellerId;
+            if (dto.Theme       != null) product.Theme       = dto.Theme;
+            if (dto.Technique   != null) product.Technique   = dto.Technique;
             if (dto.Material    != null) product.Material    = dto.Material;
-            if (dto.Dimensions  != null) product.Dimensions  = dto.Dimensions;
+            if (dto.Size        != null) product.Size        = dto.Size;
             if (dto.Year        != null) product.Year        = dto.Year;
+            if (dto.IsOriginal  != null) product.IsOriginal  = dto.IsOriginal.Value;
+            if (dto.Condition   != null) product.Condition   = dto.Condition;
             if (dto.Status      != null) product.Status      = dto.Status;
+
 
             await _productRepository.UpdateAsync(product);
             return Ok(ToDto(product));
@@ -197,18 +207,10 @@ namespace BaseCore.APIService.Controllers
         // ─────────────────────────────────────────────
         private static object ToDto(Product p) => new
         {
-            p.Id,
-            p.Name,
-            p.Price,
-            p.Stock,
-            p.Description,
-            p.ImageUrl,
-            p.CategoryId,
-            p.ArtistName,
-            p.Material,
-            p.Dimensions,
-            p.Year,
-            p.Status,
+            p.Id, p.Name, p.ArtistName, p.Price, p.Stock,
+            p.Description, p.ImageUrl, p.CategoryId, p.SellerId,
+            p.Theme, p.Technique, p.Material, p.Size,
+            p.Year, p.IsOriginal, p.Condition, p.Status,
             categoryName = p.Category?.Name ?? ""
         };
     }
@@ -218,31 +220,41 @@ namespace BaseCore.APIService.Controllers
     // DTOs
     public class ProductCreateDto
     {
-        public string Name         { get; set; } = "";
+        public string  Name        { get; set; } = "";
         public string? ArtistName  { get; set; }
         public decimal Price       { get; set; }
-        public int Stock           { get; set; }
-        public int CategoryId      { get; set; }
+        public int     Stock       { get; set; } = 1;
+        public int     CategoryId  { get; set; }
         public string? Description { get; set; }
         public string? ImageUrl    { get; set; }
+        public string? SellerId    { get; set; }
+        public string? Theme       { get; set; }
+        public string? Technique   { get; set; }
         public string? Material    { get; set; }
-        public string? Dimensions  { get; set; }
-        public int? Year           { get; set; }
+        public string? Size        { get; set; }
+        public int?    Year        { get; set; }
+        public bool    IsOriginal  { get; set; } = true;
+        public string? Condition   { get; set; }
         public string? Status      { get; set; }
     }
 
     public class ProductUpdateDto
     {
-        public string? Name        { get; set; }
-        public string? ArtistName  { get; set; }
-        public decimal? Price      { get; set; }
-        public int? Stock          { get; set; }
-        public int? CategoryId     { get; set; }
-        public string? Description { get; set; }
-        public string? ImageUrl    { get; set; }
-        public string? Material    { get; set; }
-        public string? Dimensions  { get; set; }
-        public int? Year           { get; set; }
-        public string? Status      { get; set; }
+        public string?  Name        { get; set; }
+        public string?  ArtistName  { get; set; }
+        public decimal? Price       { get; set; }
+        public int?     Stock       { get; set; }
+        public int?     CategoryId  { get; set; }
+        public string?  Description { get; set; }
+        public string?  ImageUrl    { get; set; }
+        public string?  SellerId    { get; set; }
+        public string?  Theme       { get; set; }
+        public string?  Technique   { get; set; }
+        public string?  Material    { get; set; }
+        public string?  Size        { get; set; }
+        public int?     Year        { get; set; }
+        public bool?    IsOriginal  { get; set; }
+        public string?  Condition   { get; set; }
+        public string?  Status      { get; set; }
     }
 }

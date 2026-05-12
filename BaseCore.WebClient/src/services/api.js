@@ -57,7 +57,7 @@ export const productApi = {
         const form = new FormData();
         form.append('file', file);
         return api.post('/products/upload-image', form, {
-            headers: { 'Content-Type': 'multipart/form-data' },
+            headers: { 'Content-Type': undefined }, // ← đây là fix chính
         });
     },
 };
