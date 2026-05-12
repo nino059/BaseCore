@@ -21,7 +21,15 @@ namespace BaseCore.APIService.Controllers
         public async Task<IActionResult> GetAll()
         {
             var categories = await _categoryRepository.GetAllAsync();
-            return Ok(categories);
+            // ✅ Map DTO — bỏ Products tránh circular reference
+            var result = categories.Select(c => new {
+                c.Id,
+                c.Name,
+                c.Description,
+                c.Slug,
+                c.Icon
+            }).ToList();
+            return Ok(result);
         }
 
         /// <summary>Get category by ID</summary>
@@ -32,7 +40,14 @@ namespace BaseCore.APIService.Controllers
             if (category == null)
                 return NotFound(new { message = "Category not found" });
 
-            return Ok(category);
+            // ✅ Map DTO
+            return Ok(new {
+                category.Id,
+                category.Name,
+                category.Description,
+                category.Slug,
+                category.Icon
+            });
         }
 
         /// <summary>Create new category</summary>
@@ -53,7 +68,15 @@ namespace BaseCore.APIService.Controllers
             };
 
             await _categoryRepository.AddAsync(category);
-            return CreatedAtAction(nameof(GetById), new { id = category.Id }, category);
+
+            // ✅ Map DTO
+            return CreatedAtAction(nameof(GetById), new { id = category.Id }, new {
+                category.Id,
+                category.Name,
+                category.Description,
+                category.Slug,
+                category.Icon
+            });
         }
 
         /// <summary>Update category</summary>
@@ -71,7 +94,15 @@ namespace BaseCore.APIService.Controllers
             category.Icon = dto.Icon ?? category.Icon;
 
             await _categoryRepository.UpdateAsync(category);
-            return Ok(category);
+
+            // ✅ Map DTO
+            return Ok(new {
+                category.Id,
+                category.Name,
+                category.Description,
+                category.Slug,
+                category.Icon
+            });
         }
 
         /// <summary>Delete category</summary>
@@ -92,7 +123,7 @@ namespace BaseCore.APIService.Controllers
     {
         public string Name { get; set; } = "";
         public string? Description { get; set; }
-        public string? Slug { get; set; }   // ← THÊM
-        public string? Icon { get; set; }   // ← THÊM
+        public string? Slug { get; set; }
+        public string? Icon { get; set; }
     }
 }

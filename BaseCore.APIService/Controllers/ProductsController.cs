@@ -13,16 +13,16 @@ namespace BaseCore.APIService.Controllers
     {
         private readonly IProductRepositoryEF _productRepository;
         private readonly ICategoryRepositoryEF _categoryRepository;
-        private readonly Cloudinary _cloudinary;  // ← THÊM
+        private readonly Cloudinary _cloudinary;
 
         public ProductsController(
             IProductRepositoryEF productRepository,
             ICategoryRepositoryEF categoryRepository,
-            Cloudinary cloudinary)                // ← THÊM
+            Cloudinary cloudinary)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
-            _cloudinary = cloudinary;             // ← THÊM
+            _cloudinary = cloudinary;
         }
 
         /// <summary>Upload ảnh lên Cloudinary, trả về URL</summary>
@@ -79,6 +79,7 @@ namespace BaseCore.APIService.Controllers
         {
             var (products, totalCount) = await _productRepository.SearchAsync(keyword, categoryId, page, pageSize);
 
+            // ✅ Map sang DTO để tránh circular reference (Product → Category → Products → ...)
             var items = products.Select(p => new {
                 p.Id,
                 p.Name,
@@ -88,11 +89,11 @@ namespace BaseCore.APIService.Controllers
                 p.ImageUrl,
                 p.CategoryId,
                 categoryName = p.Category?.Name ?? ""
-            });
+            }).ToList();
 
             return Ok(new
             {
-                items = products,
+                items,          // ✅ trả items DTO, không phải products entity
                 totalCount,
                 page,
                 pageSize,
@@ -108,7 +109,17 @@ namespace BaseCore.APIService.Controllers
             if (product == null)
                 return NotFound(new { message = "Product not found" });
 
-            return Ok(product);
+            // ✅ Map sang DTO tránh circular reference
+            return Ok(new {
+                product.Id,
+                product.Name,
+                product.Price,
+                product.Stock,
+                product.Description,
+                product.ImageUrl,
+                product.CategoryId,
+                categoryName = product.Category?.Name ?? ""
+            });
         }
 
         /// <summary>Create new product (requires authentication)</summary>
@@ -131,7 +142,17 @@ namespace BaseCore.APIService.Controllers
             };
 
             await _productRepository.AddAsync(product);
-            return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
+
+            // ✅ Trả DTO tránh circular reference
+            return CreatedAtAction(nameof(GetById), new { id = product.Id }, new {
+                product.Id,
+                product.Name,
+                product.Price,
+                product.Stock,
+                product.Description,
+                product.ImageUrl,
+                product.CategoryId
+            });
         }
 
         /// <summary>Update product (requires authentication)</summary>
@@ -151,7 +172,17 @@ namespace BaseCore.APIService.Controllers
             product.ImageUrl = dto.ImageUrl ?? product.ImageUrl;
 
             await _productRepository.UpdateAsync(product);
-            return Ok(product);
+
+            // ✅ Trả DTO tránh circular reference
+            return Ok(new {
+                product.Id,
+                product.Name,
+                product.Price,
+                product.Stock,
+                product.Description,
+                product.ImageUrl,
+                product.CategoryId
+            });
         }
 
         /// <summary>Delete product (requires authentication)</summary>
@@ -167,12 +198,22 @@ namespace BaseCore.APIService.Controllers
             return Ok(new { message = "Product deleted successfully" });
         }
 
-        /// <summary>Get products by category</summary>
+        /// <summary>Get products by category — trả DTO tránh circular reference</summary>
         [HttpGet("category/{categoryId}")]
         public async Task<IActionResult> GetByCategory(int categoryId)
         {
             var products = await _productRepository.GetByCategoryAsync(categoryId);
-            return Ok(products);
+            var items = products.Select(p => new {
+                p.Id,
+                p.Name,
+                p.Price,
+                p.Stock,
+                p.Description,
+                p.ImageUrl,
+                p.CategoryId,
+                categoryName = p.Category?.Name ?? ""
+            }).ToList();
+            return Ok(items);
         }
     }
 

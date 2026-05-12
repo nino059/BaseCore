@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json.Serialization;
 namespace BaseCore.Entities
 {
     public class Category
@@ -20,6 +20,8 @@ namespace BaseCore.Entities
 
         [MaxLength(10)]
         public string Icon { get; set; } = "";
+
+        [JsonIgnore]
 
         public ICollection<Product> Products { get; set; } = new List<Product>();
     }
