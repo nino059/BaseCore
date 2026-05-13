@@ -11,7 +11,7 @@
 
     <PackageReference Include="Azure.Core" Version="1.55.0" />
 
-    <PackageReference Include="Azure.Identity" Version="1.10.3" />
+    <PackageReference Include="Azure.Identity" Version="1.21.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="11.0.0-preview.3.26207.106" />
 
@@ -20,6 +20,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0-preview.3.26207.106" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="11.0.0-preview.3.26207.106" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.84.0" />

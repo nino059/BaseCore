@@ -147,7 +147,7 @@ const Dashboard = () => {
                                 </div>
                                 <div className="card-body">
                                     <p className="text-muted">
-                                        Hệ thống quản lý <strong>Revo Coffee</strong> phiên bản dành cho {isAdmin ? "Quản trị viên" : "Khách hàng"}.
+                                        Hệ thống quản lý <strong>Arthentic</strong> phiên bản dành cho {isAdmin ? "Quản trị viên" : "Khách hàng"}.
                                     </p>
                                     <div className="alert alert-light border">
                                         <h5><i className="icon fas fa-info"></i> Ghi chú hệ thống:</h5>

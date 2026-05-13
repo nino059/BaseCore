@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "L3SkqnM8XCM=",
+  "dgSpecHash": "Ay0MGP307eg=",
   "success": true,
   "projectFilePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Libs\\BaseCore.Libs.csproj",
   "expectedPackageFiles": [
@@ -8,7 +8,7 @@
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\awssdk.core\\3.7.100.14\\awssdk.core.3.7.100.14.nupkg.sha512",
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\awssdk.securitytoken\\3.7.100.14\\awssdk.securitytoken.3.7.100.14.nupkg.sha512",
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\azure.core\\1.55.0\\azure.core.1.55.0.nupkg.sha512",
-    "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
+    "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\azure.identity\\1.21.0\\azure.identity.1.21.0.nupkg.sha512",
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\dnsclient\\1.6.1\\dnsclient.1.6.1.nupkg.sha512",
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.0\\microsoft.aspnetcore.authentication.jwtbearer.8.0.0.nupkg.sha512",
@@ -90,30 +90,6 @@
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\zstdsharp.port\\0.7.3\\zstdsharp.port.0.7.3.nupkg.sha512"
   ],
   "logs": [
-    {
-      "code": "NU1902",
-      "level": "Warning",
-      "message": "Package 'Azure.Identity' 1.10.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-m5vv-6r4h-3vj9",
-      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Libs\\BaseCore.Libs.csproj",
-      "warningLevel": 1,
-      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Libs\\BaseCore.Libs.csproj",
-      "libraryId": "Azure.Identity",
-      "targetGraphs": [
-        "net10.0"
-      ]
-    },
-    {
-      "code": "NU1902",
-      "level": "Warning",
-      "message": "Package 'Azure.Identity' 1.10.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-wvxc-855f-jvrv",
-      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Libs\\BaseCore.Libs.csproj",
-      "warningLevel": 1,
-      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Libs\\BaseCore.Libs.csproj",
-      "libraryId": "Azure.Identity",
-      "targetGraphs": [
-        "net10.0"
-      ]
-    },
     {
       "code": "NU1903",
       "level": "Warning",

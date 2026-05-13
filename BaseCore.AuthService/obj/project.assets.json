@@ -70,21 +70,18 @@
           "buildTransitive/net10.0/Azure.Core.targets": {}
         }
       },
-      "Azure.Identity/1.10.3": {
+      "Azure.Identity/1.21.0": {
         "type": "package",
         "dependencies": {
-          "Azure.Core": "1.35.0",
-          "Microsoft.Identity.Client": "4.56.0",
-          "Microsoft.Identity.Client.Extensions.Msal": "4.56.0",
-          "System.Security.Cryptography.ProtectedData": "4.7.0"
+          "Azure.Core": "1.53.0"
         },
         "compile": {
-          "lib/netstandard2.0/Azure.Identity.dll": {
+          "lib/net10.0/Azure.Identity.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/netstandard2.0/Azure.Identity.dll": {
+          "lib/net10.0/Azure.Identity.dll": {
             "related": ".xml"
           }
         }
@@ -563,6 +560,22 @@
         "buildMultiTargeting": {
           "buildMultiTargeting/Microsoft.Extensions.ApiDescription.Server.props": {},
           "buildMultiTargeting/Microsoft.Extensions.ApiDescription.Server.targets": {}
+        }
+      },
+      "Microsoft.Extensions.Caching.Memory/8.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/_._": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/_._": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "buildTransitive/net6.0/_._": {}
         }
       },
       "Microsoft.Extensions.DependencyInjection/11.0.0-preview.3.26207.106": {
@@ -1521,7 +1534,7 @@
         "dependencies": {
           "AutoMapper": "16.1.1",
           "Azure.Core": "1.55.0",
-          "Azure.Identity": "1.10.3",
+          "Azure.Identity": "1.21.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.0",
           "Microsoft.Bcl.AsyncInterfaces": "11.0.0-preview.3.26207.106",
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.8",
@@ -1551,7 +1564,7 @@
         "dependencies": {
           "AutoMapper": "16.1.1",
           "Azure.Core": "1.55.0",
-          "Azure.Identity": "1.10.3",
+          "Azure.Identity": "1.21.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.0",
           "Microsoft.Bcl.AsyncInterfaces": "11.0.0-preview.3.26207.106",
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.8",
@@ -1579,7 +1592,7 @@
         "dependencies": {
           "AutoMapper": "16.1.1",
           "Azure.Core": "1.55.0",
-          "Azure.Identity": "1.10.3",
+          "Azure.Identity": "1.21.0",
           "BaseCore.Common": "1.0.0",
           "BaseCore.DTO": "1.0.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.0",
@@ -1608,7 +1621,7 @@
         "dependencies": {
           "AutoMapper": "16.1.1",
           "Azure.Core": "1.55.0",
-          "Azure.Identity": "1.10.3",
+          "Azure.Identity": "1.21.0",
           "BaseCore.Common": "1.0.0",
           "BaseCore.Entities": "1.0.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.0",
@@ -1638,7 +1651,7 @@
         "dependencies": {
           "AutoMapper": "16.1.1",
           "Azure.Core": "1.55.0",
-          "Azure.Identity": "1.10.3",
+          "Azure.Identity": "1.21.0",
           "BaseCore.Common": "1.0.0",
           "BaseCore.DTO": "1.0.0",
           "BaseCore.Entities": "1.0.0",
@@ -1670,7 +1683,7 @@
         "dependencies": {
           "AutoMapper": "16.1.1",
           "Azure.Core": "1.55.0",
-          "Azure.Identity": "1.10.3",
+          "Azure.Identity": "1.21.0",
           "BaseCore.Common": "1.0.0",
           "BaseCore.DTO": "1.0.0",
           "BaseCore.Entities": "1.0.0",
@@ -1806,18 +1819,22 @@
         "lib/netstandard2.0/Azure.Core.xml"
       ]
     },
-    "Azure.Identity/1.10.3": {
-      "sha512": "l1Xm2MWOF2Mzcwuarlw8kWQXLZk3UeB55aQXVyjj23aBfDwOZ3gu5GP2kJ6KlmZeZv2TCzw7x4L3V36iNr3gww==",
+    "Azure.Identity/1.21.0": {
+      "sha512": "GeFv8sGwRKvDKwI2WFy8r0mhmlxEVZg24Sit2NogTjiSO8RVjllWM65OT6e1sKjOvG8V74y7hAbaELUUPjZQSw==",
       "type": "package",
-      "path": "azure.identity/1.10.3",
+      "path": "azure.identity/1.21.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "CHANGELOG.md",
         "README.md",
-        "azure.identity.1.10.3.nupkg.sha512",
+        "azure.identity.1.21.0.nupkg.sha512",
         "azure.identity.nuspec",
         "azureicon.png",
+        "lib/net10.0/Azure.Identity.dll",
+        "lib/net10.0/Azure.Identity.xml",
+        "lib/net8.0/Azure.Identity.dll",
+        "lib/net8.0/Azure.Identity.xml",
         "lib/netstandard2.0/Azure.Identity.dll",
         "lib/netstandard2.0/Azure.Identity.xml"
       ]
@@ -2759,6 +2776,36 @@
         "tools/netcoreapp2.1/GetDocument.Insider.dll",
         "tools/netcoreapp2.1/GetDocument.Insider.runtimeconfig.json",
         "tools/netcoreapp2.1/System.Diagnostics.DiagnosticSource.dll"
+      ]
+    },
+    "Microsoft.Extensions.Caching.Memory/8.0.0": {
+      "sha512": "7pqivmrZDzo1ADPkRwjy+8jtRKWRCPag9qPI+p7sgu7Q4QreWhcvbiWXsbhP+yY8XSiDvZpu2/LWdBv7PnmOpQ==",
+      "type": "package",
+      "path": "microsoft.extensions.caching.memory/8.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "LICENSE.TXT",
+        "PACKAGE.md",
+        "THIRD-PARTY-NOTICES.TXT",
+        "buildTransitive/net461/Microsoft.Extensions.Caching.Memory.targets",
+        "buildTransitive/net462/_._",
+        "buildTransitive/net6.0/_._",
+        "buildTransitive/netcoreapp2.0/Microsoft.Extensions.Caching.Memory.targets",
+        "lib/net462/Microsoft.Extensions.Caching.Memory.dll",
+        "lib/net462/Microsoft.Extensions.Caching.Memory.xml",
+        "lib/net6.0/Microsoft.Extensions.Caching.Memory.dll",
+        "lib/net6.0/Microsoft.Extensions.Caching.Memory.xml",
+        "lib/net7.0/Microsoft.Extensions.Caching.Memory.dll",
+        "lib/net7.0/Microsoft.Extensions.Caching.Memory.xml",
+        "lib/net8.0/Microsoft.Extensions.Caching.Memory.dll",
+        "lib/net8.0/Microsoft.Extensions.Caching.Memory.xml",
+        "lib/netstandard2.0/Microsoft.Extensions.Caching.Memory.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.Caching.Memory.xml",
+        "microsoft.extensions.caching.memory.8.0.0.nupkg.sha512",
+        "microsoft.extensions.caching.memory.nuspec",
+        "useSharedDesignerContext.txt"
       ]
     },
     "Microsoft.Extensions.DependencyInjection/11.0.0-preview.3.26207.106": {
@@ -4252,7 +4299,7 @@
     "net10.0": [
       "AutoMapper >= 16.1.1",
       "Azure.Core >= 1.55.0",
-      "Azure.Identity >= 1.10.3",
+      "Azure.Identity >= 1.21.0",
       "BaseCore.Common >= 1.0.0",
       "BaseCore.Entities >= 1.0.0",
       "BaseCore.Repository >= 1.0.0",
@@ -4261,6 +4308,7 @@
       "Microsoft.Bcl.AsyncInterfaces >= 11.0.0-preview.3.26207.106",
       "Microsoft.EntityFrameworkCore.SqlServer >= 8.0.8",
       "Microsoft.EntityFrameworkCore.Tools >= 8.0.8",
+      "Microsoft.Extensions.Caching.Memory >= 8.0.0",
       "Microsoft.Extensions.DependencyInjection >= 11.0.0-preview.3.26207.106",
       "Microsoft.Extensions.Logging >= 11.0.0-preview.3.26207.106",
       "Microsoft.Identity.Client >= 4.84.0",
@@ -4303,6 +4351,7 @@
       },
       "frameworks": {
         "net10.0": {
+          "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {
             "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj": {
@@ -4334,6 +4383,7 @@
     },
     "frameworks": {
       "net10.0": {
+        "framework": "net10.0",
         "targetAlias": "net10.0",
         "dependencies": {
           "AutoMapper": {
@@ -4346,7 +4396,7 @@
           },
           "Azure.Identity": {
             "target": "Package",
-            "version": "[1.10.3, )"
+            "version": "[1.21.0, )"
           },
           "Microsoft.AspNetCore.Authentication.JwtBearer": {
             "target": "Package",
@@ -4365,6 +4415,10 @@
             "suppressParent": "All",
             "target": "Package",
             "version": "[8.0.8, )"
+          },
+          "Microsoft.Extensions.Caching.Memory": {
+            "target": "Package",
+            "version": "[8.0.0, )"
           },
           "Microsoft.Extensions.DependencyInjection": {
             "target": "Package",
@@ -4846,21 +4900,21 @@
   },
   "logs": [
     {
-      "code": "NU1902",
+      "code": "NU1510",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Azure.Identity' 1.10.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-m5vv-6r4h-3vj9",
-      "libraryId": "Azure.Identity",
+      "message": "PackageReference Microsoft.Extensions.Caching.Memory will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "libraryId": "Microsoft.Extensions.Caching.Memory",
       "targetGraphs": [
         "net10.0"
       ]
     },
     {
-      "code": "NU1902",
+      "code": "NU1903",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Azure.Identity' 1.10.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-wvxc-855f-jvrv",
-      "libraryId": "Azure.Identity",
+      "message": "Package 'Microsoft.Extensions.Caching.Memory' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-qj66-m88j-hmgj",
+      "libraryId": "Microsoft.Extensions.Caching.Memory",
       "targetGraphs": [
         "net10.0"
       ]

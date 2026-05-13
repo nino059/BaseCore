@@ -10,7 +10,7 @@
         "dependencies": {
           "AutoMapper": "16.1.1",
           "Azure.Core": "1.55.0",
-          "Azure.Identity": "1.10.3",
+          "Azure.Identity": "1.21.0",
           "BaseCore.Common": "1.0.0",
           "BaseCore.DTO": "1.0.0",
           "BaseCore.Entities": "1.0.0",
@@ -81,17 +81,14 @@
           }
         }
       },
-      "Azure.Identity/1.10.3": {
+      "Azure.Identity/1.21.0": {
         "dependencies": {
-          "Azure.Core": "1.55.0",
-          "Microsoft.Identity.Client": "4.84.0",
-          "Microsoft.Identity.Client.Extensions.Msal": "4.83.1",
-          "System.Security.Cryptography.ProtectedData": "6.0.0"
+          "Azure.Core": "1.55.0"
         },
         "runtime": {
-          "lib/netstandard2.0/Azure.Identity.dll": {
-            "assemblyVersion": "1.10.3.0",
-            "fileVersion": "1.1000.323.51804"
+          "lib/net10.0/Azure.Identity.dll": {
+            "assemblyVersion": "1.21.0.0",
+            "fileVersion": "1.2100.26.21009"
           }
         }
       },
@@ -343,7 +340,7 @@
       },
       "Microsoft.Data.SqlClient/5.1.5": {
         "dependencies": {
-          "Azure.Identity": "1.10.3",
+          "Azure.Identity": "1.21.0",
           "Microsoft.Data.SqlClient.SNI.runtime": "5.1.1",
           "Microsoft.Identity.Client": "4.84.0",
           "Microsoft.IdentityModel.JsonWebTokens": "8.14.0",
@@ -1070,7 +1067,7 @@
         "dependencies": {
           "AutoMapper": "16.1.1",
           "Azure.Core": "1.55.0",
-          "Azure.Identity": "1.10.3",
+          "Azure.Identity": "1.21.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.0",
           "Microsoft.Bcl.AsyncInterfaces": "11.0.0-preview.3.26207.106",
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.8",
@@ -1098,7 +1095,7 @@
         "dependencies": {
           "AutoMapper": "16.1.1",
           "Azure.Core": "1.55.0",
-          "Azure.Identity": "1.10.3",
+          "Azure.Identity": "1.21.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.0",
           "Microsoft.Bcl.AsyncInterfaces": "11.0.0-preview.3.26207.106",
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.8",
@@ -1124,7 +1121,7 @@
         "dependencies": {
           "AutoMapper": "16.1.1",
           "Azure.Core": "1.55.0",
-          "Azure.Identity": "1.10.3",
+          "Azure.Identity": "1.21.0",
           "BaseCore.Common": "1.0.0",
           "BaseCore.DTO": "1.0.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.0",
@@ -1151,7 +1148,7 @@
         "dependencies": {
           "AutoMapper": "16.1.1",
           "Azure.Core": "1.55.0",
-          "Azure.Identity": "1.10.3",
+          "Azure.Identity": "1.21.0",
           "BaseCore.Common": "1.0.0",
           "BaseCore.Entities": "1.0.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.0",
@@ -1211,12 +1208,12 @@
       "path": "azure.core/1.55.0",
       "hashPath": "azure.core.1.55.0.nupkg.sha512"
     },
-    "Azure.Identity/1.10.3": {
+    "Azure.Identity/1.21.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-l1Xm2MWOF2Mzcwuarlw8kWQXLZk3UeB55aQXVyjj23aBfDwOZ3gu5GP2kJ6KlmZeZv2TCzw7x4L3V36iNr3gww==",
-      "path": "azure.identity/1.10.3",
-      "hashPath": "azure.identity.1.10.3.nupkg.sha512"
+      "sha512": "sha512-GeFv8sGwRKvDKwI2WFy8r0mhmlxEVZg24Sit2NogTjiSO8RVjllWM65OT6e1sKjOvG8V74y7hAbaELUUPjZQSw==",
+      "path": "azure.identity/1.21.0",
+      "hashPath": "azure.identity.1.21.0.nupkg.sha512"
     },
     "DnsClient/1.6.1": {
       "type": "package",

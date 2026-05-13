@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "jfX8fwPmXXE=",
+  "dgSpecHash": "CgtAzCVM75A=",
   "success": true,
   "projectFilePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj",
   "expectedPackageFiles": [
@@ -8,7 +8,7 @@
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\awssdk.core\\3.7.100.14\\awssdk.core.3.7.100.14.nupkg.sha512",
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\awssdk.securitytoken\\3.7.100.14\\awssdk.securitytoken.3.7.100.14.nupkg.sha512",
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\azure.core\\1.55.0\\azure.core.1.55.0.nupkg.sha512",
-    "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
+    "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\azure.identity\\1.21.0\\azure.identity.1.21.0.nupkg.sha512",
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\cloudinarydotnet\\1.29.1\\cloudinarydotnet.1.29.1.nupkg.sha512",
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\dnsclient\\1.6.1\\dnsclient.1.6.1.nupkg.sha512",
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
@@ -29,6 +29,7 @@
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\microsoft.entityframeworkcore.sqlserver\\8.0.8\\microsoft.entityframeworkcore.sqlserver.8.0.8.nupkg.sha512",
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\microsoft.entityframeworkcore.tools\\8.0.8\\microsoft.entityframeworkcore.tools.8.0.8.nupkg.sha512",
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
+    "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\microsoft.extensions.caching.memory\\8.0.0\\microsoft.extensions.caching.memory.8.0.0.nupkg.sha512",
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\11.0.0-preview.3.26207.106\\microsoft.extensions.dependencyinjection.11.0.0-preview.3.26207.106.nupkg.sha512",
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\11.0.0-preview.3.26207.106\\microsoft.extensions.dependencyinjection.abstractions.11.0.0-preview.3.26207.106.nupkg.sha512",
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\microsoft.extensions.dependencymodel\\8.0.1\\microsoft.extensions.dependencymodel.8.0.1.nupkg.sha512",
@@ -87,25 +88,25 @@
   ],
   "logs": [
     {
-      "code": "NU1902",
+      "code": "NU1510",
       "level": "Warning",
-      "message": "Package 'Azure.Identity' 1.10.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-m5vv-6r4h-3vj9",
+      "message": "PackageReference Microsoft.Extensions.Caching.Memory will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
       "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj",
       "warningLevel": 1,
       "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj",
-      "libraryId": "Azure.Identity",
+      "libraryId": "Microsoft.Extensions.Caching.Memory",
       "targetGraphs": [
         "net10.0"
       ]
     },
     {
-      "code": "NU1902",
+      "code": "NU1903",
       "level": "Warning",
-      "message": "Package 'Azure.Identity' 1.10.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-wvxc-855f-jvrv",
+      "message": "Package 'Microsoft.Extensions.Caching.Memory' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-qj66-m88j-hmgj",
       "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj",
       "warningLevel": 1,
       "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj",
-      "libraryId": "Azure.Identity",
+      "libraryId": "Microsoft.Extensions.Caching.Memory",
       "targetGraphs": [
         "net10.0"
       ]

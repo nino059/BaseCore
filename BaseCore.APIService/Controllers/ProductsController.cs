@@ -30,7 +30,7 @@ namespace BaseCore.APIService.Controllers
         // Upload ảnh lên Cloudinary qua backend (có auth)
         // ─────────────────────────────────────────────
         [HttpPost("upload-image")]
-
+        [Authorize]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -113,7 +113,7 @@ namespace BaseCore.APIService.Controllers
         // POST /api/products
         // ─────────────────────────────────────────────
         [HttpPost]
-        [Authorize]
+
         public async Task<IActionResult> Create([FromBody] ProductCreateDto dto)
         {
             var category = await _categoryRepository.GetByIdAsync(dto.CategoryId);
@@ -206,13 +206,13 @@ namespace BaseCore.APIService.Controllers
         // Helper: map entity → DTO (tránh circular reference)
         // ─────────────────────────────────────────────
         private static object ToDto(Product p) => new
-        {
-            p.Id, p.Name, p.ArtistName, p.Price, p.Stock,
-            p.Description, p.ImageUrl, p.CategoryId, p.SellerId,
-            p.Theme, p.Technique, p.Material, p.Size,
-            p.Year, p.IsOriginal, p.Condition, p.Status,
-            categoryName = p.Category?.Name ?? ""
-        };
+    {
+        p.Id, p.Name, p.ArtistName, p.Price, p.Stock,
+        p.Description, p.ImageUrl, p.CategoryId, p.SellerId,
+        p.Theme, p.Technique, p.Material, p.Size,
+        p.Year, p.IsOriginal, p.Condition, p.Status,
+        categoryName = p.Category?.Name ?? ""
+    };
     }
 
     // ─── DTOs ───────────────────────────────────────

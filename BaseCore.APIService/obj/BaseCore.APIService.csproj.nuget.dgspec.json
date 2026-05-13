@@ -30,7 +30,6 @@
         },
         "frameworks": {
           "net10.0": {
-            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
               "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj": {
@@ -59,7 +58,6 @@
       },
       "frameworks": {
         "net10.0": {
-          "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
             "AutoMapper": {
@@ -72,7 +70,7 @@
             },
             "Azure.Identity": {
               "target": "Package",
-              "version": "[1.10.3, )"
+              "version": "[1.21.0, )"
             },
             "CloudinaryDotNet": {
               "target": "Package",
@@ -95,6 +93,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.8, )"
+            },
+            "Microsoft.Extensions.Caching.Memory": {
+              "target": "Package",
+              "version": "[8.0.0, )"
             },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
@@ -600,7 +602,6 @@
         },
         "frameworks": {
           "net10.0": {
-            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {}
           }
@@ -619,7 +620,6 @@
       },
       "frameworks": {
         "net10.0": {
-          "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
             "AutoMapper": {
@@ -632,7 +632,7 @@
             },
             "Azure.Identity": {
               "target": "Package",
-              "version": "[1.10.3, )"
+              "version": "[1.21.0, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
@@ -651,6 +651,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.8, )"
+            },
+            "Microsoft.Extensions.Caching.Memory": {
+              "target": "Package",
+              "version": "[8.0.0, )"
             },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
@@ -1021,7 +1025,6 @@
         },
         "frameworks": {
           "net10.0": {
-            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {}
           }
@@ -1040,7 +1043,6 @@
       },
       "frameworks": {
         "net10.0": {
-          "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
             "AutoMapper": {
@@ -1053,7 +1055,7 @@
             },
             "Azure.Identity": {
               "target": "Package",
-              "version": "[1.10.3, )"
+              "version": "[1.21.0, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
@@ -1072,6 +1074,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.8, )"
+            },
+            "Microsoft.Extensions.Caching.Memory": {
+              "target": "Package",
+              "version": "[8.0.0, )"
             },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
@@ -1434,7 +1440,6 @@
         },
         "frameworks": {
           "net10.0": {
-            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
               "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj": {
@@ -1460,7 +1465,6 @@
       },
       "frameworks": {
         "net10.0": {
-          "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
             "AutoMapper": {
@@ -1473,7 +1477,7 @@
             },
             "Azure.Identity": {
               "target": "Package",
-              "version": "[1.10.3, )"
+              "version": "[1.21.0, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
@@ -1492,6 +1496,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.8, )"
+            },
+            "Microsoft.Extensions.Caching.Memory": {
+              "target": "Package",
+              "version": "[8.0.0, )"
             },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
@@ -1850,7 +1858,6 @@
         },
         "frameworks": {
           "net10.0": {
-            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
               "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj": {
@@ -1876,7 +1883,6 @@
       },
       "frameworks": {
         "net10.0": {
-          "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
             "AutoMapper": {
@@ -1889,7 +1895,7 @@
             },
             "Azure.Identity": {
               "target": "Package",
-              "version": "[1.10.3, )"
+              "version": "[1.21.0, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
@@ -1908,6 +1914,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.8, )"
+            },
+            "Microsoft.Extensions.Caching.Memory": {
+              "target": "Package",
+              "version": "[8.0.0, )"
             },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
@@ -2270,7 +2280,6 @@
         },
         "frameworks": {
           "net10.0": {
-            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
               "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj": {
@@ -2302,7 +2311,6 @@
       },
       "frameworks": {
         "net10.0": {
-          "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
             "AutoMapper": {
@@ -2315,7 +2323,7 @@
             },
             "Azure.Identity": {
               "target": "Package",
-              "version": "[1.10.3, )"
+              "version": "[1.21.0, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
@@ -2338,6 +2346,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.8, )"
+            },
+            "Microsoft.Extensions.Caching.Memory": {
+              "target": "Package",
+              "version": "[8.0.0, )"
             },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
@@ -2696,7 +2708,6 @@
         },
         "frameworks": {
           "net10.0": {
-            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
               "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj": {
@@ -2728,7 +2739,6 @@
       },
       "frameworks": {
         "net10.0": {
-          "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
             "AutoMapper": {
@@ -2741,7 +2751,7 @@
             },
             "Azure.Identity": {
               "target": "Package",
-              "version": "[1.10.3, )"
+              "version": "[1.21.0, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
@@ -2760,6 +2770,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.8, )"
+            },
+            "Microsoft.Extensions.Caching.Memory": {
+              "target": "Package",
+              "version": "[8.0.0, )"
             },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
