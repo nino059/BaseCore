@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ltqsPIJ5bxA=",
+  "dgSpecHash": "MDF49HSrXqw=",
   "success": true,
-  "projectFilePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
+  "projectFilePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\automapper\\16.1.1\\automapper.16.1.1.nupkg.sha512",
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\awssdk.core\\3.7.100.14\\awssdk.core.3.7.100.14.nupkg.sha512",
@@ -86,9 +86,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'Microsoft.Extensions.Caching.Memory' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-qj66-m88j-hmgj",
-      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
+      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
       "warningLevel": 1,
-      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
+      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
       "libraryId": "Microsoft.Extensions.Caching.Memory",
       "targetGraphs": [
         "net10.0"
@@ -98,9 +98,9 @@
       "code": "NU1902",
       "level": "Warning",
       "message": "Package 'SharpCompress' 0.30.1 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-6c8g-7p36-r338",
-      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
+      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
       "warningLevel": 1,
-      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
+      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
       "libraryId": "SharpCompress",
       "targetGraphs": [
         "net10.0"
@@ -110,9 +110,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'Snappier' 1.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-pggp-6c3x-2xmx",
-      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
+      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
       "warningLevel": 1,
-      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
+      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
       "libraryId": "Snappier",
       "targetGraphs": [
         "net10.0"
@@ -122,9 +122,9 @@
       "code": "NU1902",
       "level": "Warning",
       "message": "Package 'System.IdentityModel.Tokens.Jwt' 7.0.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-59j7-ghrg-fj52",
-      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
+      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
       "warningLevel": 1,
-      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
+      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
       "libraryId": "System.IdentityModel.Tokens.Jwt",
       "targetGraphs": [
         "net10.0"

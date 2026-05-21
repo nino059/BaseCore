@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj": {}
+    "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj": {}
   },
   "projects": {
-    "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj": {
+    "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj",
+        "projectUniqueName": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj",
         "projectName": "BaseCore.APIService",
-        "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj",
+        "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj",
         "packagesPath": "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\",
-        "outputPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.APIService\\obj\\",
+        "outputPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.APIService\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -32,14 +32,14 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj": {
-                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj"
+              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj": {
+                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj"
               },
-              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Repository\\BaseCore.Repository.csproj": {
-                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Repository\\BaseCore.Repository.csproj"
+              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Repository\\BaseCore.Repository.csproj": {
+                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Repository\\BaseCore.Repository.csproj"
               },
-              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Services\\BaseCore.Services.csproj": {
-                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Services\\BaseCore.Services.csproj"
+              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Services\\BaseCore.Services.csproj": {
+                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Services\\BaseCore.Services.csproj"
               }
             }
           }
@@ -576,14 +576,14 @@
         }
       }
     },
-    "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj": {
+    "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj",
+        "projectUniqueName": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj",
         "projectName": "BaseCore.Common",
-        "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj",
+        "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj",
         "packagesPath": "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\",
-        "outputPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\obj\\",
+        "outputPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Common\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -999,14 +999,14 @@
         }
       }
     },
-    "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj": {
+    "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
+        "projectUniqueName": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
         "projectName": "BaseCore.DTO",
-        "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
+        "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
         "packagesPath": "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\",
-        "outputPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\obj\\",
+        "outputPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1414,14 +1414,14 @@
         }
       }
     },
-    "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj": {
+    "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj",
+        "projectUniqueName": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj",
         "projectName": "BaseCore.Entities",
-        "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj",
+        "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj",
         "packagesPath": "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\",
-        "outputPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Entities\\obj\\",
+        "outputPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Entities\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1442,11 +1442,11 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj": {
-                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj"
+              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj": {
+                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj"
               },
-              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj": {
-                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj"
+              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj": {
+                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj"
               }
             }
           }
@@ -1832,14 +1832,14 @@
         }
       }
     },
-    "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Libs\\BaseCore.Libs.csproj": {
+    "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Libs\\BaseCore.Libs.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Libs\\BaseCore.Libs.csproj",
+        "projectUniqueName": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Libs\\BaseCore.Libs.csproj",
         "projectName": "BaseCore.Libs",
-        "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Libs\\BaseCore.Libs.csproj",
+        "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Libs\\BaseCore.Libs.csproj",
         "packagesPath": "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\",
-        "outputPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Libs\\obj\\",
+        "outputPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Libs\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1860,11 +1860,11 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj": {
-                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj"
+              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj": {
+                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj"
               },
-              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj": {
-                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj"
+              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj": {
+                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj"
               }
             }
           }
@@ -2254,14 +2254,14 @@
         }
       }
     },
-    "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Repository\\BaseCore.Repository.csproj": {
+    "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Repository\\BaseCore.Repository.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Repository\\BaseCore.Repository.csproj",
+        "projectUniqueName": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Repository\\BaseCore.Repository.csproj",
         "projectName": "BaseCore.Repository",
-        "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Repository\\BaseCore.Repository.csproj",
+        "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Repository\\BaseCore.Repository.csproj",
         "packagesPath": "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\",
-        "outputPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Repository\\obj\\",
+        "outputPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Repository\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -2282,17 +2282,17 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj": {
-                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj"
+              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj": {
+                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj"
               },
-              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj": {
-                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj"
+              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj": {
+                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj"
               },
-              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj": {
-                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj"
+              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj": {
+                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj"
               },
-              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Libs\\BaseCore.Libs.csproj": {
-                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Libs\\BaseCore.Libs.csproj"
+              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Libs\\BaseCore.Libs.csproj": {
+                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Libs\\BaseCore.Libs.csproj"
               }
             }
           }
@@ -2682,14 +2682,14 @@
         }
       }
     },
-    "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Services\\BaseCore.Services.csproj": {
+    "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Services\\BaseCore.Services.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Services\\BaseCore.Services.csproj",
+        "projectUniqueName": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Services\\BaseCore.Services.csproj",
         "projectName": "BaseCore.Services",
-        "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Services\\BaseCore.Services.csproj",
+        "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Services\\BaseCore.Services.csproj",
         "packagesPath": "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\",
-        "outputPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Services\\obj\\",
+        "outputPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Services\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -2710,17 +2710,17 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj": {
-                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj"
+              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj": {
+                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj"
               },
-              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj": {
-                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj"
+              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj": {
+                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj"
               },
-              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj": {
-                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj"
+              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj": {
+                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj"
               },
-              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Repository\\BaseCore.Repository.csproj": {
-                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Repository\\BaseCore.Repository.csproj"
+              "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Repository\\BaseCore.Repository.csproj": {
+                "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Repository\\BaseCore.Repository.csproj"
               }
             }
           }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "LMYCTamPDKE=",
+  "dgSpecHash": "X0nk7BV6qAw=",
   "success": true,
-  "projectFilePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj",
+  "projectFilePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\automapper\\16.1.1\\automapper.16.1.1.nupkg.sha512",
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\azure.core\\1.55.0\\azure.core.1.55.0.nupkg.sha512",
@@ -84,9 +84,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'Microsoft.Extensions.Caching.Memory' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-qj66-m88j-hmgj",
-      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj",
+      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj",
       "warningLevel": 1,
-      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj",
+      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Common\\BaseCore.Common.csproj",
       "libraryId": "Microsoft.Extensions.Caching.Memory",
       "targetGraphs": [
         "net10.0"

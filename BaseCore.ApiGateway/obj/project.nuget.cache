@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "iN4K1NZ0a+U=",
+  "dgSpecHash": "pNeLni3ZgZU=",
   "success": true,
-  "projectFilePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
+  "projectFilePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\automapper\\16.1.1\\automapper.16.1.1.nupkg.sha512",
     "C:\\Users\\NguyenPhuongTay\\.nuget\\packages\\azure.core\\1.55.0\\azure.core.1.55.0.nupkg.sha512",
@@ -85,9 +85,9 @@
       "code": "NU1510",
       "level": "Warning",
       "message": "PackageReference Microsoft.Extensions.Caching.Memory will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
+      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
       "warningLevel": 1,
-      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
+      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
       "libraryId": "Microsoft.Extensions.Caching.Memory",
       "targetGraphs": [
         "net10.0"
@@ -97,9 +97,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'Microsoft.Extensions.Caching.Memory' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-qj66-m88j-hmgj",
-      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
+      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
       "warningLevel": 1,
-      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
+      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
       "libraryId": "Microsoft.Extensions.Caching.Memory",
       "targetGraphs": [
         "net10.0"
@@ -109,9 +109,9 @@
       "code": "NU1902",
       "level": "Warning",
       "message": "Package 'System.IdentityModel.Tokens.Jwt' 7.0.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-59j7-ghrg-fj52",
-      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
+      "projectPath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
       "warningLevel": 1,
-      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\ngay14_4\\BaseCore\\BaseCore\\BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
+      "filePath": "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
       "libraryId": "System.IdentityModel.Tokens.Jwt",
       "targetGraphs": [
         "net10.0"

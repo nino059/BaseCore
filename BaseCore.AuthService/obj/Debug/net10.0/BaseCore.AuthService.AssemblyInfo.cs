@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BaseCore.AuthService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eea5a5d3cf7078d7f41f97de4787009a630990ab")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5d6364f5f03847c16d34a6f865e313397dc22c12")]
 [assembly: System.Reflection.AssemblyProductAttribute("BaseCore.AuthService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BaseCore.AuthService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
