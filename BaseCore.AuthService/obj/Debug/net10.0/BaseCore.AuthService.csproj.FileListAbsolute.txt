@@ -441,10 +441,10 @@ D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.AuthSe
 D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.AuthService\obj\Debug\net10.0\staticwebassets.development.json
 D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.AuthService\obj\Debug\net10.0\staticwebassets.build.endpoints.json
 D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.AuthService\obj\Debug\net10.0\swae.build.ex.cache
-D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.AuthService\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
 D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.AuthService\obj\Debug\net10.0\BaseCore.A4C47D7E.Up2Date
 D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.AuthService\obj\Debug\net10.0\BaseCore.AuthService.dll
 D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.AuthService\obj\Debug\net10.0\refint\BaseCore.AuthService.dll
 D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.AuthService\obj\Debug\net10.0\BaseCore.AuthService.pdb
 D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.AuthService\obj\Debug\net10.0\BaseCore.AuthService.genruntimeconfig.cache
 D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.AuthService\obj\Debug\net10.0\ref\BaseCore.AuthService.dll
+D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.AuthService\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt

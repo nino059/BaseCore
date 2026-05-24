@@ -82,6 +82,7 @@ builder.Services.AddScoped<IProductRepositoryEF, ProductRepositoryEF>();
 builder.Services.AddScoped<ICategoryRepositoryEF, CategoryRepositoryEF>();
 builder.Services.AddScoped<IOrderRepositoryEF, OrderRepositoryEF>();
 builder.Services.AddScoped<IOrderDetailRepositoryEF, OrderDetailRepositoryEF>();
+builder.Services.AddScoped<IUserRepositoryEF, UserRepositoryEF>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
 // JWT Authentication
@@ -106,11 +107,11 @@ builder.Services.AddAuthentication(x =>
 
 var app = builder.Build();
 
-// Auto migrate + seed
+// Auto migrate
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.EnsureCreated();
+    db.Database.Migrate();
 }
 
 if (app.Environment.IsDevelopment())

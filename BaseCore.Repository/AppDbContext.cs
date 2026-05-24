@@ -14,6 +14,7 @@ namespace BaseCore.Repository
         public DbSet<Category> Categories { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<BlogPost> BlogPosts { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
 
@@ -29,6 +30,7 @@ namespace BaseCore.Repository
                 entity.Property(e => e.Name).HasMaxLength(100);
                 entity.Property(e => e.Email).HasMaxLength(100);
                 entity.Property(e => e.Phone).HasMaxLength(20);
+                entity.Property(e => e.Bio).HasMaxLength(2000).IsRequired(false);
                 entity.HasIndex(e => e.UserName).IsUnique();
             });
 
@@ -39,6 +41,7 @@ namespace BaseCore.Repository
                 entity.Property(e => e.Description).HasMaxLength(500);
                 entity.Property(e => e.Slug).HasMaxLength(100);
                 entity.Property(e => e.Icon).HasMaxLength(10);
+                entity.Property(e => e.Color).HasMaxLength(20).HasDefaultValue("#6366f1");
             });
 
             modelBuilder.Entity<Product>(entity =>
@@ -46,16 +49,13 @@ namespace BaseCore.Repository
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Name).HasMaxLength(200).IsRequired();
                 entity.Property(e => e.Price).HasPrecision(18, 2);
+                entity.Property(e => e.DiscountPrice).HasPrecision(18, 2);
                 entity.Property(e => e.Description).HasMaxLength(1000);
                 entity.Property(e => e.ImageUrl).HasMaxLength(500);
                 entity.Property(e => e.ArtistName).HasMaxLength(200);
                 entity.Property(e => e.Status).HasMaxLength(20).HasDefaultValue("Available");
-                entity.Property(e => e.IsOriginal).HasDefaultValue(true);
                 entity.Property(e => e.Theme).HasMaxLength(100);
-                entity.Property(e => e.Technique).HasMaxLength(100);
-                entity.Property(e => e.Size).HasMaxLength(50);
                 entity.Property(e => e.Material).HasMaxLength(100);
-                entity.Property(e => e.Condition).HasMaxLength(50);
                 entity.Property(e => e.SellerId).HasMaxLength(450);
 
                 entity.HasOne(e => e.Category)
@@ -69,6 +69,9 @@ namespace BaseCore.Repository
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.TotalAmount).HasPrecision(18, 2);
                 entity.Property(e => e.ShippingAddress).HasMaxLength(500);
+                entity.Property(e => e.PaymentMethod).HasMaxLength(20).HasDefaultValue("COD");
+                entity.Property(e => e.Note).HasMaxLength(500);
+                entity.Property(e => e.Phone).HasMaxLength(20);
                 entity.HasMany(e => e.OrderDetails)
                       .WithOne(d => d.Order)
                       .HasForeignKey(d => d.OrderId);
@@ -88,6 +91,19 @@ namespace BaseCore.Repository
                       .WithMany()
                       .HasForeignKey(e => e.ProductId)
                       .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<BlogPost>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Title).HasMaxLength(300).IsRequired();
+                entity.Property(e => e.Excerpt).HasMaxLength(600);
+                entity.Property(e => e.Category).HasMaxLength(100);
+                entity.Property(e => e.AuthorId).HasMaxLength(450).IsRequired();
+                entity.Property(e => e.AuthorName).HasMaxLength(200);
+                entity.Property(e => e.CoverImageUrl).HasMaxLength(500);
+                entity.Property(e => e.Status).HasMaxLength(20).HasDefaultValue("Pending");
+                entity.Property(e => e.ReadTime).HasMaxLength(20);
             });
 
             // ✅ KHÔNG seed data ở đây — data đã có sẵn trong DB

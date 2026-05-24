@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BaseCore.Entities;
 using BaseCore.Repository.EFCore;
+using BaseCore.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace BaseCore.APIService.Controllers
 {
@@ -10,25 +12,29 @@ namespace BaseCore.APIService.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryRepositoryEF _categoryRepository;
+        private readonly AppDbContext _db;
 
-        public CategoriesController(ICategoryRepositoryEF categoryRepository)
+        public CategoriesController(ICategoryRepositoryEF categoryRepository, AppDbContext db)
         {
             _categoryRepository = categoryRepository;
+            _db = db;
         }
 
-        /// <summary>Get all categories</summary>
+        /// <summary>Get all categories with product count</summary>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var categories = await _categoryRepository.GetAllAsync();
-            // ✅ Map DTO — bỏ Products tránh circular reference
-            var result = categories.Select(c => new {
-                c.Id,
-                c.Name,
-                c.Description,
-                c.Slug,
-                c.Icon
-            }).ToList();
+            var result = await _db.Categories
+                .Select(c => new {
+                    c.Id,
+                    c.Name,
+                    c.Description,
+                    c.Slug,
+                    c.Icon,
+                    c.Color,
+                    productCount = _db.Products.Count(p => p.CategoryId == c.Id && p.Status == "Available")
+                })
+                .ToListAsync();
             return Ok(result);
         }
 
@@ -40,13 +46,16 @@ namespace BaseCore.APIService.Controllers
             if (category == null)
                 return NotFound(new { message = "Category not found" });
 
-            // ✅ Map DTO
+            var productCount = await _db.Products.CountAsync(p => p.CategoryId == id && p.Status == "Available");
+
             return Ok(new {
                 category.Id,
                 category.Name,
                 category.Description,
                 category.Slug,
-                category.Icon
+                category.Icon,
+                category.Color,
+                productCount
             });
         }
 
@@ -64,18 +73,20 @@ namespace BaseCore.APIService.Controllers
                 Name = dto.Name,
                 Description = dto.Description ?? "",
                 Slug = dto.Slug ?? dto.Name.ToLower().Replace(" ", "-"),
-                Icon = dto.Icon ?? ""
+                Icon = dto.Icon ?? "",
+                Color = dto.Color ?? "#6366f1"
             };
 
             await _categoryRepository.AddAsync(category);
 
-            // ✅ Map DTO
             return CreatedAtAction(nameof(GetById), new { id = category.Id }, new {
                 category.Id,
                 category.Name,
                 category.Description,
                 category.Slug,
-                category.Icon
+                category.Icon,
+                category.Color,
+                productCount = 0
             });
         }
 
@@ -92,16 +103,20 @@ namespace BaseCore.APIService.Controllers
             category.Description = dto.Description ?? category.Description;
             category.Slug = dto.Slug ?? category.Slug;
             category.Icon = dto.Icon ?? category.Icon;
+            category.Color = dto.Color ?? category.Color;
 
             await _categoryRepository.UpdateAsync(category);
 
-            // ✅ Map DTO
+            var productCount = await _db.Products.CountAsync(p => p.CategoryId == id && p.Status == "Available");
+
             return Ok(new {
                 category.Id,
                 category.Name,
                 category.Description,
                 category.Slug,
-                category.Icon
+                category.Icon,
+                category.Color,
+                productCount
             });
         }
 
@@ -125,5 +140,6 @@ namespace BaseCore.APIService.Controllers
         public string? Description { get; set; }
         public string? Slug { get; set; }
         public string? Icon { get; set; }
+        public string? Color { get; set; }
     }
 }

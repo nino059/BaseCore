@@ -183,5 +183,15 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BaseCore.AuthService.Controllers.UserController",
+    "Method": "GetArtists",
+    "RelativePath": "api/users/artists",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
   }
 ]

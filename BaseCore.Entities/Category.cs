@@ -21,6 +21,9 @@ namespace BaseCore.Entities
         [MaxLength(10)]
         public string Icon { get; set; } = "";
 
+        [MaxLength(20)]
+        public string Color { get; set; } = "#6366f1";
+
         [JsonIgnore]
 
         public ICollection<Product> Products { get; set; } = new List<Product>();

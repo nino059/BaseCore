@@ -2,8 +2,17 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-const ProtectedRoute = ({ children, adminOnly = false }) => {
-    const { user, isAuthenticated, isAdmin, loading } = useAuth();
+const getStoredUser = () => {
+    try {
+        const raw = localStorage.getItem('user') || sessionStorage.getItem('user');
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        if (!raw || !token || token === 'undefined') return null;
+        return JSON.parse(raw);
+    } catch { return null; }
+};
+
+const ProtectedRoute = ({ children, adminOnly = false, artistOnly = false }) => {
+    const { user, isAuthenticated, isAdmin, isArtist, loading } = useAuth();
     const location = useLocation();
 
     if (loading) return (
@@ -14,20 +23,30 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
         </div>
     );
 
-    // Chưa đăng nhập
-    if (!isAuthenticated || !user) {
+    // Fallback: đọc từ storage nếu React state chưa kịp update (race condition sau login)
+    const effectiveUser = user || getStoredUser();
+    const effectiveRole = effectiveUser?.role || effectiveUser?.Role || '';
+    const effectiveIsAdmin  = effectiveRole === 'Admin' || effectiveRole === 'Staff';
+    const effectiveIsArtist = effectiveRole === 'Artist';
+
+    if (!effectiveUser) {
         return <Navigate to="/login" state={{ from: location.pathname }} replace />;
     }
 
-    // User thường cố vào trang admin
-    if (adminOnly && !isAdmin) {
+    // Artist-only route
+    if (artistOnly && !effectiveIsArtist) {
         return <Navigate to="/" replace />;
     }
 
-    // Admin cố vào trang user (tuỳ chọn — bỏ comment nếu muốn)
-    // if (!adminOnly && isAdmin) {
-    //     return <Navigate to="/dashboard" replace />;
-    // }
+    // Admin-only route: non-admin/non-artist can't enter
+    if (adminOnly && !effectiveIsAdmin) {
+        return <Navigate to="/" replace />;
+    }
+
+    // Admin trying to access a regular user/artist page → send to dashboard
+    if (!adminOnly && !artistOnly && effectiveIsAdmin) {
+        return <Navigate to="/dashboard" replace />;
+    }
 
     return children;
 };

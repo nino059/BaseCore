@@ -36,12 +36,18 @@ namespace BaseCore.AuthService.Controllers
             }
 
             // Generate JWT token
+            var role = user.UserType switch {
+                1 => "Admin",
+                2 => "Artist",
+                _ => "User"
+            };
+
             var token = TokenHelper.GenerateToken(
                 SecretKey,
                 TokenExpirationMinutes,
                 user.Id.ToString(),
                 user.UserName,
-                user.UserType == 1 ? "Admin" : "User"
+                role
             );
 
             return Ok(new LoginResponse
@@ -51,7 +57,8 @@ namespace BaseCore.AuthService.Controllers
                 Username = user.UserName,
                 Name = user.Name,
                 Email = user.Email,
-                Role = user.UserType == 1 ? "Admin" : "User",
+                Role = role,
+                AvatarUrl = user.Image ?? "",
                 ExpiresIn = TokenExpirationMinutes * 60
             });
         }
@@ -78,10 +85,12 @@ namespace BaseCore.AuthService.Controllers
             {
                 var user = new BaseCore.Entities.User
                 {
+                    Id       = Guid.NewGuid().ToString(),
                     UserName = request.Username,
-                    Name = request.Name ?? request.Username,
-                    Email = request.Email,
-                    Phone = request.Phone,
+                    Name     = request.Name ?? request.Username,
+                    Email    = request.Email    ?? "",
+                    Phone    = request.Phone    ?? "",
+                    Image    = "",
                     UserType = 0 // Default to regular user
                 };
 
@@ -110,6 +119,7 @@ namespace BaseCore.AuthService.Controllers
         public string Name { get; set; }
         public string Email { get; set; }
         public string Role { get; set; }
+        public string AvatarUrl { get; set; }
         public int ExpiresIn { get; set; }
     }
 
@@ -117,8 +127,8 @@ namespace BaseCore.AuthService.Controllers
     {
         public string Username { get; set; }
         public string Password { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
+        public string? Name { get; set; }
+        public string? Email { get; set; }
+        public string? Phone { get; set; }
     }
 }

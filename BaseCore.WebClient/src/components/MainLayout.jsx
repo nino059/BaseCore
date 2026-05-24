@@ -1,27 +1,35 @@
-//import React, { useState } from 'react';
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-const SIDEBAR_WIDTH = 240;
+const SIDEBAR_WIDTH   = 240;
+const COLLAPSED_WIDTH = 64;
 
 const navItems = [
-    { path: '/dashboard',  icon: 'fa-chart-bar',      label: 'Tổng quan' },
-    { path: '/products',   icon: 'fa-palette',         label: 'Tác phẩm' },
-    { path: '/categories', icon: 'fa-layer-group',     label: 'Thể loại' },
-    { path: '/orders',     icon: 'fa-shopping-bag',    label: 'Đơn hàng' },
-    { path: '/users',      icon: 'fa-users',           label: 'Người dùng', adminOnly: true },
+    { path: '/dashboard',  icon: 'fa-chart-bar',     label: 'Tổng quan' },
+    { path: '/products',   icon: 'fa-palette',        label: 'Tác phẩm' },
+    { path: '/categories', icon: 'fa-layer-group',    label: 'Thể loại' },
+    { path: '/orders',     icon: 'fa-shopping-bag',   label: 'Đơn hàng' },
+    { path: '/admin/blog', icon: 'fa-pen-fancy',      label: 'Bài viết' },
+    { path: '/users',      icon: 'fa-users',          label: 'Người dùng', adminOnly: true },
 ];
 
 const MainLayout = ({ children }) => {
-    const location = useLocation();
-    const navigate = useNavigate();
+    const location  = useLocation();
+    const navigate  = useNavigate();
     const { user, logout, isAdmin } = useAuth();
-    const [collapsed, setCollapsed] = useState(false);
-    const [mobileOpen, setMobileOpen] = useState(false);
+
+    // pinned = luôn mở; hovered = mở tạm khi di chuột vào
+    const [pinned,  setPinned]  = useState(false);
+    const [hovered, setHovered] = useState(false);
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
+
+    const isOpen        = pinned || hovered;
+    const sidebarW      = isOpen ? SIDEBAR_WIDTH : COLLAPSED_WIDTH;
+    // Chỉ đẩy content sang khi pinned; khi hover thì sidebar overlay lên trên
+    const contentMargin = pinned ? SIDEBAR_WIDTH : COLLAPSED_WIDTH;
 
     useEffect(() => {
         const handler = (e) => {
@@ -32,102 +40,130 @@ const MainLayout = ({ children }) => {
         return () => document.removeEventListener('mousedown', handler);
     }, []);
 
-    const handleLogout = () => {
-        logout();
-        navigate('/login');
-    };
-
-    const isActive = (path) => location.pathname === path;
-
-    const sidebarW = collapsed ? 64 : SIDEBAR_WIDTH;
+    const handleLogout = () => { logout(); navigate('/login'); };
+    const isActive     = (path) => location.pathname === path;
 
     return (
         <div style={{ display: 'flex', minHeight: '100vh', background: '#f5f6fa', fontFamily: "'Segoe UI', sans-serif" }}>
 
-            {/* ===== SIDEBAR ===== */}
-            <aside style={{
-                width: sidebarW,
-                minHeight: '100vh',
-                background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%)',
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'fixed',
-                top: 0, left: 0, bottom: 0,
-                zIndex: 100,
-                transition: 'width 0.25s cubic-bezier(.4,0,.2,1)',
-                boxShadow: '4px 0 24px rgba(0,0,0,0.18)',
-                overflow: 'hidden',
-            }}>
+            <style>{`
+                .sidebar-link:hover { background: rgba(200,169,122,0.12) !important; color: #e8d5a8 !important; }
+                .sidebar-link:hover i { color: #e8d5a8 !important; }
+                .nav-tooltip { position: absolute; left: 72px; background: #1e293b; color: white;
+                    padding: 5px 10px; borderRadius: 6px; fontSize: 12px; fontWeight: 600;
+                    whiteSpace: nowrap; pointerEvents: none; zIndex: 9999;
+                    boxShadow: 0 4px 12px rgba(0,0,0,0.3); }
+                .nav-tooltip::before { content:''; position:absolute; left:-5px; top:50%; transform:translateY(-50%);
+                    borderRight: 5px solid #1e293b; borderTop: 5px solid transparent; borderBottom: 5px solid transparent; }
+            `}</style>
 
-                {/* Logo */}
+            {/* ===== SIDEBAR ===== */}
+            <aside
+                onMouseEnter={() => !pinned && setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
+                style={{
+                    width: sidebarW,
+                    minHeight: '100vh',
+                    background: 'linear-gradient(180deg, #1a1614 0%, #231e1b 60%, #2c2520 100%)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    position: 'fixed',
+                    top: 0, left: 0, bottom: 0,
+                    zIndex: hovered && !pinned ? 300 : 100,
+                    transition: 'width 0.22s cubic-bezier(.4,0,.2,1)',
+                    boxShadow: isOpen
+                        ? '6px 0 32px rgba(0,0,0,0.28)'
+                        : '2px 0 12px rgba(0,0,0,0.15)',
+                    overflow: 'hidden',
+                }}>
+
+                {/* Logo + pin button */}
                 <div style={{
-                    padding: collapsed ? '20px 0' : '24px 20px 20px',
+                    padding: '0 12px',
                     borderBottom: '1px solid rgba(255,255,255,0.08)',
                     display: 'flex', alignItems: 'center',
-                    justifyContent: collapsed ? 'center' : 'space-between',
-                    minHeight: 68,
+                    justifyContent: 'space-between',
+                    height: 64, flexShrink: 0,
                 }}>
-                    {!collapsed && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <div style={{
-                                width: 36, height: 36, borderRadius: 10,
-                                background: 'linear-gradient(135deg, #a78bfa, #7c3aed)',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            }}>
-                                <i className="fas fa-palette" style={{ color: 'white', fontSize: '1rem' }}></i>
-                            </div>
-                            <div>
-                                <div style={{ color: 'white', fontWeight: 800, fontSize: '1rem', lineHeight: 1.1 }}>Arthentic</div>
-                                <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.7rem' }}>Admin Panel</div>
-                            </div>
-                        </div>
-                    )}
-                    <button onClick={() => setCollapsed(c => !c)} style={{
-                        background: 'rgba(255,255,255,0.08)', border: 'none',
-                        color: 'rgba(255,255,255,0.7)', borderRadius: 8,
-                        width: 32, height: 32, cursor: 'pointer',
+                    {/* Logo icon (luôn hiển thị) */}
+                    <div style={{
+                        width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+                        background: 'linear-gradient(135deg, #e8d5a8, #c8a97a)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        flexShrink: 0,
-                        transition: 'background 0.2s',
                     }}>
-                        <i className={`fas fa-${collapsed ? 'chevron-right' : 'chevron-left'}`} style={{ fontSize: '0.8rem' }}></i>
-                    </button>
+                        <i className="fas fa-palette" style={{ color: 'white', fontSize: '1rem' }}></i>
+                    </div>
+
+                    {/* Tên app — chỉ hiện khi mở */}
+                    <div style={{
+                        flex: 1, marginLeft: 10, overflow: 'hidden',
+                        opacity: isOpen ? 1 : 0,
+                        transition: 'opacity 0.15s',
+                        whiteSpace: 'nowrap',
+                    }}>
+                        <div style={{ color: 'white', fontWeight: 800, fontSize: '1rem', lineHeight: 1.1 }}>Arthentic</div>
+                        <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.68rem' }}>Admin Panel</div>
+                    </div>
+
+                    {/* Nút ghim — chỉ hiện khi mở */}
+                    {isOpen && (
+                        <button
+                            onClick={() => { setPinned(p => !p); setHovered(false); }}
+                            title={pinned ? 'Tự động thu' : 'Ghim sidebar'}
+                            style={{
+                                background: pinned ? 'rgba(200,169,122,0.25)' : 'rgba(255,255,255,0.08)',
+                                border: pinned ? '1px solid rgba(200,169,122,0.4)' : '1px solid transparent',
+                                color: pinned ? '#c8a97a' : 'rgba(255,255,255,0.55)',
+                                borderRadius: 7, width: 28, height: 28, cursor: 'pointer',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                flexShrink: 0, transition: 'all 0.2s', marginLeft: 6,
+                            }}>
+                            <i className="fas fa-thumbtack" style={{
+                                fontSize: '0.72rem',
+                                transform: pinned ? 'rotate(0deg)' : 'rotate(45deg)',
+                                transition: 'transform 0.2s',
+                            }}></i>
+                        </button>
+                    )}
                 </div>
 
                 {/* User info */}
-                {!collapsed && (
+                <div style={{
+                    padding: '12px',
+                    borderBottom: '1px solid rgba(255,255,255,0.08)',
+                    display: 'flex', alignItems: 'center', gap: 10,
+                    flexShrink: 0,
+                }}>
                     <div style={{
-                        padding: '16px 20px',
-                        borderBottom: '1px solid rgba(255,255,255,0.08)',
-                        display: 'flex', alignItems: 'center', gap: 12,
+                        width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
+                        background: 'linear-gradient(135deg, #e8d5a8, #c8a97a)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
-                        <div style={{
-                            width: 38, height: 38, borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #a78bfa, #7c3aed)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            flexShrink: 0,
-                        }}>
-                            <span style={{ color: 'white', fontWeight: 700, fontSize: '1rem' }}>
-                                {(user?.username || user?.name || 'A')[0].toUpperCase()}
-                            </span>
+                        <span style={{ color: 'white', fontWeight: 700, fontSize: '0.95rem' }}>
+                            {(user?.username || user?.name || 'A')[0].toUpperCase()}
+                        </span>
+                    </div>
+                    <div style={{
+                        overflow: 'hidden', flex: 1,
+                        opacity: isOpen ? 1 : 0,
+                        transition: 'opacity 0.15s',
+                        whiteSpace: 'nowrap',
+                    }}>
+                        <div style={{ color: 'white', fontWeight: 600, fontSize: '0.85rem', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {user?.name || user?.username}
                         </div>
-                        <div style={{ overflow: 'hidden' }}>
-                            <div style={{ color: 'white', fontWeight: 600, fontSize: '0.88rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                {user?.name || user?.username}
-                            </div>
-                            <div style={{
-                                display: 'inline-block', marginTop: 2,
-                                background: 'rgba(167,139,250,0.25)', color: '#a78bfa',
-                                borderRadius: 20, padding: '1px 8px', fontSize: '0.7rem', fontWeight: 600
-                            }}>
-                                {isAdmin ? 'Admin' : 'Staff'}
-                            </div>
+                        <div style={{
+                            display: 'inline-block', marginTop: 2,
+                            background: 'rgba(200,169,122,0.25)', color: '#c8a97a',
+                            borderRadius: 20, padding: '1px 8px', fontSize: '0.66rem', fontWeight: 700,
+                        }}>
+                            {isAdmin ? 'Admin' : 'Staff'}
                         </div>
                     </div>
-                )}
+                </div>
 
                 {/* Nav items */}
-                <nav style={{ flex: 1, padding: collapsed ? '12px 8px' : '12px 12px', overflowY: 'auto' }}>
+                <nav style={{ flex: 1, padding: '10px 8px', overflowY: 'auto', overflowX: 'hidden' }}>
                     {navItems
                         .filter(item => !item.adminOnly || isAdmin)
                         .map(item => {
@@ -136,38 +172,41 @@ const MainLayout = ({ children }) => {
                                 <Link
                                     key={item.path}
                                     to={item.path}
-                                    title={collapsed ? item.label : ''}
+                                    className="sidebar-link"
                                     style={{
                                         display: 'flex',
                                         alignItems: 'center',
                                         gap: 12,
-                                        padding: collapsed ? '12px 0' : '11px 14px',
+                                        padding: '10px 10px',
                                         borderRadius: 10,
-                                        marginBottom: 4,
+                                        marginBottom: 2,
                                         textDecoration: 'none',
-                                        justifyContent: collapsed ? 'center' : 'flex-start',
                                         background: active
-                                            ? 'linear-gradient(135deg, rgba(167,139,250,0.25), rgba(124,58,237,0.2))'
+                                            ? 'linear-gradient(135deg, rgba(200,169,122,0.28), rgba(139,108,74,0.22))'
                                             : 'transparent',
-                                        border: active ? '1px solid rgba(167,139,250,0.3)' : '1px solid transparent',
-                                        transition: 'all 0.2s',
-                                        color: active ? '#a78bfa' : 'rgba(255,255,255,0.6)',
+                                        border: active ? '1px solid rgba(200,169,122,0.35)' : '1px solid transparent',
+                                        transition: 'all 0.18s',
+                                        color: active ? '#e8d5a8' : 'rgba(255,255,255,0.6)',
+                                        position: 'relative',
+                                        whiteSpace: 'nowrap',
                                     }}
                                 >
                                     <i className={`fas ${item.icon}`} style={{
-                                        fontSize: '1rem', width: 20, textAlign: 'center',
-                                        color: active ? '#a78bfa' : 'rgba(255,255,255,0.5)',
-                                        flexShrink: 0,
+                                        fontSize: '1rem', width: 20, textAlign: 'center', flexShrink: 0,
+                                        color: active ? '#e8d5a8' : 'rgba(255,255,255,0.5)',
                                     }}></i>
-                                    {!collapsed && (
-                                        <span style={{ fontWeight: active ? 700 : 500, fontSize: '0.9rem', whiteSpace: 'nowrap' }}>
-                                            {item.label}
-                                        </span>
-                                    )}
-                                    {!collapsed && active && (
+                                    <span style={{
+                                        fontWeight: active ? 700 : 500, fontSize: '0.88rem',
+                                        opacity: isOpen ? 1 : 0,
+                                        transition: 'opacity 0.15s',
+                                        overflow: 'hidden',
+                                    }}>
+                                        {item.label}
+                                    </span>
+                                    {isOpen && active && (
                                         <span style={{
                                             marginLeft: 'auto', width: 6, height: 6,
-                                            borderRadius: '50%', background: '#a78bfa',
+                                            borderRadius: '50%', background: '#c8a97a', flexShrink: 0,
                                         }}></span>
                                     )}
                                 </Link>
@@ -176,42 +215,28 @@ const MainLayout = ({ children }) => {
                     }
                 </nav>
 
-                {/* Divider + link về shop */}
-                <div style={{ padding: collapsed ? '8px' : '8px 12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-                    <Link to="/" style={{
-                        display: 'flex', alignItems: 'center', gap: 12,
-                        padding: collapsed ? '10px 0' : '10px 14px',
-                        borderRadius: 10, textDecoration: 'none',
-                        color: 'rgba(255,255,255,0.45)',
-                        justifyContent: collapsed ? 'center' : 'flex-start',
-                        fontSize: '0.85rem',
-                    }}>
-                        <i className="fas fa-store" style={{ width: 20, textAlign: 'center', flexShrink: 0 }}></i>
-                        {!collapsed && <span>Xem cửa hàng</span>}
-                    </Link>
+                {/* Đăng xuất */}
+                <div style={{ padding: '8px', borderTop: '1px solid rgba(255,255,255,0.08)', flexShrink: 0 }}>
                     <button onClick={handleLogout} style={{
                         display: 'flex', alignItems: 'center', gap: 12,
-                        padding: collapsed ? '10px 0' : '10px 14px',
-                        borderRadius: 10, border: 'none', cursor: 'pointer',
+                        padding: '10px', borderRadius: 10, border: 'none', cursor: 'pointer',
                         background: 'transparent', color: 'rgba(255,255,255,0.45)',
-                        width: '100%',
-                        justifyContent: collapsed ? 'center' : 'flex-start',
-                        fontSize: '0.85rem',
-                        transition: 'color 0.2s',
+                        width: '100%', fontSize: '0.85rem', transition: 'color 0.2s',
+                        whiteSpace: 'nowrap',
                     }}>
                         <i className="fas fa-sign-out-alt" style={{ width: 20, textAlign: 'center', flexShrink: 0 }}></i>
-                        {!collapsed && <span>Đăng xuất</span>}
+                        <span style={{ opacity: isOpen ? 1 : 0, transition: 'opacity 0.15s' }}>Đăng xuất</span>
                     </button>
                 </div>
             </aside>
 
             {/* ===== MAIN CONTENT ===== */}
             <div style={{
-                marginLeft: sidebarW,
+                marginLeft: contentMargin,
                 flex: 1,
                 display: 'flex',
                 flexDirection: 'column',
-                transition: 'margin-left 0.25s cubic-bezier(.4,0,.2,1)',
+                transition: 'margin-left 0.22s cubic-bezier(.4,0,.2,1)',
                 minWidth: 0,
             }}>
 
@@ -229,68 +254,53 @@ const MainLayout = ({ children }) => {
                     zIndex: 50,
                     boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
                 }}>
-                    {/* Breadcrumb / Page title */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span style={{ color: '#9ca3af', fontSize: '0.9rem' }}>Admin</span>
-                        <i className="fas fa-chevron-right" style={{ color: '#d1d5db', fontSize: '0.7rem' }}></i>
-                        <span style={{ fontWeight: 600, color: '#1f2937', fontSize: '0.9rem' }}>
+                        <span style={{ color: '#9ca3af', fontSize: '0.88rem' }}>Admin</span>
+                        <i className="fas fa-chevron-right" style={{ color: '#d1d5db', fontSize: '0.65rem' }}></i>
+                        <span style={{ fontWeight: 700, color: '#1f2937', fontSize: '0.88rem' }}>
                             {navItems.find(n => n.path === location.pathname)?.label || 'Trang quản trị'}
                         </span>
                     </div>
 
-                    {/* Right side */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                        {/* Nút về shop */}
-                        <Link to="/shop" style={{
-                            display: 'flex', alignItems: 'center', gap: 6,
-                            padding: '7px 14px', borderRadius: 8,
-                            background: '#f5f3ff', color: '#7c3aed',
-                            textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600,
-                        }}>
-                            <i className="fas fa-store"></i>
-                            <span>Cửa hàng</span>
-                        </Link>
-
-                        {/* Avatar + dropdown */}
-                        <div ref={dropdownRef} style={{ position: 'relative' }}>
-                            <div
-                                onClick={() => setDropdownOpen(o => !o)}
-                                style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '4px 8px', borderRadius: 8, userSelect: 'none' }}
-                            >
-                                <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg, #a78bfa, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <span style={{ color: 'white', fontWeight: 700, fontSize: '0.9rem' }}>
-                                        {(user?.username || user?.fullName || 'A')[0].toUpperCase()}
-                                    </span>
-                                </div>
-                                <div style={{ lineHeight: 1.2 }}>
-                                    <div style={{ fontWeight: 600, fontSize: '0.88rem', color: '#1f2937' }}>{user?.fullName || user?.username}</div>
-                                    <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{isAdmin ? 'Quản trị viên' : 'Nhân viên'}</div>
-                                </div>
-                                <i className={`fas fa-chevron-${dropdownOpen ? 'up' : 'down'}`} style={{ color: '#9ca3af', fontSize: '0.7rem' }}></i>
+                    {/* Avatar + dropdown */}
+                    <div ref={dropdownRef} style={{ position: 'relative' }}>
+                        <div
+                            onClick={() => setDropdownOpen(o => !o)}
+                            style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '4px 8px', borderRadius: 8, userSelect: 'none' }}
+                        >
+                            <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg, #e8d5a8, #c8a97a)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <span style={{ color: 'white', fontWeight: 700, fontSize: '0.9rem' }}>
+                                    {(user?.username || user?.fullName || 'A')[0].toUpperCase()}
+                                </span>
                             </div>
-
-                            {dropdownOpen && (
-                                <div style={{
-                                    position: 'absolute', right: 0, top: '110%',
-                                    background: 'white', borderRadius: 12,
-                                    boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-                                    minWidth: 180, zIndex: 200, overflow: 'hidden',
-                                    border: '1px solid #f3f4f6',
-                                }}>
-                                    <div style={{ padding: '10px 16px 8px', borderBottom: '1px solid #f3f4f6' }}>
-                                        <div style={{ fontWeight: 600, fontSize: '0.88rem' }}>{user?.fullName || user?.username}</div>
-                                        <div style={{ fontSize: '0.78rem', color: '#9ca3af' }}>{user?.email}</div>
-                                    </div>
-                                    <button onClick={handleLogout} style={{
-                                        display: 'block', width: '100%', textAlign: 'left',
-                                        padding: '10px 16px', fontSize: '0.88rem',
-                                        color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer',
-                                    }}>
-                                        <i className="fas fa-sign-out-alt mr-2"></i>Đăng xuất
-                                    </button>
-                                </div>
-                            )}
+                            <div style={{ lineHeight: 1.2 }}>
+                                <div style={{ fontWeight: 600, fontSize: '0.88rem', color: '#1f2937' }}>{user?.fullName || user?.username}</div>
+                                <div style={{ fontSize: '0.73rem', color: '#9ca3af' }}>{isAdmin ? 'Quản trị viên' : 'Nhân viên'}</div>
+                            </div>
+                            <i className={`fas fa-chevron-${dropdownOpen ? 'up' : 'down'}`} style={{ color: '#9ca3af', fontSize: '0.65rem' }}></i>
                         </div>
+
+                        {dropdownOpen && (
+                            <div style={{
+                                position: 'absolute', right: 0, top: '110%',
+                                background: 'white', borderRadius: 12,
+                                boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                                minWidth: 180, zIndex: 200, overflow: 'hidden',
+                                border: '1px solid #f3f4f6',
+                            }}>
+                                <div style={{ padding: '10px 16px 8px', borderBottom: '1px solid #f3f4f6' }}>
+                                    <div style={{ fontWeight: 600, fontSize: '0.88rem' }}>{user?.fullName || user?.username}</div>
+                                    <div style={{ fontSize: '0.78rem', color: '#9ca3af' }}>{user?.email}</div>
+                                </div>
+                                <button onClick={handleLogout} style={{
+                                    display: 'block', width: '100%', textAlign: 'left',
+                                    padding: '10px 16px', fontSize: '0.88rem',
+                                    color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer',
+                                }}>
+                                    <i className="fas fa-sign-out-alt mr-2"></i>Đăng xuất
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </header>
 
@@ -301,15 +311,15 @@ const MainLayout = ({ children }) => {
 
                 {/* Footer */}
                 <footer style={{
-                    padding: '16px 28px',
+                    padding: '14px 28px',
                     borderTop: '1px solid #f0f0f0',
                     background: 'white',
-                    fontSize: '0.82rem',
+                    fontSize: '0.8rem',
                     color: '#9ca3af',
                     display: 'flex',
                     justifyContent: 'space-between',
                 }}>
-                    <span>© 2026 <strong style={{ color: '#7c3aed' }}>Arthentic</strong>. All rights reserved.</span>
+                    <span>© 2026 <strong style={{ color: '#c8a97a' }}>Arthentic</strong>. All rights reserved.</span>
                     <span>Version 1.0.0</span>
                 </footer>
             </div>

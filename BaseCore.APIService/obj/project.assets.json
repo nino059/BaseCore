@@ -4386,6 +4386,7 @@
       },
       "frameworks": {
         "net10.0": {
+          "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {
             "D:\\Newfolder\\Ky6\\7. Công nghệ web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Entities\\BaseCore.Entities.csproj": {
@@ -4414,6 +4415,7 @@
     },
     "frameworks": {
       "net10.0": {
+        "framework": "net10.0",
         "targetAlias": "net10.0",
         "dependencies": {
           "AutoMapper": {

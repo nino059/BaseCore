@@ -1,34 +1,75 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { userApi } from '../../services/api';
-import { useCart } from './Cart';
+import PublicLayout from '../../components/PublicLayout';
+
+const inp = {
+  width: '100%', padding: '12px 16px',
+  border: '1.5px solid #e8e4df', background: 'white',
+  fontSize: '0.95rem', color: '#1a1a1a', outline: 'none',
+  boxSizing: 'border-box', transition: 'border-color 0.2s',
+};
 
 const Profile = () => {
-  const { user, login } = useAuth();
-  const { count } = useCart();
+  const { user, isAdmin, updateUser } = useAuth();
+  const userId = user?.userId || user?.id;
   const [tab, setTab] = useState('info');
   const [form, setForm] = useState({
-    fullName: user?.fullName || '',
+    fullName: user?.name || user?.fullName || '',
     email:    user?.email    || '',
     phone:    user?.phone    || '',
   });
   const [pwForm, setPwForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
   const [msg, setMsg]         = useState({ type: '', text: '' });
   const [loading, setLoading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || '');
+  const [avatarLoading, setAvatarLoading] = useState(false);
+  const avatarInputRef = useRef(null);
+
+  // Fetch avatar hiện tại từ API (xử lý session cũ chưa có avatarUrl)
+  useEffect(() => {
+    if (!userId) return;
+    userApi.getById(userId)
+      .then(res => {
+        const url = res.data?.avatarUrl || '';
+        if (url && url !== avatarUrl) {
+          setAvatarUrl(url);
+          updateUser({ avatarUrl: url });
+        }
+      })
+      .catch(() => {});
+  }, [userId]); // eslint-disable-line
 
   const showMsg = (type, text) => {
     setMsg({ type, text });
     setTimeout(() => setMsg({ type: '', text: '' }), 4000);
   };
 
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAvatarLoading(true);
+    try {
+      const uploadRes = await userApi.uploadAvatar(userId, file);
+      const url = uploadRes.data?.avatarUrl || uploadRes.data?.url || uploadRes.data;
+      setAvatarUrl(url);
+      updateUser({ avatarUrl: url });
+      showMsg('success', 'Cập nhật ảnh đại diện thành công');
+    } catch {
+      showMsg('error', 'Tải ảnh thất bại. Vui lòng thử lại');
+    }
+    setAvatarLoading(false);
+  };
+
   const handleInfoSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await userApi.update(user.id, form);
-      showMsg('success', 'Cập nhật thông tin thành công!');
+      await userApi.update(userId, { name: form.fullName, phone: form.phone });
+      updateUser({ name: form.fullName, fullName: form.fullName, phone: form.phone });
+      showMsg('success', 'Cập nhật thông tin thành công');
     } catch {
-      showMsg('error', 'Cập nhật thất bại. Vui lòng thử lại!');
+      showMsg('error', 'Cập nhật thất bại. Vui lòng thử lại');
     }
     setLoading(false);
   };
@@ -36,162 +77,212 @@ const Profile = () => {
   const handlePwSubmit = async (e) => {
     e.preventDefault();
     if (pwForm.newPassword !== pwForm.confirmPassword)
-      return showMsg('error', 'Mật khẩu xác nhận không khớp!');
+      return showMsg('error', 'Mật khẩu xác nhận không khớp');
     if (pwForm.newPassword.length < 6)
-      return showMsg('error', 'Mật khẩu mới phải có ít nhất 6 ký tự!');
+      return showMsg('error', 'Mật khẩu mới phải có ít nhất 6 ký tự');
     setLoading(true);
     try {
-      await userApi.update(user.id, { currentPassword: pwForm.currentPassword, newPassword: pwForm.newPassword });
-      showMsg('success', 'Đổi mật khẩu thành công!');
+      await userApi.update(userId, { currentPassword: pwForm.currentPassword, newPassword: pwForm.newPassword });
+      showMsg('success', 'Đổi mật khẩu thành công');
       setPwForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
     } catch {
-      showMsg('error', 'Mật khẩu hiện tại không đúng!');
+      showMsg('error', 'Mật khẩu hiện tại không đúng');
     }
     setLoading(false);
   };
 
+  const TABS = [
+    { key: 'info',     label: 'Thông tin cá nhân' },
+    { key: 'password', label: 'Đổi mật khẩu' },
+  ];
+
   return (
-    <div style={{ maxWidth: 640, margin: '0 auto', padding: '40px 16px' }}>
-      <h1 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: 28, textAlign: 'center' }}>
-        Hồ sơ cá nhân
-      </h1>
+    <PublicLayout>
+      <div style={{ background: '#faf8f5', minHeight: '80vh' }}>
+        <div style={{ maxWidth: 680, margin: '0 auto', padding: '48px 20px' }}>
 
-      {/* Avatar */}
-      <div style={{
-        display: 'flex', flexDirection: 'column', alignItems: 'center',
-        background: 'linear-gradient(135deg,#a78bfa22,#7c3aed11)',
-        borderRadius: 20, padding: '28px 20px', marginBottom: 28,
-      }}>
-        <div style={{
-          width: 80, height: 80, borderRadius: '50%',
-          background: 'linear-gradient(135deg,#a78bfa,#7c3aed)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: 'white', fontSize: '2rem', fontWeight: 800, marginBottom: 14,
-          boxShadow: '0 4px 16px rgba(124,58,237,0.3)',
-        }}>
-          {(user?.fullName || user?.username || 'U')[0].toUpperCase()}
-        </div>
-        <div style={{ fontWeight: 700, fontSize: '1.1rem', marginBottom: 4 }}>
-          {user?.fullName || user?.username}
-        </div>
-        <div style={{ color: '#6b7280', fontSize: '0.9rem', marginBottom: 8 }}>{user?.email}</div>
-        <span style={{
-          background: user?.role === 'Admin' ? '#ede9fe' : '#d1fae5',
-          color:      user?.role === 'Admin' ? '#7c3aed' : '#059669',
-          padding: '3px 14px', borderRadius: 999, fontSize: '0.78rem', fontWeight: 700,
-        }}>
-          {user?.role === 'Admin' ? '⚙️ Quản trị viên' : '🎨 Khách hàng'}
-        </span>
-      </div>
+          {/* Header */}
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.18em', color: '#c8a97a', textTransform: 'uppercase', marginBottom: 10 }}>
+              Tài khoản
+            </p>
+            <h1 style={{ fontWeight: 200, fontSize: 'clamp(1.4rem, 3vw, 2rem)', color: '#1a1a1a', letterSpacing: '0.04em', margin: 0 }}>
+              Hồ sơ cá nhân
+            </h1>
+          </div>
 
-      {/* Tabs */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 24, background: '#f3f4f6', borderRadius: 14, padding: 6 }}>
-        {[
-          { key: 'info',     label: '👤 Thông tin' },
-          { key: 'password', label: '🔒 Đổi mật khẩu' },
-        ].map(t => (
-          <button key={t.key} onClick={() => setTab(t.key)} style={{
-            flex: 1, padding: '10px 0', border: 'none', cursor: 'pointer',
-            fontWeight: 600, fontSize: '0.9rem', borderRadius: 10, transition: 'all 0.2s',
-            background: tab === t.key ? 'white' : 'transparent',
-            color:      tab === t.key ? '#7c3aed' : '#6b7280',
-            boxShadow:  tab === t.key ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
+          {/* Avatar Card */}
+          <div style={{
+            background: 'white', padding: '28px 32px',
+            display: 'flex', alignItems: 'center', gap: 24,
+            marginBottom: 32, boxShadow: '0 2px 16px rgba(0,0,0,0.04)',
           }}>
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Thông báo */}
-      {msg.text && (
-        <div style={{
-          padding: '12px 18px', borderRadius: 12, marginBottom: 20, fontWeight: 600,
-          fontSize: '0.9rem', textAlign: 'center',
-          background: msg.type === 'success' ? '#d1fae5' : '#fee2e2',
-          color:      msg.type === 'success' ? '#065f46' : '#dc2626',
-        }}>
-          {msg.type === 'success' ? '✅ ' : '❌ '}{msg.text}
-        </div>
-      )}
-
-      {/* Tab: Thông tin */}
-      {tab === 'info' && (
-        <form onSubmit={handleInfoSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-          {[
-            { key: 'fullName', label: 'Họ và tên',       type: 'text',  placeholder: 'Nguyễn Văn A', disabled: false },
-            { key: 'email',    label: 'Email',            type: 'email', placeholder: '',              disabled: true  },
-            { key: 'phone',    label: 'Số điện thoại',   type: 'tel',   placeholder: '0901 234 567', disabled: false },
-          ].map(f => (
-            <div key={f.key}>
-              <label style={{ fontWeight: 600, fontSize: '0.9rem', color: '#374151', display: 'block', marginBottom: 6 }}>
-                {f.label}
-              </label>
-              <input
-                type={f.type}
-                value={form[f.key]}
-                onChange={e => !f.disabled && setForm({ ...form, [f.key]: e.target.value })}
-                placeholder={f.placeholder}
-                disabled={f.disabled}
+            <div style={{ position: 'relative', flexShrink: 0 }}>
+              <div style={{
+                width: 72, height: 72, background: '#1a1a1a', overflow: 'hidden',
+                borderRadius: '50%', border: '2px solid #c8a97a',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'white', fontSize: '1.8rem', fontWeight: 300,
+              }}>
+                {avatarUrl
+                  ? <img src={avatarUrl} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={() => setAvatarUrl('')} />
+                  : (user?.fullName || user?.username || 'U')[0].toUpperCase()
+                }
+              </div>
+              <button
+                onClick={() => avatarInputRef.current?.click()}
+                disabled={avatarLoading}
+                title="Đổi ảnh đại diện"
                 style={{
-                  width: '100%', padding: '11px 14px', border: '1.5px solid #e5e7eb',
-                  borderRadius: 12, fontSize: '0.95rem', outline: 'none', boxSizing: 'border-box',
-                  background: f.disabled ? '#f9fafb' : 'white',
-                  color:      f.disabled ? '#9ca3af' : '#111827',
-                  cursor:     f.disabled ? 'not-allowed' : 'text',
+                  position: 'absolute', bottom: -6, right: -6,
+                  width: 26, height: 26, border: '2px solid white',
+                  borderRadius: '50%', background: '#1a1a1a',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: avatarLoading ? 'not-allowed' : 'pointer', padding: 0,
                 }}
-              />
-              {f.disabled && (
-                <p style={{ fontSize: '0.78rem', color: '#9ca3af', marginTop: 4 }}>Email không thể thay đổi</p>
-              )}
+              >
+                {avatarLoading
+                  ? <span className="spinner-border spinner-border-sm" style={{ width: 10, height: 10, borderWidth: 2, color: 'white' }}></span>
+                  : <i className="fas fa-camera" style={{ color: 'white', fontSize: '0.6rem' }}></i>
+                }
+              </button>
+              <input ref={avatarInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleAvatarChange} />
             </div>
-          ))}
-          <button type="submit" disabled={loading} style={{
-            padding: '13px 28px', borderRadius: 14, border: 'none', fontWeight: 700,
-            fontSize: '0.95rem', cursor: loading ? 'not-allowed' : 'pointer', transition: 'all 0.2s',
-            background: loading ? '#e5e7eb' : 'linear-gradient(135deg,#a78bfa,#7c3aed)',
-            color: loading ? '#9ca3af' : 'white',
-          }}>
-            {loading ? '⏳ Đang lưu...' : '💾 Lưu thay đổi'}
-          </button>
-        </form>
-      )}
+            <div>
+              <div style={{ fontWeight: 600, fontSize: '1.05rem', color: '#1a1a1a', marginBottom: 4 }}>
+                {user?.fullName || user?.username}
+              </div>
+              <div style={{ fontSize: '0.85rem', color: '#767676', marginBottom: 8 }}>{user?.email}</div>
+              <span style={{
+                display: 'inline-block', padding: '3px 12px',
+                background: isAdmin ? '#fef3c7' : '#f0fdf4',
+                color: isAdmin ? '#92400e' : '#065f46',
+                fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em',
+              }}>
+                {isAdmin ? 'QUẢN TRỊ VIÊN' : 'THÀNH VIÊN'}
+              </span>
+            </div>
+          </div>
 
-      {/* Tab: Đổi mật khẩu */}
-      {tab === 'password' && (
-        <form onSubmit={handlePwSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-          {[
-            { name: 'currentPassword', label: 'Mật khẩu hiện tại',     placeholder: '••••••••' },
-            { name: 'newPassword',     label: 'Mật khẩu mới',          placeholder: 'Ít nhất 6 ký tự' },
-            { name: 'confirmPassword', label: 'Xác nhận mật khẩu mới', placeholder: '••••••••' },
-          ].map(f => (
-            <div key={f.name}>
-              <label style={{ fontWeight: 600, fontSize: '0.9rem', color: '#374151', display: 'block', marginBottom: 6 }}>
-                {f.label}
-              </label>
-              <input
-                type="password"
-                value={pwForm[f.name]}
-                onChange={e => setPwForm({ ...pwForm, [f.name]: e.target.value })}
-                placeholder={f.placeholder}
-                required
-                style={{
-                  width: '100%', padding: '11px 14px', border: '1.5px solid #e5e7eb',
-                  borderRadius: 12, fontSize: '0.95rem', outline: 'none', boxSizing: 'border-box',
-                }}
-              />
+          {/* Tabs */}
+          <div style={{ display: 'flex', borderBottom: '1.5px solid #e8e4df', marginBottom: 32 }}>
+            {TABS.map(t => (
+              <button key={t.key} onClick={() => setTab(t.key)} style={{
+                padding: '12px 20px', border: 'none', cursor: 'pointer',
+                background: 'transparent',
+                fontWeight: tab === t.key ? 700 : 400,
+                fontSize: '0.85rem', letterSpacing: '0.04em',
+                color: tab === t.key ? '#1a1a1a' : '#767676',
+                borderBottom: tab === t.key ? '2px solid #1a1a1a' : '2px solid transparent',
+                marginBottom: -1.5, transition: 'all 0.18s',
+              }}>
+                {t.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Thông báo */}
+          {msg.text && (
+            <div style={{
+              padding: '12px 18px', fontSize: '0.85rem', marginBottom: 24, letterSpacing: '0.01em',
+              background: msg.type === 'success' ? '#f0fdf4' : '#fef2f2',
+              border: `1px solid ${msg.type === 'success' ? '#bbf7d0' : '#fecaca'}`,
+              color: msg.type === 'success' ? '#166534' : '#991b1b',
+            }}>
+              <i className={`fas fa-${msg.type === 'success' ? 'check' : 'exclamation-circle'} mr-2`}></i>
+              {msg.text}
             </div>
-          ))}
-          <button type="submit" disabled={loading} style={{
-            padding: '13px 28px', borderRadius: 14, border: 'none', fontWeight: 700,
-            fontSize: '0.95rem', cursor: loading ? 'not-allowed' : 'pointer', transition: 'all 0.2s',
-            background: loading ? '#e5e7eb' : 'linear-gradient(135deg,#a78bfa,#7c3aed)',
-            color: loading ? '#9ca3af' : 'white',
-          }}>
-            {loading ? '⏳ Đang đổi...' : '🔑 Đổi mật khẩu'}
-          </button>
-        </form>
-      )}
-    </div>
+          )}
+
+          {/* Form panel */}
+          <div style={{ background: 'white', padding: '36px 32px', boxShadow: '0 2px 16px rgba(0,0,0,0.04)' }}>
+
+            {/* Tab: Thông tin */}
+            {tab === 'info' && (
+              <form onSubmit={handleInfoSubmit}>
+                {[
+                  { key: 'fullName', label: 'Họ và tên',     type: 'text',  placeholder: 'Nguyễn Văn A', disabled: false },
+                  { key: 'email',    label: 'Email',          type: 'email', placeholder: '',              disabled: true  },
+                  { key: 'phone',    label: 'Số điện thoại', type: 'tel',   placeholder: '0901 234 567',  disabled: false },
+                ].map(f => (
+                  <div key={f.key} style={{ marginBottom: 22 }}>
+                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 8 }}>
+                      {f.label}
+                    </label>
+                    <input
+                      type={f.type}
+                      value={form[f.key]}
+                      onChange={e => !f.disabled && setForm({ ...form, [f.key]: e.target.value })}
+                      placeholder={f.placeholder}
+                      disabled={f.disabled}
+                      style={{
+                        ...inp,
+                        background: f.disabled ? '#faf8f5' : 'white',
+                        color: f.disabled ? '#aaa' : '#1a1a1a',
+                        cursor: f.disabled ? 'not-allowed' : 'text',
+                      }}
+                      onFocus={e => !f.disabled && (e.target.style.borderColor = '#1a1a1a')}
+                      onBlur={e => (e.target.style.borderColor = '#e8e4df')}
+                    />
+                    {f.disabled && (
+                      <p style={{ fontSize: '0.75rem', color: '#bbb', marginTop: 5 }}>Email không thể thay đổi</p>
+                    )}
+                  </div>
+                ))}
+                <div style={{ marginTop: 32 }}>
+                  <button type="submit" disabled={loading} style={{
+                    padding: '13px 32px', background: loading ? '#ccc' : '#1a1a1a',
+                    color: 'white', border: 'none',
+                    fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.14em',
+                    textTransform: 'uppercase', cursor: loading ? 'not-allowed' : 'pointer',
+                  }}>
+                    {loading ? 'Đang lưu...' : 'Lưu thay đổi'}
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* Tab: Đổi mật khẩu */}
+            {tab === 'password' && (
+              <form onSubmit={handlePwSubmit}>
+                {[
+                  { name: 'currentPassword', label: 'Mật khẩu hiện tại',     placeholder: '••••••••' },
+                  { name: 'newPassword',     label: 'Mật khẩu mới',          placeholder: 'Ít nhất 6 ký tự' },
+                  { name: 'confirmPassword', label: 'Xác nhận mật khẩu mới', placeholder: '••••••••' },
+                ].map(f => (
+                  <div key={f.name} style={{ marginBottom: 22 }}>
+                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 8 }}>
+                      {f.label}
+                    </label>
+                    <input
+                      type="password"
+                      value={pwForm[f.name]}
+                      onChange={e => setPwForm({ ...pwForm, [f.name]: e.target.value })}
+                      placeholder={f.placeholder}
+                      required
+                      style={inp}
+                      onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
+                      onBlur={e => (e.target.style.borderColor = '#e8e4df')}
+                    />
+                  </div>
+                ))}
+                <div style={{ marginTop: 32 }}>
+                  <button type="submit" disabled={loading} style={{
+                    padding: '13px 32px', background: loading ? '#ccc' : '#1a1a1a',
+                    color: 'white', border: 'none',
+                    fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.14em',
+                    textTransform: 'uppercase', cursor: loading ? 'not-allowed' : 'pointer',
+                  }}>
+                    {loading ? 'Đang đổi...' : 'Đổi mật khẩu'}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+
+        </div>
+      </div>
+    </PublicLayout>
   );
 };
 

@@ -13,6 +13,42 @@
             "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ]
         },
         {
+            "DownstreamPathTemplate": "/api/users/{id}/avatar",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 5001
+                }
+            ],
+            "UpstreamPathTemplate": "/api/users/{id}/avatar",
+            "UpstreamHttpMethod": [ "POST", "OPTIONS" ]
+        },
+        {
+            "DownstreamPathTemplate": "/api/users/{id}/profile",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 5001
+                }
+            ],
+            "UpstreamPathTemplate": "/api/users/{id}/profile",
+            "UpstreamHttpMethod": [ "GET", "OPTIONS" ]
+        },
+        {
+            "DownstreamPathTemplate": "/api/users/artists",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 5001
+                }
+            ],
+            "UpstreamPathTemplate": "/api/users/artists",
+            "UpstreamHttpMethod": [ "GET", "OPTIONS" ]
+        },
+        {
             "DownstreamPathTemplate": "/api/users/{everything}",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [

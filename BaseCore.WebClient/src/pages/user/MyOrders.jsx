@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { orderApi } from '../../services/api';
-import { useCart } from './Cart';
+import PublicLayout from '../../components/PublicLayout';
 
 const fmt = (p) =>
   new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p);
@@ -22,20 +22,22 @@ const TABS = [
 ];
 
 const STATUS_MAP = {
-  Pending:   { label: 'Chờ xác nhận', color: '#f59e0b', bg: '#fef3c7' },
-  Confirmed: { label: 'Đã xác nhận',  color: '#3b82f6', bg: '#dbeafe' },
-  Shipping:  { label: 'Đang giao',    color: '#8b5cf6', bg: '#ede9fe' },
-  Delivered: { label: 'Đã giao',      color: '#10b981', bg: '#d1fae5' },
-  Cancelled: { label: 'Đã hủy',       color: '#ef4444', bg: '#fee2e2' },
+  Pending:   { label: 'Chờ xác nhận', color: '#92400e', bg: '#fef3c7', dot: '#f59e0b' },
+  Confirmed: { label: 'Đã xác nhận',  color: '#1e40af', bg: '#dbeafe', dot: '#3b82f6' },
+  Shipping:  { label: 'Đang giao',    color: '#5b21b6', bg: '#ede9fe', dot: '#8b5cf6' },
+  Delivered: { label: 'Đã giao',      color: '#065f46', bg: '#d1fae5', dot: '#10b981' },
+  Cancelled: { label: 'Đã hủy',       color: '#991b1b', bg: '#fee2e2', dot: '#ef4444' },
 };
 
 const StatusBadge = ({ status }) => {
-  const s = STATUS_MAP[status] || { label: status, color: '#6b7280', bg: '#f3f4f6' };
+  const s = STATUS_MAP[status] || { label: status, color: '#6b7280', bg: '#f3f4f6', dot: '#9ca3af' };
   return (
     <span style={{
-      display: 'inline-block', padding: '3px 12px', borderRadius: 999,
-      fontSize: '0.78rem', fontWeight: 700, background: s.bg, color: s.color,
+      display: 'inline-flex', alignItems: 'center', gap: 5,
+      padding: '4px 12px', fontSize: '0.72rem', fontWeight: 700,
+      letterSpacing: '0.06em', background: s.bg, color: s.color,
     }}>
+      <span style={{ width: 6, height: 6, borderRadius: '50%', background: s.dot, display: 'inline-block' }}></span>
       {s.label}
     </span>
   );
@@ -47,7 +49,6 @@ const MyOrders = () => {
   const [selected, setSelected]         = useState(null);
   const [activeTab, setActiveTab]       = useState('all');
   const [cancellingId, setCancellingId] = useState(null);
-  const { count } = useCart();
 
   const loadOrders = async () => {
     setLoading(true);
@@ -74,192 +75,232 @@ const MyOrders = () => {
   const filtered = activeTab === 'all' ? orders : orders.filter(o => o.status === activeTab);
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 16px' }}>
+    <PublicLayout>
+      <div style={{ background: '#faf8f5', minHeight: '80vh' }}>
+        <div style={{ maxWidth: 960, margin: '0 auto', padding: '48px 20px' }}>
 
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-        <h1 style={{ fontSize: '1.8rem', fontWeight: 800, margin: 0 }}>Đơn hàng của tôi</h1>
-        <Link to="/shop" style={{
-          padding: '8px 20px', borderRadius: 10, fontSize: '0.9rem', fontWeight: 600,
-          background: 'linear-gradient(135deg,#a78bfa,#7c3aed)', color: 'white', textDecoration: 'none',
-        }}>
-          Tiếp tục mua sắm
-        </Link>
-      </div>
+          {/* Header */}
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 40, flexWrap: 'wrap', gap: 16 }}>
+            <div>
+              <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.18em', color: '#c8a97a', textTransform: 'uppercase', marginBottom: 8 }}>
+                Tài khoản
+              </p>
+              <h1 style={{ fontWeight: 200, fontSize: 'clamp(1.4rem, 3vw, 2rem)', color: '#1a1a1a', letterSpacing: '0.04em', margin: 0 }}>
+                Đơn hàng của tôi
+              </h1>
+            </div>
+            <Link to="/shop" style={{
+              padding: '11px 24px', background: 'transparent',
+              border: '1.5px solid #1a1a1a', color: '#1a1a1a',
+              fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.12em',
+              textTransform: 'uppercase', textDecoration: 'none',
+              display: 'inline-block',
+            }}>
+              Tiếp tục mua sắm
+            </Link>
+          </div>
 
-      {/* Status Tabs */}
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
-        {TABS.map(t => (
-          <button key={t.key} onClick={() => { setActiveTab(t.key); setSelected(null); }} style={{
-            padding: '7px 18px', borderRadius: 999, border: 'none', cursor: 'pointer',
-            fontWeight: 600, fontSize: '0.85rem', transition: 'all 0.2s',
-            background: activeTab === t.key ? 'linear-gradient(135deg,#a78bfa,#7c3aed)' : '#f3f4f6',
-            color: activeTab === t.key ? 'white' : '#6b7280',
-          }}>
-            {t.label}
-            {t.key !== 'all' && (
-              <span style={{ marginLeft: 6, opacity: 0.8 }}>
-                ({orders.filter(o => o.status === t.key).length})
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
-
-      {/* Loading */}
-      {loading && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {[1,2,3].map(i => (
-            <div key={i} style={{ height: 88, borderRadius: 16, background: '#f3f4f6' }} />
-          ))}
-        </div>
-      )}
-
-      {/* Empty */}
-      {!loading && orders.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '64px 0', color: '#9ca3af' }}>
-          <div style={{ fontSize: '3.5rem', marginBottom: 16 }}>📦</div>
-          <p style={{ fontSize: '1.1rem', fontWeight: 600, color: '#374151', marginBottom: 8 }}>
-            Bạn chưa có đơn hàng nào
-          </p>
-          <Link to="/shop" style={{
-            display: 'inline-block', marginTop: 12, padding: '10px 28px', borderRadius: 12,
-            background: 'linear-gradient(135deg,#a78bfa,#7c3aed)',
-            color: 'white', textDecoration: 'none', fontWeight: 700,
-          }}>
-            Mua sắm ngay
-          </Link>
-        </div>
-      )}
-
-      {/* Tab empty */}
-      {!loading && orders.length > 0 && filtered.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '40px 0', color: '#9ca3af' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>🔍</div>
-          <p>Không có đơn hàng nào ở trạng thái này.</p>
-        </div>
-      )}
-
-      {/* List + Detail */}
-      {!loading && filtered.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: selected ? '1fr 1.1fr' : '1fr', gap: 16 }}>
-
-          {/* Danh sách */}
-          <div>
-            {filtered.map(order => (
-              <div key={order.id}
-                onClick={() => setSelected(selected?.id === order.id ? null : order)}
-                style={{
-                  background: 'white', borderRadius: 16, padding: '16px 20px', marginBottom: 12, cursor: 'pointer',
-                  boxShadow: selected?.id === order.id
-                    ? '0 0 0 2px #a78bfa, 0 4px 24px rgba(167,139,250,0.15)'
-                    : '0 2px 12px rgba(0,0,0,0.06)',
-                  transition: 'box-shadow 0.2s',
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-                  <div>
-                    <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>Đơn #{order.id}</span>
-                    <div style={{ color: '#9ca3af', fontSize: '0.8rem', marginTop: 2 }}>
-                      {fmtDate(order.createdAt || order.orderDate)}
-                    </div>
-                  </div>
-                  <StatusBadge status={order.status} />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  {order.items && (
-                    <span style={{ color: '#6b7280', fontSize: '0.85rem' }}>{order.items.length} sản phẩm</span>
-                  )}
-                  <span style={{ fontWeight: 800, color: '#7c3aed', fontSize: '1rem' }}>
-                    {fmt(order.totalAmount || order.total || 0)}
+          {/* Tabs */}
+          <div style={{ display: 'flex', gap: 0, flexWrap: 'nowrap', overflowX: 'auto', marginBottom: 32, borderBottom: '1.5px solid #e8e4df' }}>
+            {TABS.map(t => (
+              <button key={t.key} onClick={() => { setActiveTab(t.key); setSelected(null); }} style={{
+                padding: '11px 18px', border: 'none', cursor: 'pointer',
+                fontWeight: activeTab === t.key ? 700 : 400,
+                fontSize: '0.82rem', letterSpacing: '0.06em',
+                background: 'transparent', whiteSpace: 'nowrap',
+                color: activeTab === t.key ? '#1a1a1a' : '#767676',
+                borderBottom: activeTab === t.key ? '2px solid #1a1a1a' : '2px solid transparent',
+                marginBottom: -1.5, transition: 'all 0.18s',
+              }}>
+                {t.label}
+                {t.key !== 'all' && orders.filter(o => o.status === t.key).length > 0 && (
+                  <span style={{ marginLeft: 6, fontSize: '0.7rem', color: '#c8a97a' }}>
+                    ({orders.filter(o => o.status === t.key).length})
                   </span>
-                </div>
-              </div>
+                )}
+              </button>
             ))}
           </div>
 
-          {/* Chi tiết */}
-          {selected && (
-            <div style={{
-              background: 'white', borderRadius: 20, padding: 24,
-              boxShadow: '0 8px 32px rgba(0,0,0,0.1)', height: 'fit-content',
-              position: 'sticky', top: 80,
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <h3 style={{ fontWeight: 800, fontSize: '1.1rem', margin: 0 }}>Chi tiết đơn #{selected.id}</h3>
-                <button onClick={() => setSelected(null)} style={{
-                  background: '#f3f4f6', border: 'none', borderRadius: '50%',
-                  width: 32, height: 32, cursor: 'pointer', fontSize: '1rem', color: '#6b7280',
-                }}>✕</button>
-              </div>
+          {/* Loading skeleton */}
+          {loading && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {[1, 2, 3].map(i => (
+                <div key={i} style={{ height: 80, background: '#ede9e0', opacity: 0.5 }} />
+              ))}
+            </div>
+          )}
 
-              <div style={{ background: '#f9fafb', borderRadius: 12, padding: '12px 16px', marginBottom: 16 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                  <span style={{ color: '#6b7280', fontSize: '0.85rem' }}>Trạng thái</span>
-                  <StatusBadge status={selected.status} />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: '#6b7280', fontSize: '0.85rem' }}>Ngày đặt</span>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>
-                    {fmtDate(selected.createdAt || selected.orderDate)}
-                  </span>
-                </div>
-              </div>
+          {/* Empty */}
+          {!loading && orders.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '80px 0' }}>
+              <p style={{ fontSize: '2rem', color: '#e8e4df', marginBottom: 20 }}>✦</p>
+              <p style={{ fontWeight: 300, fontSize: '1.1rem', color: '#767676', marginBottom: 8 }}>Bạn chưa có đơn hàng nào</p>
+              <p style={{ fontSize: '0.85rem', color: '#aaa', marginBottom: 28 }}>Khám phá bộ sưu tập nghệ thuật của chúng tôi</p>
+              <Link to="/shop" style={{
+                display: 'inline-block', padding: '13px 32px',
+                background: '#1a1a1a', color: 'white',
+                fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.14em',
+                textTransform: 'uppercase', textDecoration: 'none',
+              }}>
+                Khám phá ngay
+              </Link>
+            </div>
+          )}
 
-              {selected.shippingAddress && (
-                <div style={{ marginBottom: 16 }}>
-                  <div style={{ fontSize: '0.8rem', color: '#9ca3af', marginBottom: 4, fontWeight: 600 }}>ĐỊA CHỈ GIAO HÀNG</div>
-                  <div style={{ fontSize: '0.9rem', color: '#374151' }}>{selected.shippingAddress}</div>
-                </div>
-              )}
+          {/* Tab empty */}
+          {!loading && orders.length > 0 && filtered.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '60px 0', color: '#aaa' }}>
+              <p style={{ fontSize: '2rem', marginBottom: 12 }}>✦</p>
+              <p style={{ fontWeight: 300 }}>Không có đơn hàng nào ở trạng thái này.</p>
+            </div>
+          )}
 
-              {selected.note && (
-                <div style={{ background: '#fffbeb', borderRadius: 10, padding: '10px 14px', marginBottom: 16, fontSize: '0.87rem', color: '#92400e' }}>
-                  📝 {selected.note}
-                </div>
-              )}
+          {/* List + Detail */}
+          {!loading && filtered.length > 0 && (
+            <div style={{ display: 'grid', gridTemplateColumns: selected ? '1fr 1.1fr' : '1fr', gap: 24 }}>
 
-              {selected.items && selected.items.length > 0 && (
-                <div style={{ marginBottom: 16 }}>
-                  <div style={{ fontSize: '0.8rem', color: '#9ca3af', marginBottom: 10, fontWeight: 600 }}>SẢN PHẨM</div>
-                  {selected.items.map((item, idx) => (
-                    <div key={idx} style={{
-                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                      padding: '8px 0', borderBottom: '1px solid #f3f4f6',
-                    }}>
+              {/* Danh sách */}
+              <div>
+                {filtered.map(order => (
+                  <div
+                    key={order.id}
+                    onClick={() => setSelected(selected?.id === order.id ? null : order)}
+                    style={{
+                      background: 'white', padding: '20px 24px', marginBottom: 10, cursor: 'pointer',
+                      borderLeft: selected?.id === order.id ? '3px solid #1a1a1a' : '3px solid transparent',
+                      boxShadow: selected?.id === order.id
+                        ? '0 4px 24px rgba(0,0,0,0.08)'
+                        : '0 1px 4px rgba(0,0,0,0.04)',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={e => { if (selected?.id !== order.id) e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.07)'; }}
+                    onMouseLeave={e => { if (selected?.id !== order.id) e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'; }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                       <div>
-                        <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{item.productName || item.name}</div>
-                        <div style={{ color: '#9ca3af', fontSize: '0.8rem' }}>x{item.quantity || item.qty}</div>
+                        <span style={{ fontWeight: 600, fontSize: '0.92rem', color: '#1a1a1a' }}>Đơn #{order.id}</span>
+                        <div style={{ color: '#aaa', fontSize: '0.78rem', marginTop: 3, letterSpacing: '0.02em' }}>
+                          {fmtDate(order.createdAt || order.orderDate)}
+                        </div>
                       </div>
-                      <div style={{ fontWeight: 700, color: '#7c3aed' }}>
-                        {fmt(item.price * (item.quantity || item.qty))}
-                      </div>
+                      <StatusBadge status={order.status} />
                     </div>
-                  ))}
-                </div>
-              )}
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '2px solid #f3f4f6', paddingTop: 14, marginBottom: 16 }}>
-                <span style={{ fontWeight: 700, fontSize: '1rem' }}>Tổng cộng</span>
-                <span style={{ fontWeight: 800, fontSize: '1.1rem', color: '#7c3aed' }}>
-                  {fmt(selected.totalAmount || selected.total || 0)}
-                </span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      {order.items && (
+                        <span style={{ color: '#aaa', fontSize: '0.8rem' }}>{order.items.length} tác phẩm</span>
+                      )}
+                      <span style={{ fontWeight: 600, color: '#1a1a1a', fontSize: '0.95rem' }}>
+                        {fmt(order.totalAmount || order.total || 0)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
 
-              {selected.status === 'Pending' && (
-                <button onClick={() => handleCancel(selected)} disabled={cancellingId === selected.id} style={{
-                  width: '100%', padding: '11px 0', borderRadius: 12, border: 'none',
-                  background: cancellingId === selected.id ? '#f3f4f6' : '#fee2e2',
-                  color: '#dc2626', fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem',
+              {/* Chi tiết */}
+              {selected && (
+                <div style={{
+                  background: 'white', padding: 28,
+                  boxShadow: '0 8px 40px rgba(0,0,0,0.07)',
+                  height: 'fit-content', position: 'sticky', top: 80,
                 }}>
-                  {cancellingId === selected.id ? 'Đang hủy...' : '🗑 Hủy đơn hàng'}
-                </button>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                    <div>
+                      <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.16em', color: '#c8a97a', textTransform: 'uppercase', marginBottom: 4 }}>
+                        Chi tiết
+                      </p>
+                      <h3 style={{ fontWeight: 400, fontSize: '1rem', color: '#1a1a1a', margin: 0 }}>
+                        Đơn hàng #{selected.id}
+                      </h3>
+                    </div>
+                    <button onClick={() => setSelected(null)} style={{
+                      background: '#f9f6f2', border: 'none',
+                      width: 32, height: 32, cursor: 'pointer', fontSize: '0.9rem', color: '#767676',
+                    }}>✕</button>
+                  </div>
+
+                  <div style={{ background: '#faf8f5', padding: '14px 18px', marginBottom: 20 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <span style={{ fontSize: '0.78rem', color: '#767676' }}>Trạng thái</span>
+                      <StatusBadge status={selected.status} />
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: '0.78rem', color: '#767676' }}>Ngày đặt</span>
+                      <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#1a1a1a' }}>
+                        {fmtDate(selected.createdAt || selected.orderDate)}
+                      </span>
+                    </div>
+                    {selected.paymentMethod && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
+                        <span style={{ fontSize: '0.78rem', color: '#767676' }}>Thanh toán</span>
+                        <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#1a1a1a' }}>{selected.paymentMethod}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {selected.shippingAddress && (
+                    <div style={{ marginBottom: 20 }}>
+                      <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 6 }}>
+                        Địa chỉ giao hàng
+                      </p>
+                      <p style={{ fontSize: '0.88rem', color: '#1a1a1a', fontWeight: 300, lineHeight: 1.6 }}>{selected.shippingAddress}</p>
+                    </div>
+                  )}
+
+                  {selected.note && (
+                    <div style={{ background: '#fffbeb', border: '1px solid #fde68a', padding: '10px 14px', marginBottom: 20, fontSize: '0.85rem', color: '#92400e' }}>
+                      <i className="fas fa-sticky-note mr-2"></i>{selected.note}
+                    </div>
+                  )}
+
+                  {selected.items && selected.items.length > 0 && (
+                    <div style={{ marginBottom: 20 }}>
+                      <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 12 }}>
+                        Tác phẩm đặt mua
+                      </p>
+                      {selected.items.map((item, idx) => (
+                        <div key={idx} style={{
+                          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                          padding: '10px 0', borderBottom: '1px solid #f0ece6',
+                        }}>
+                          <div>
+                            <div style={{ fontWeight: 500, fontSize: '0.88rem', color: '#1a1a1a' }}>{item.productName || item.name}</div>
+                            <div style={{ color: '#aaa', fontSize: '0.78rem', marginTop: 2 }}>Số lượng: {item.quantity || item.qty}</div>
+                          </div>
+                          <div style={{ fontWeight: 600, color: '#1a1a1a', fontSize: '0.88rem' }}>
+                            {fmt(item.price * (item.quantity || item.qty))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1.5px solid #e8e4df', paddingTop: 16, marginBottom: 20 }}>
+                    <span style={{ fontWeight: 600, fontSize: '0.92rem', color: '#1a1a1a' }}>Tổng cộng</span>
+                    <span style={{ fontWeight: 700, fontSize: '1.05rem', color: '#1a1a1a' }}>
+                      {fmt(selected.totalAmount || selected.total || 0)}
+                    </span>
+                  </div>
+
+                  {selected.status === 'Pending' && (
+                    <button onClick={() => handleCancel(selected)} disabled={cancellingId === selected.id} style={{
+                      width: '100%', padding: '12px 0', border: '1.5px solid #991b1b',
+                      background: 'transparent', color: '#991b1b',
+                      fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.12em',
+                      textTransform: 'uppercase', cursor: cancellingId === selected.id ? 'not-allowed' : 'pointer',
+                      opacity: cancellingId === selected.id ? 0.6 : 1,
+                    }}>
+                      {cancellingId === selected.id ? 'Đang hủy...' : 'Hủy đơn hàng'}
+                    </button>
+                  )}
+                </div>
               )}
             </div>
           )}
         </div>
-      )}
-    </div>
+      </div>
+    </PublicLayout>
   );
 };
 

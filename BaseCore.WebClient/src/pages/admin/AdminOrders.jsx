@@ -1,0 +1,718 @@
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { orderApi } from '../../services/api';
+
+// ─── Config trạng thái ────────────────────────────────────────
+const STATUS_CFG = {
+  Pending:    { label: 'Chờ xác nhận', color: '#f59e0b', bg: '#fef3c7', icon: 'fa-clock'        },
+  Processing: { label: 'Đang xử lý',   color: '#3b82f6', bg: '#dbeafe', icon: 'fa-cog'          },
+  Shipped:    { label: 'Đang giao',    color: '#8b6c4a', bg: '#f5edd6', icon: 'fa-truck'         },
+  Completed:  { label: 'Hoàn thành',  color: '#10b981', bg: '#d1fae5', icon: 'fa-check-circle'  },
+  Cancelled:  { label: 'Đã hủy',      color: '#ef4444', bg: '#fee2e2', icon: 'fa-times-circle'  },
+};
+
+const STATUS_STEPS = ['Pending', 'Processing', 'Shipped', 'Completed'];
+const fmt = v => Number(v || 0).toLocaleString('vi-VN') + '₫';
+
+// ─── Toast ────────────────────────────────────────────────────
+const Toast = ({ toasts }) => (
+  <div style={{ position:'fixed', top:20, right:20, zIndex:9999, display:'flex', flexDirection:'column', gap:8 }}>
+    {toasts.map(t => (
+      <div key={t.id} style={{
+        padding:'11px 18px', borderRadius:10, color:'white', fontWeight:600, fontSize:'0.88rem',
+        background: t.type==='success' ? '#10b981' : t.type==='error' ? '#ef4444' : '#3b82f6',
+        boxShadow:'0 4px 20px rgba(0,0,0,0.15)', minWidth:260, animation:'slideIn .25s ease',
+      }}>
+        <i className={`fas ${t.type==='success'?'fa-check-circle':t.type==='error'?'fa-times-circle':'fa-info-circle'} mr-2`}></i>
+        {t.message}
+      </div>
+    ))}
+  </div>
+);
+
+// ─── Confirm Dialog ───────────────────────────────────────────
+const ConfirmDialog = ({ open, title, message, onConfirm, onCancel }) => {
+  if (!open) return null;
+  return (
+    <>
+      <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.5)', zIndex:2000 }} onClick={onCancel} />
+      <div style={{
+        position:'fixed', top:'50%', left:'50%', transform:'translate(-50%,-50%)',
+        background:'white', borderRadius:16, padding:'28px 32px', zIndex:2001,
+        minWidth:340, boxShadow:'0 20px 60px rgba(0,0,0,0.2)', textAlign:'center',
+      }}>
+        <div style={{ fontSize:'2.2rem', marginBottom:10 }}>⚠️</div>
+        <h5 style={{ fontWeight:800, marginBottom:8, color:'#1f2937' }}>{title}</h5>
+        <p style={{ color:'#6b7280', marginBottom:24, fontSize:'0.9rem' }}>{message}</p>
+        <div style={{ display:'flex', gap:10, justifyContent:'center' }}>
+          <button onClick={onCancel} style={{ padding:'9px 24px', borderRadius:9, border:'1.5px solid #e5e7eb', background:'white', color:'#374151', fontWeight:600, cursor:'pointer' }}>
+            Hủy bỏ
+          </button>
+          <button onClick={onConfirm} style={{ padding:'9px 24px', borderRadius:9, border:'none', background:'#ef4444', color:'white', fontWeight:700, cursor:'pointer' }}>
+            Xác nhận xóa
+          </button>
+        </div>
+      </div>
+    </>
+  );
+};
+
+// ─── Status Badge ─────────────────────────────────────────────
+const StatusBadge = ({ status }) => {
+  const cfg = STATUS_CFG[status] || { label: status, color:'#6b7280', bg:'#f3f4f6', icon:'fa-circle' };
+  return (
+    <span style={{
+      display:'inline-flex', alignItems:'center', gap:5,
+      padding:'4px 10px', borderRadius:20, fontSize:'0.78rem', fontWeight:700,
+      color:cfg.color, background:cfg.bg,
+    }}>
+      <i className={`fas ${cfg.icon}`} style={{ fontSize:'0.7rem' }}></i>
+      {cfg.label}
+    </span>
+  );
+};
+
+// ─── Smart Pagination ─────────────────────────────────────────
+const pageNums = (page, total) => {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  if (page <= 4)  return [1,2,3,4,5,6,7,'…',total];
+  if (page >= total - 3) return [1,'…',...Array.from({length:7},(_,i)=>total-6+i)];
+  return [1,'…',page-1,page,page+1,'…',total];
+};
+
+// ═══════════════════════════════════════════════════════════════
+// MAIN COMPONENT
+// ═══════════════════════════════════════════════════════════════
+const Orders = () => {
+  const [orders,        setOrders]        = useState([]);
+  const [loading,       setLoading]       = useState(true);
+  const [search,        setSearch]        = useState('');
+  const [filterStatus,  setFilterStatus]  = useState('');
+  const [page,          setPage]          = useState(1);
+  const PAGE_SIZE = 10;
+  const [totalPages,    setTotalPages]    = useState(1);
+  const [totalCount,    setTotalCount]    = useState(0);
+  const [showModal,     setShowModal]     = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [statusUpdate,  setStatusUpdate]  = useState('');
+  const [updating,      setUpdating]      = useState(false);
+
+  // Stats từ full dataset
+  const [stats, setStats] = useState({ total:0, pending:0, processing:0, shipped:0, completed:0, cancelled:0 });
+
+  // Inline quick-status per row
+  const [quickUpdating, setQuickUpdating] = useState({});
+
+  // Confirm + Toast
+  const [confirm, setConfirm] = useState({ open:false, title:'', message:'', onConfirm:null });
+  const [toasts,  setToasts]  = useState([]);
+  const toastId = useRef(0);
+
+  const showToast = useCallback((message, type='success') => {
+    const id = ++toastId.current;
+    setToasts(p => [...p, { id, message, type }]);
+    setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 3500);
+  }, []);
+
+  const openConfirm  = (title, message, cb) => setConfirm({ open:true, title, message, onConfirm:cb });
+  const closeConfirm = () => setConfirm(p => ({ ...p, open:false }));
+
+  // ── Load stats (full dataset) ──
+  const loadStats = useCallback(async () => {
+    try {
+      const res = await orderApi.getAll({ pageSize: 999 });
+      const raw = res.data;
+      const all = raw?.items || raw?.data || (Array.isArray(raw) ? raw : []);
+      setStats({
+        total:      raw?.totalCount || all.length,
+        pending:    all.filter(o => o.status === 'Pending').length,
+        processing: all.filter(o => o.status === 'Processing').length,
+        shipped:    all.filter(o => o.status === 'Shipped').length,
+        completed:  all.filter(o => o.status === 'Completed').length,
+        cancelled:  all.filter(o => o.status === 'Cancelled').length,
+      });
+    } catch {}
+  }, []);
+
+  // ── Load danh sách có phân trang & filter ──
+  const fetchOrders = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = { page, pageSize: PAGE_SIZE };
+      if (search)       params.keyword = search;
+      if (filterStatus) params.status  = filterStatus;
+      const res  = await orderApi.getAll(params);
+      const raw  = res.data;
+      const list = raw?.items || raw?.data || (Array.isArray(raw) ? raw : []);
+      setOrders(list);
+      const count = raw?.totalCount || list.length;
+      setTotalCount(count);
+      setTotalPages(Math.max(1, Math.ceil(count / PAGE_SIZE)));
+    } catch (e) { console.error(e); }
+    finally { setLoading(false); }
+  }, [search, filterStatus, page]);
+
+  useEffect(() => { fetchOrders(); }, [fetchOrders]);
+  useEffect(() => { loadStats();   }, [loadStats]);
+
+  // ── Xem chi tiết đơn hàng ──
+  const handleViewDetail = async (id) => {
+    try {
+      const res = await orderApi.getById(id);
+      const data = res.data;
+      const order = {
+        ...(data.order || data),
+        items: data.details || data.items || [],
+      };
+      setSelectedOrder(order);
+      setStatusUpdate(order.status || 'Pending');
+      setShowModal(true);
+    } catch { showToast('Không lấy được chi tiết đơn hàng', 'error'); }
+  };
+
+  // ── Cập nhật trạng thái trong modal ──
+  const handleUpdateStatus = async () => {
+    if (!selectedOrder || statusUpdate === selectedOrder.status) return;
+    setUpdating(true);
+    try {
+      await orderApi.update(selectedOrder.id, { status: statusUpdate });
+      setSelectedOrder(prev => ({ ...prev, status: statusUpdate }));
+      // Cập nhật ngay trong bảng danh sách
+      setOrders(prev => prev.map(o => o.id === selectedOrder.id ? { ...o, status: statusUpdate } : o));
+      showToast('Cập nhật trạng thái thành công');
+      loadStats();
+    } catch { showToast('Cập nhật thất bại', 'error'); }
+    finally { setUpdating(false); }
+  };
+
+  // ── Đổi trạng thái nhanh inline ──
+  const handleQuickStatus = async (orderId, newStatus) => {
+    setQuickUpdating(p => ({ ...p, [orderId]: true }));
+    try {
+      await orderApi.update(orderId, { status: newStatus });
+      setOrders(p => p.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+      loadStats();
+      showToast('Đã cập nhật trạng thái');
+    } catch { showToast('Cập nhật thất bại', 'error'); }
+    finally { setQuickUpdating(p => ({ ...p, [orderId]: false })); }
+  };
+
+  // ── Xóa đơn hàng ──
+  const handleDelete = (id) => openConfirm(
+    'Xóa đơn hàng',
+    `Bạn có chắc muốn xóa vĩnh viễn đơn hàng #${id}? Thao tác này không thể hoàn tác.`,
+    async () => {
+      closeConfirm();
+      try {
+        await orderApi.delete(id);
+        showToast('Đã xóa đơn hàng thành công');
+        fetchOrders(); loadStats();
+      } catch { showToast('Xóa thất bại!', 'error'); }
+    }
+  );
+
+  const hasFilter = search || filterStatus;
+
+  // ══════════════════════════════════════════════════════════
+  // RENDER
+  // ══════════════════════════════════════════════════════════
+  return (
+    <div>
+      <style>{`
+        @keyframes slideIn { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+        .order-row { border-bottom: 1px solid #f1f5f9; transition: background .12s; }
+        .order-row:hover { background: #f8f7ff !important; }
+        .status-sel { border:none; outline:none; cursor:pointer; border-radius:20px;
+          padding:4px 10px; font-size:.78rem; font-weight:700; transition:filter .15s; }
+        .status-sel:hover { filter:brightness(.92); }
+        .action-btn { opacity:.65; transition:opacity .15s,transform .15s; }
+        .action-btn:hover { opacity:1; transform:scale(1.1); }
+        .chip { display:inline-flex; align-items:center; gap:5px; padding:3px 10px;
+          border-radius:20px; font-size:0.78rem; font-weight:600;
+          background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; }
+        .chip-close { background:none; border:none; cursor:pointer; color:#94a3b8;
+          font-size:0.9rem; line-height:1; padding:0 1px; margin-left:1px; }
+        .chip-close:hover { color:#ef4444; }
+      `}</style>
+
+      <Toast toasts={toasts} />
+      <ConfirmDialog {...confirm} onCancel={closeConfirm} />
+
+      {/* ── Tiêu đề ── */}
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:14 }}>
+          <div style={{
+            width:46, height:46, borderRadius:13,
+            background:'linear-gradient(135deg,#f59e0b,#f97316)',
+            display:'flex', alignItems:'center', justifyContent:'center',
+            boxShadow:'0 4px 14px rgba(245,158,11,.35)', flexShrink:0,
+          }}>
+            <i className="fas fa-shopping-bag" style={{ color:'white', fontSize:'1.05rem' }}></i>
+          </div>
+          <div>
+            <h1 style={{ fontSize:'1.35rem', fontWeight:800, color:'#1e293b', margin:0 }}>Quản lý Đơn hàng</h1>
+            <p style={{ fontSize:'0.82rem', color:'#94a3b8', margin:'4px 0 0' }}>
+              {loading ? 'Đang tải...' : `${stats.total} đơn hàng trong hệ thống`}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ── KPI Cards (click để lọc) ── */}
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(130px,1fr))', gap:14, marginBottom:22 }}>
+        {[
+          { label:'Tổng đơn',     value:stats.total,      icon:'fa-list',         color:'#c8a97a', bg:'#f5edd6', key:''           },
+          { label:'Chờ xác nhận', value:stats.pending,    icon:'fa-clock',        color:'#f59e0b', bg:'#fef3c7', key:'Pending'    },
+          { label:'Đang xử lý',   value:stats.processing, icon:'fa-cog',          color:'#3b82f6', bg:'#dbeafe', key:'Processing' },
+          { label:'Đang giao',    value:stats.shipped,    icon:'fa-truck',        color:'#8b6c4a', bg:'#f5edd6', key:'Shipped'    },
+          { label:'Hoàn thành',   value:stats.completed,  icon:'fa-check-circle', color:'#10b981', bg:'#d1fae5', key:'Completed'  },
+          { label:'Đã hủy',       value:stats.cancelled,  icon:'fa-times-circle', color:'#ef4444', bg:'#fee2e2', key:'Cancelled'  },
+        ].map((s, i) => {
+          const active = i === 0 ? !filterStatus : filterStatus === s.key;
+          return (
+            <div key={i}
+              onClick={() => { setFilterStatus(f => f === s.key ? '' : s.key); setPage(1); }}
+              style={{
+                borderTop: `3px solid ${active ? s.color : '#f1f5f9'}`,
+                background: active ? s.bg + '55' : 'white',
+                boxShadow: active ? `0 6px 24px ${s.color}28` : '0 2px 12px rgba(0,0,0,.06)',
+                cursor:'pointer', transition:'all .2s', borderRadius:14, padding:'16px 18px',
+              }}>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start' }}>
+                <div>
+                  <div style={{ fontSize:'1.8rem', fontWeight:900, color:s.color, lineHeight:1 }}>{s.value}</div>
+                  <div style={{ fontSize:'0.79rem', fontWeight:700, color:'#374151', marginTop:4 }}>{s.label}</div>
+                  <div style={{ fontSize:'0.71rem', color: active ? s.color : '#94a3b8', marginTop:3, fontWeight: active ? 700 : 400 }}>
+                    {active ? <><i className="fas fa-check-circle mr-1"></i>Đang lọc</> : 'Nhấn để lọc'}
+                  </div>
+                </div>
+                <div style={{ width:40, height:40, borderRadius:10, background:s.bg, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                  <i className={`fas ${s.icon}`} style={{ color:s.color, fontSize:'1rem' }}></i>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── Bộ lọc ── */}
+      <div style={{
+        background:'white', borderRadius:14, padding:'14px 18px',
+        boxShadow:'0 2px 12px rgba(0,0,0,.06)', marginBottom:18,
+      }}>
+        {/* Inputs row */}
+        <div style={{ display:'flex', gap:10, flexWrap:'wrap', alignItems:'center' }}>
+          <div style={{ flex:'1 1 200px', position:'relative', minWidth:160 }}>
+            <i className="fas fa-search" style={{ position:'absolute', left:11, top:'50%', transform:'translateY(-50%)', color:'#9ca3af', fontSize:'0.82rem' }}></i>
+            <input
+              className="form-control"
+              placeholder="Tìm mã đơn, tên khách hàng..."
+              value={search}
+              onChange={e => { setSearch(e.target.value); setPage(1); }}
+              style={{ paddingLeft:32, borderRadius:9, border:'1.5px solid #e5e7eb', fontSize:'0.88rem' }}
+            />
+          </div>
+          <select className="form-control" value={filterStatus}
+            onChange={e => { setFilterStatus(e.target.value); setPage(1); }}
+            style={{ flex:'1 1 160px', maxWidth:200, borderRadius:9, border:'1.5px solid #e5e7eb', fontSize:'0.88rem' }}>
+            <option value="">Tất cả trạng thái</option>
+            {Object.entries(STATUS_CFG).map(([k, v]) => (
+              <option key={k} value={k}>{v.label}</option>
+            ))}
+          </select>
+          {hasFilter && (
+            <button onClick={() => { setSearch(''); setFilterStatus(''); setPage(1); }}
+              style={{ padding:'8px 16px', borderRadius:9, border:'1.5px solid #fecaca', background:'#fef2f2', color:'#ef4444', fontWeight:600, cursor:'pointer', fontSize:'0.85rem', display:'flex', alignItems:'center', gap:6 }}>
+              <i className="fas fa-times-circle"></i> Xóa lọc
+            </button>
+          )}
+        </div>
+
+        {/* Active filter chips */}
+        {hasFilter && (
+          <div style={{ marginTop:10, display:'flex', flexWrap:'wrap', gap:6, alignItems:'center' }}>
+            {search.trim() && (
+              <span className="chip" style={{ borderColor:'#c4b5fd', background:'#f5edd6', color:'#c8a97a' }}>
+                <i className="fas fa-search" style={{ fontSize:'0.65rem' }}></i>
+                "{search.trim()}"
+                <button className="chip-close" onClick={() => { setSearch(''); setPage(1); }}>×</button>
+              </span>
+            )}
+            {filterStatus && (
+              <span className="chip" style={{ background:STATUS_CFG[filterStatus]?.bg, color:STATUS_CFG[filterStatus]?.color, borderColor:STATUS_CFG[filterStatus]?.color + '50' }}>
+                <i className="fas fa-circle" style={{ fontSize:'0.5rem' }}></i>
+                {STATUS_CFG[filterStatus]?.label}
+                <button className="chip-close" onClick={() => { setFilterStatus(''); setPage(1); }}>×</button>
+              </span>
+            )}
+            <span style={{ marginLeft:'auto', fontSize:'0.8rem', color:'#94a3b8', fontWeight:600 }}>
+              <strong style={{ color:'#475569' }}>{totalCount}</strong> kết quả
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* ── Bảng đơn hàng ── */}
+      <div style={{ background:'white', borderRadius:14, boxShadow:'0 2px 16px rgba(0,0,0,.07)', overflow:'hidden' }}>
+
+        {/* Header */}
+        <div style={{ padding:'14px 20px', borderBottom:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+            <i className="fas fa-list" style={{ color:'#f59e0b', fontSize:'0.85rem' }}></i>
+            <span style={{ fontWeight:700, color:'#1e293b', fontSize:'0.92rem' }}>Danh sách đơn hàng</span>
+            {!loading && (
+              <span style={{ marginLeft:2, background:'#fef3c7', color:'#d97706', borderRadius:20, padding:'2px 10px', fontSize:'0.75rem', fontWeight:700 }}>
+                {totalCount}
+              </span>
+            )}
+            {hasFilter && (
+              <span style={{ background:'#fef9c3', color:'#ca8a04', borderRadius:20, padding:'2px 9px', fontSize:'0.72rem', fontWeight:700 }}>
+                đã lọc
+              </span>
+            )}
+          </div>
+          <button onClick={fetchOrders} title="Làm mới"
+            style={{ width:32, height:32, borderRadius:8, border:'1.5px solid #e2e8f0', background:'white', color:'#64748b', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <i className="fas fa-sync-alt" style={{ fontSize:'0.78rem' }}></i>
+          </button>
+        </div>
+
+        {/* Body */}
+        {loading ? (
+          <div style={{ textAlign:'center', padding:'60px 0' }}>
+            <div className="spinner-border" style={{ color:'#f59e0b', width:36, height:36 }}></div>
+            <p style={{ marginTop:12, color:'#94a3b8', fontSize:'0.88rem' }}>Đang tải dữ liệu...</p>
+          </div>
+        ) : orders.length === 0 ? (
+          <div style={{ textAlign:'center', padding:'60px 0', color:'#94a3b8' }}>
+            <i className="fas fa-inbox" style={{ fontSize:'2.8rem', display:'block', marginBottom:12, color:'#e2e8f0' }}></i>
+            <div style={{ fontWeight:600, color:'#64748b', marginBottom:6 }}>
+              {hasFilter ? 'Không tìm thấy đơn hàng phù hợp' : 'Chưa có đơn hàng nào'}
+            </div>
+            {hasFilter && (
+              <button onClick={() => { setSearch(''); setFilterStatus(''); setPage(1); }}
+                style={{ marginTop:10, padding:'7px 18px', borderRadius:8, border:'none', background:'#fef3c7', color:'#d97706', fontWeight:600, cursor:'pointer' }}>
+                Xóa bộ lọc
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="table-responsive">
+            <table style={{ width:'100%', borderCollapse:'collapse' }}>
+              <thead>
+                <tr style={{ background:'#f8fafc' }}>
+                  {['Mã đơn','Ngày đặt','Khách hàng','Sản phẩm','Tổng tiền','Trạng thái','Thao tác'].map((h, i) => (
+                    <th key={i} style={{
+                      padding:'10px 14px', fontSize:'0.73rem', fontWeight:700,
+                      color:'#64748b', textTransform:'uppercase', letterSpacing:'0.04em',
+                      borderBottom:'1px solid #f1f5f9', textAlign: i === 6 ? 'center' : 'left',
+                      whiteSpace:'nowrap',
+                    }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((o, idx) => (
+                  <tr key={o.id} className="order-row" style={{ background: idx % 2 === 1 ? '#fafbff' : 'white', transition:'background .15s' }}>
+
+                    {/* Mã đơn */}
+                    <td style={{ padding:'12px 14px' }}>
+                      <span style={{ fontWeight:800, color:'#f59e0b', fontSize:'0.9rem' }}>#{o.id}</span>
+                    </td>
+
+                    {/* Ngày đặt */}
+                    <td style={{ padding:'12px 14px' }}>
+                      <div style={{ fontSize:'0.84rem', color:'#475569' }}>
+                        {new Date(o.orderDate).toLocaleDateString('vi-VN')}
+                      </div>
+                      <div style={{ fontSize:'0.75rem', color:'#94a3b8' }}>
+                        {new Date(o.orderDate).toLocaleTimeString('vi-VN', { hour:'2-digit', minute:'2-digit' })}
+                      </div>
+                    </td>
+
+                    {/* Khách hàng */}
+                    <td style={{ padding:'12px 14px' }}>
+                      <div style={{ fontWeight:600, fontSize:'0.86rem', color:'#1e293b' }}>
+                        {o.userName || o.userEmail || `User #${o.userId}`}
+                      </div>
+                      {o.userEmail && o.userName && (
+                        <div style={{ fontSize:'0.76rem', color:'#94a3b8' }}>{o.userEmail}</div>
+                      )}
+                    </td>
+
+                    {/* Sản phẩm */}
+                    <td style={{ padding:'12px 14px', maxWidth:160 }}>
+                      <div style={{ fontSize:'0.84rem', color:'#475569', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+                        {o.items?.length > 0
+                          ? `${o.items[0].productName}${o.items.length > 1 ? ` +${o.items.length - 1}` : ''}`
+                          : `${o.itemCount || 0} sản phẩm`}
+                      </div>
+                    </td>
+
+                    {/* Tổng tiền */}
+                    <td style={{ padding:'12px 14px', fontWeight:800, color:'#dc2626', whiteSpace:'nowrap' }}>
+                      {fmt(o.totalAmount)}
+                    </td>
+
+                    {/* Trạng thái — chỉ xem, Admin không thay đổi */}
+                    <td style={{ padding:'12px 14px' }}>
+                      <StatusBadge status={o.status} />
+                    </td>
+
+                    {/* Thao tác */}
+                    <td style={{ padding:'12px 14px', textAlign:'center', whiteSpace:'nowrap' }}>
+                      <button
+                        className="action-btn"
+                        onClick={() => handleViewDetail(o.id)}
+                        title="Xem chi tiết & sửa trạng thái"
+                        style={{
+                          width:32, height:32, borderRadius:8, border:'1.5px solid #c8a97a',
+                          background:'#fdf6e3', color:'#c8a97a', cursor:'pointer',
+                          display:'inline-flex', alignItems:'center', justifyContent:'center', marginRight:6,
+                        }}>
+                        <i className="fas fa-eye" style={{ fontSize:'0.75rem' }}></i>
+                      </button>
+                      <button
+                        className="action-btn"
+                        onClick={() => handleDelete(o.id)}
+                        title="Xóa đơn hàng"
+                        style={{
+                          width:32, height:32, borderRadius:8, border:'1.5px solid #ef4444',
+                          background:'#fef2f2', color:'#ef4444', cursor:'pointer',
+                          display:'inline-flex', alignItems:'center', justifyContent:'center',
+                        }}>
+                        <i className="fas fa-trash" style={{ fontSize:'0.75rem' }}></i>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div style={{
+            padding:'12px 20px', borderTop:'1px solid #f1f5f9',
+            display:'flex', justifyContent:'space-between', alignItems:'center', background:'#fafbff',
+          }}>
+            <span style={{ fontSize:'0.82rem', color:'#64748b' }}>
+              Hiển thị{' '}
+              <strong style={{ color:'#1e293b' }}>{(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, totalCount)}</strong>
+              {' '}trong{' '}
+              <strong style={{ color:'#1e293b' }}>{totalCount}</strong> đơn hàng
+            </span>
+            <div style={{ display:'flex', gap:4 }}>
+              <button onClick={() => setPage(p => p - 1)} disabled={page === 1}
+                style={{ width:32, height:32, borderRadius:8, border:'1.5px solid #e2e8f0', background: page===1?'#f8fafc':'white', color: page===1?'#cbd5e1':'#475569', cursor: page===1?'not-allowed':'pointer', fontWeight:700 }}>
+                ‹
+              </button>
+              {pageNums(page, totalPages).map((n, i) =>
+                n === '…'
+                  ? <span key={`e${i}`} style={{ width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center', color:'#94a3b8' }}>…</span>
+                  : <button key={n} onClick={() => setPage(n)} style={{
+                      width:32, height:32, borderRadius:8,
+                      border: page===n ? 'none' : '1.5px solid #e2e8f0',
+                      background: page===n ? '#f59e0b' : 'white',
+                      color: page===n ? 'white' : '#475569',
+                      fontWeight: page===n ? 800 : 500, cursor:'pointer',
+                      boxShadow: page===n ? '0 2px 8px rgba(245,158,11,.3)' : 'none',
+                    }}>{n}</button>
+              )}
+              <button onClick={() => setPage(p => p + 1)} disabled={page === totalPages}
+                style={{ width:32, height:32, borderRadius:8, border:'1.5px solid #e2e8f0', background: page===totalPages?'#f8fafc':'white', color: page===totalPages?'#cbd5e1':'#475569', cursor: page===totalPages?'not-allowed':'pointer', fontWeight:700 }}>
+                ›
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ════ MODAL CHI TIẾT ════ */}
+      {showModal && selectedOrder && (
+        <div style={{
+          position:'fixed', inset:0, background:'rgba(15,15,35,0.6)', zIndex:1050,
+          display:'flex', alignItems:'flex-start', justifyContent:'center',
+          padding:'20px 0', overflowY:'auto',
+        }} onClick={() => setShowModal(false)}>
+          <div style={{
+            background:'white', borderRadius:18, width:'100%', maxWidth:720,
+            margin:'auto', boxShadow:'0 24px 80px rgba(0,0,0,0.25)', overflow:'hidden',
+          }} onClick={e => e.stopPropagation()}>
+
+            {/* Header */}
+            <div style={{
+              background:'linear-gradient(135deg,#1a1a2e,#533483)',
+              padding:'18px 26px', display:'flex', justifyContent:'space-between', alignItems:'center',
+            }}>
+              <div>
+                <h5 style={{ color:'white', fontWeight:800, margin:0, fontSize:'1.05rem' }}>
+                  <i className="fas fa-receipt mr-2"></i>Đơn hàng #{selectedOrder.id}
+                </h5>
+                <p style={{ color:'rgba(255,255,255,.65)', margin:'3px 0 0', fontSize:'0.8rem' }}>
+                  {new Date(selectedOrder.orderDate).toLocaleString('vi-VN')}
+                </p>
+              </div>
+              <button onClick={() => setShowModal(false)} style={{
+                background:'rgba(255,255,255,.15)', border:'none', color:'white',
+                width:32, height:32, borderRadius:8, cursor:'pointer',
+                display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1rem',
+              }}>✕</button>
+            </div>
+
+            <div style={{ padding:'22px 26px' }}>
+
+              {/* Timeline trạng thái */}
+              {selectedOrder.status !== 'Cancelled' && (
+                <div style={{ marginBottom:22 }}>
+                  <div style={{ display:'flex', alignItems:'center', position:'relative' }}>
+                    <div style={{ position:'absolute', top:18, left:'6%', right:'6%', height:3, background:'#e5e7eb', zIndex:0 }}></div>
+                    <div style={{
+                      position:'absolute', top:18, left:'6%', height:3, zIndex:1,
+                      background:'linear-gradient(90deg,#c8a97a,#8b6c4a)',
+                      width:`${(STATUS_STEPS.indexOf(selectedOrder.status) / (STATUS_STEPS.length - 1)) * 88}%`,
+                      transition:'width .5s',
+                    }}></div>
+                    {STATUS_STEPS.map((s, i) => {
+                      const cfg  = STATUS_CFG[s];
+                      const done = STATUS_STEPS.indexOf(selectedOrder.status) >= i;
+                      return (
+                        <div key={s} style={{ textAlign:'center', zIndex:2, flex:1 }}>
+                          <div style={{
+                            width:36, height:36, borderRadius:'50%', margin:'0 auto',
+                            background: done ? '#c8a97a' : '#e5e7eb',
+                            display:'flex', alignItems:'center', justifyContent:'center',
+                            boxShadow: done ? '0 0 0 4px rgba(124,58,237,0.18)' : 'none',
+                            transition:'all .3s',
+                          }}>
+                            <i className={`fas ${cfg.icon}`} style={{ color: done ? 'white' : '#9ca3af', fontSize:'0.85rem' }}></i>
+                          </div>
+                          <div style={{ fontSize:'0.7rem', marginTop:5, color: done ? '#c8a97a' : '#9ca3af', fontWeight: done ? 700 : 400 }}>
+                            {cfg.label}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Info đơn hàng */}
+              <div style={{ marginBottom:20 }}>
+                <div style={{ background:'#f8fafc', borderRadius:12, padding:'14px 16px' }}>
+                  <h6 style={{ fontWeight:700, marginBottom:12, fontSize:'0.88rem', color:'#374151' }}>
+                    <i className="fas fa-info-circle mr-1" style={{ color:'#c8a97a' }}></i> Thông tin đơn
+                  </h6>
+                  <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px 16px' }}>
+                    <div style={{ fontSize:'0.85rem' }}>
+                      <span style={{ color:'#6b7280' }}>Khách hàng: </span>
+                      <strong>{selectedOrder.userName || `User #${selectedOrder.userId}`}</strong>
+                    </div>
+                    {selectedOrder.userEmail && (
+                      <div style={{ fontSize:'0.85rem' }}>
+                        <span style={{ color:'#6b7280' }}>Email: </span>
+                        <span>{selectedOrder.userEmail}</span>
+                      </div>
+                    )}
+                    <div style={{ fontSize:'0.85rem' }}>
+                      <span style={{ color:'#6b7280' }}>Tổng tiền: </span>
+                      <strong style={{ color:'#dc2626', fontSize:'1rem' }}>{fmt(selectedOrder.totalAmount)}</strong>
+                    </div>
+                    <div style={{ fontSize:'0.85rem', display:'flex', alignItems:'center', gap:6 }}>
+                      <span style={{ color:'#6b7280' }}>Trạng thái: </span>
+                      <StatusBadge status={selectedOrder.status} />
+                    </div>
+                    {(selectedOrder.shippingAddress || selectedOrder.address) && (
+                      <div style={{ fontSize:'0.85rem', gridColumn:'1 / -1', paddingTop:8, borderTop:'1px solid #e5e7eb', marginTop:4 }}>
+                        <i className="fas fa-map-marker-alt mr-1" style={{ color:'#ef4444' }}></i>
+                        <span style={{ color:'#6b7280' }}>Địa chỉ: </span>
+                        <span>{selectedOrder.shippingAddress || selectedOrder.address}</span>
+                      </div>
+                    )}
+                    {selectedOrder.note && (
+                      <div style={{ fontSize:'0.85rem', gridColumn:'1 / -1', paddingTop:8, borderTop:'1px solid #e5e7eb', marginTop:4 }}>
+                        <i className="fas fa-sticky-note mr-1" style={{ color:'#f59e0b' }}></i>
+                        <span style={{ color:'#6b7280' }}>Ghi chú: </span>
+                        <em>{selectedOrder.note}</em>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Danh sách sản phẩm */}
+              <h6 style={{ fontWeight:700, marginBottom:10, fontSize:'0.88rem', color:'#374151' }}>
+                <i className="fas fa-shopping-cart mr-1" style={{ color:'#c8a97a' }}></i> Sản phẩm trong đơn
+              </h6>
+              <div style={{ borderRadius:10, overflow:'hidden', border:'1.5px solid #e5e7eb' }}>
+                <table style={{ width:'100%', borderCollapse:'collapse' }}>
+                  <thead>
+                    <tr style={{ background:'#f8fafc' }}>
+                      {['Sản phẩm','SL','Đơn giá','Thành tiền'].map((h, i) => (
+                        <th key={i} style={{
+                          padding:'9px 12px', fontSize:'0.73rem', fontWeight:700,
+                          color:'#64748b', textTransform:'uppercase', letterSpacing:'0.04em',
+                          textAlign: i > 0 ? 'center' : 'left', borderBottom:'1px solid #e5e7eb',
+                        }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(selectedOrder.items || []).length === 0 ? (
+                      <tr>
+                        <td colSpan={4} style={{ textAlign:'center', padding:'20px 0', color:'#94a3b8', fontSize:'0.85rem' }}>
+                          Không có thông tin sản phẩm
+                        </td>
+                      </tr>
+                    ) : (selectedOrder.items || []).map((item, idx) => (
+                      <tr key={idx} style={{ borderBottom:'1px solid #f1f5f9' }}>
+                        <td style={{ padding:'10px 12px' }}>
+                          <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                            {item.imageUrl && (
+                              <img src={item.imageUrl} alt={item.productName}
+                                style={{ width:40, height:40, objectFit:'cover', borderRadius:8 }} />
+                            )}
+                            <span style={{ fontWeight:600, fontSize:'0.86rem', color:'#1e293b' }}>
+                              {item.productName}
+                            </span>
+                          </div>
+                        </td>
+                        <td style={{ padding:'10px 12px', textAlign:'center', fontWeight:700 }}>{item.quantity}</td>
+                        <td style={{ padding:'10px 12px', textAlign:'center', fontSize:'0.85rem', color:'#64748b' }}>
+                          {fmt(item.unitPrice)}
+                        </td>
+                        <td style={{ padding:'10px 12px', textAlign:'center', fontWeight:800, color:'#c8a97a' }}>
+                          {fmt((item.quantity || 0) * (item.unitPrice || 0))}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr style={{ background:'#f8fafc' }}>
+                      <td colSpan={3} style={{ padding:'10px 12px', textAlign:'right', fontWeight:700, fontSize:'0.88rem' }}>
+                        Tổng cộng:
+                      </td>
+                      <td style={{ padding:'10px 12px', textAlign:'center', fontWeight:900, fontSize:'1rem', color:'#c8a97a' }}>
+                        {fmt(selectedOrder.totalAmount)}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div style={{ padding:'14px 26px', borderTop:'1px solid #f1f5f9', display:'flex', justifyContent:'flex-end', background:'#fafbff' }}>
+              <button onClick={() => setShowModal(false)}
+                style={{ padding:'9px 24px', borderRadius:9, border:'1.5px solid #e5e7eb', background:'white', color:'#374151', fontWeight:600, cursor:'pointer' }}>
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Orders;

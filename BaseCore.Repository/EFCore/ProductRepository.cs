@@ -8,7 +8,7 @@ namespace BaseCore.Repository.EFCore
     /// </summary>
     public interface IProductRepositoryEF : IRepository<Product>
     {
-        Task<(List<Product> Products, int TotalCount)> SearchAsync(string? keyword, int? categoryId, int page, int pageSize);
+        Task<(List<Product> Products, int TotalCount)> SearchAsync(string? keyword, int? categoryId, int page, int pageSize, bool publicOnly = false, string? sellerId = null);
         Task<List<Product>> GetByCategoryAsync(int categoryId);
     }
 
@@ -18,9 +18,19 @@ namespace BaseCore.Repository.EFCore
         {
         }
 
-        public async Task<(List<Product> Products, int TotalCount)> SearchAsync(string? keyword, int? categoryId, int page, int pageSize)
+        public async Task<(List<Product> Products, int TotalCount)> SearchAsync(string? keyword, int? categoryId, int page, int pageSize, bool publicOnly = false, string? sellerId = null)
         {
             var query = _dbSet.Include(p => p.Category).AsQueryable();
+
+            // Filter by seller (artist view) — overrides publicOnly
+            if (!string.IsNullOrEmpty(sellerId))
+            {
+                query = query.Where(p => p.SellerId == sellerId);
+            }
+            else if (publicOnly)
+            {
+                query = query.Where(p => p.Status == "Available" && p.Stock > 0);
+            }
 
             if (!string.IsNullOrEmpty(keyword))
             {
@@ -31,9 +41,7 @@ namespace BaseCore.Repository.EFCore
             }
 
             if (categoryId.HasValue && categoryId > 0)
-            {
                 query = query.Where(p => p.CategoryId == categoryId);
-            }
 
             var totalCount = await query.CountAsync();
 

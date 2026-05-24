@@ -3,19 +3,20 @@
   "WorkspaceRootPath": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\BaiTapLon\\BaseCore\\BaseCore\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|d:\\newfolder\\ky6\\7. c\u00F4ng ngh\u1EC7 web\\baitaplon\\basecore\\basecore\\basecore.authservice\\basecore.authservice.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\basecore.authservice.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{3934463F-480E-4BE1-8796-E79F458CAEE7}|BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj|d:\\newfolder\\ky6\\7. c\u00F4ng ngh\u1EC7 web\\baitaplon\\basecore\\basecore\\basecore.apigateway\\basecore.apigateway.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{3934463F-480E-4BE1-8796-E79F458CAEE7}|BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj|solutionrelative:basecore.apigateway\\basecore.apigateway.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B1C2D3E4-F5A6-7890-BCDE-F12345678901}|BaseCore.APIService\\BaseCore.APIService.csproj|d:\\newfolder\\ky6\\7. c\u00F4ng ngh\u1EC7 web\\baitaplon\\basecore\\basecore\\basecore.apiservice\\basecore.apiservice.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{B1C2D3E4-F5A6-7890-BCDE-F12345678901}|BaseCore.APIService\\BaseCore.APIService.csproj|solutionrelative:basecore.apiservice\\basecore.apiservice.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|d:\\newfolder\\ky6\\7. c\u00F4ng ngh\u1EC7 web\\baitaplon\\basecore\\basecore\\basecore.authservice\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{748A2479-E8AC-453C-9FC2-AAE28B9F1AFA}|BaseCore.DTO\\BaseCore.DTO.csproj|d:\\newfolder\\ky6\\7. c\u00F4ng ngh\u1EC7 web\\baitaplon\\basecore\\basecore\\basecore.dto\\basecore.dto.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{748A2479-E8AC-453C-9FC2-AAE28B9F1AFA}|BaseCore.DTO\\BaseCore.DTO.csproj|solutionrelative:basecore.dto\\basecore.dto.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|d:\\newfolder\\ky6\\7. c\u00F4ng ngh\u1EC7 web\\baitaplon\\basecore\\basecore\\basecore.authservice\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDA5D057-E608-4A17-B58B-FABEADC300D9}|BaseCore.AuthService\\BaseCore.AuthService.csproj|solutionrelative:basecore.authservice\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\dotnet\\sdk\\10.0.202\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|d:\\newfolder\\ky6\\7. c\u00F4ng ngh\u1EC7 web\\baitaplon\\basecore\\basecore\\basecore.repository\\efcore\\repository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C747753-99CA-4281-BE7D-1711BA222237}|BaseCore.Repository\\BaseCore.Repository.csproj|solutionrelative:basecore.repository\\efcore\\repository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,51 +35,51 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "BaseCore.AuthService.csproj",
-              "DocumentMoniker": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.AuthService\\BaseCore.AuthService.csproj",
-              "RelativeDocumentMoniker": "BaseCore.AuthService\\BaseCore.AuthService.csproj",
-              "ToolTip": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.AuthService\\BaseCore.AuthService.csproj",
-              "RelativeToolTip": "BaseCore.AuthService\\BaseCore.AuthService.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAC8AAAAAAAAAAAAAAA==",
+              "Title": "BaseCore.ApiGateway.csproj",
+              "DocumentMoniker": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
+              "RelativeDocumentMoniker": "BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
+              "ToolTip": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
+              "RelativeToolTip": "BaseCore.ApiGateway\\BaseCore.ApiGateway.csproj",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAAABcAAABYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-05-08T16:58:47.066Z",
+              "WhenOpened": "2026-05-23T05:33:29.484Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "BaseCore.APIService.csproj",
-              "DocumentMoniker": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj",
-              "RelativeDocumentMoniker": "BaseCore.APIService\\BaseCore.APIService.csproj",
-              "ToolTip": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.APIService\\BaseCore.APIService.csproj",
-              "RelativeToolTip": "BaseCore.APIService\\BaseCore.APIService.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-05-08T16:58:39.975Z",
-              "EditorCaption": ""
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.AuthService\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\Controllers\\AuthController.cs",
+              "ToolTip": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.AuthService\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "BaseCore.AuthService\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAABoAAAAAAAAAAAAqwH8AAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-23T05:32:23.214Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "BaseCore.DTO.csproj",
-              "DocumentMoniker": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
-              "RelativeDocumentMoniker": "BaseCore.DTO\\BaseCore.DTO.csproj",
-              "ToolTip": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.DTO\\BaseCore.DTO.csproj",
-              "RelativeToolTip": "BaseCore.DTO\\BaseCore.DTO.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-05-08T16:57:57.289Z",
-              "EditorCaption": ""
+              "Title": "UserController.cs",
+              "DocumentMoniker": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.AuthService\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "BaseCore.AuthService\\Controllers\\UserController.cs",
+              "ToolTip": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.AuthService\\Controllers\\UserController.cs",
+              "RelativeToolTip": "BaseCore.AuthService\\Controllers\\UserController.cs",
+              "ViewState": "AgIAAN4AAAAAAAAAAAAswOQAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-23T05:31:32.646Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "Microsoft.NET.Sdk.DefaultItems.targets",
-              "DocumentMoniker": "C:\\Program Files\\dotnet\\sdk\\10.0.202\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets",
-              "ToolTip": "C:\\Program Files\\dotnet\\sdk\\10.0.202\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets",
-              "ViewState": "AgIAAG8AAAAAAAAAAAAgwHkAAAAzAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2026-05-08T16:48:00.494Z"
+              "Title": "Repository.cs",
+              "DocumentMoniker": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Repository\\EFCore\\Repository.cs",
+              "RelativeDocumentMoniker": "BaseCore.Repository\\EFCore\\Repository.cs",
+              "ToolTip": "D:\\Newfolder\\Ky6\\7. C\u00F4ng ngh\u1EC7 web\\BaiTapLon\\BaseCore\\BaseCore\\BaseCore.Repository\\EFCore\\Repository.cs",
+              "RelativeToolTip": "BaseCore.Repository\\EFCore\\Repository.cs",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAcwA0AAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-23T05:31:28.029Z"
             }
           ]
         }

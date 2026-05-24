@@ -10,8 +10,19 @@ const api = axios.create({
 // Đọc token từ localStorage (remember me) hoặc sessionStorage
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if (token) config.headers.Authorization = `Bearer ${token}`;
+        let token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        // Bỏ qua token "undefined" (chuỗi) do session cũ lưu sai
+        if (!token || token === 'undefined') {
+            // Thử lấy từ object user đã normalize
+            const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
+            if (storedUser) {
+                try {
+                    const u = JSON.parse(storedUser);
+                    token = u.token || u.Token || null;
+                } catch { token = null; }
+            }
+        }
+        if (token && token !== 'undefined') config.headers.Authorization = `Bearer ${token}`;
         return config;
     },
     (error) => Promise.reject(error)
@@ -35,29 +46,39 @@ export const authApi = {
 };
 
 export const userApi = {
-    getAll:  (params) => api.get('/users', { params }),
-    getById: (id)     => api.get(`/users/${id}`),
-    create:  (data)   => api.post('/users', data),
-    update:  (id, data) => api.put(`/users/${id}`, data),
-    delete:  (id)     => api.delete(`/users/${id}`),
+    getAll:     (params)   => api.get('/users', { params }),
+    getById:    (id)       => api.get(`/users/${id}`),
+    getProfile: (id)       => api.get(`/users/${id}/profile`),
+    getArtists: ()         => api.get('/users/artists'),
+    create:     (data)     => api.post('/users', data),
+    update:     (id, data) => api.put(`/users/${id}`, data),
+    delete:     (id)       => api.delete(`/users/${id}`),
+
+    uploadAvatar: (id, file) => {
+        const form = new FormData();
+        form.append('file', file);
+        return api.post(`/users/${id}/avatar`, form, {
+            headers: { 'Content-Type': undefined },
+        });
+    },
 };
 
 export const productApi = {
     getAll:  (params) => api.get('/products', { params }),
-    // Alias search → getAll (dùng chung query params: keyword, categoryId, page, pageSize)
     search:  (params) => api.get('/products', { params }),
     getById: (id)     => api.get(`/products/${id}`),
     create:  (data)   => api.post('/products', data),
     update:  (id, data) => api.put(`/products/${id}`, data),
     delete:  (id)     => api.delete(`/products/${id}`),
     getByCategory: (categoryId) => api.get(`/products/category/${categoryId}`),
+    approve: (id)     => api.put(`/products/${id}/approve`),
+    reject:  (id)     => api.put(`/products/${id}/reject`),
 
-    // Upload ảnh qua backend → Cloudinary (có auth)
     uploadImage: (file) => {
         const form = new FormData();
         form.append('file', file);
         return api.post('/products/upload-image', form, {
-            headers: { 'Content-Type': undefined }, // ← đây là fix chính
+            headers: { 'Content-Type': undefined },
         });
     },
 };
@@ -71,13 +92,25 @@ export const categoryApi = {
 };
 
 export const orderApi = {
-    getAll:     (params) => api.get('/orders/all', { params }),
-    getMyOrders:(params) => api.get('/orders', { params }),
-    create:     (data)   => api.post('/orders', data),
-    getById:    (id)     => api.get(`/orders/${id}`),
-    update:     (id, data) => api.put(`/orders/${id}`, data),
-    cancel:     (id)     => api.put(`/orders/${id}`, { status: 'Cancelled' }),
-    delete:     (id)     => api.delete(`/orders/${id}`),
+    getAll:        (params) => api.get('/orders/all', { params }),
+    getMyOrders:   (params) => api.get('/orders', { params }),
+    getArtistOrders: ()     => api.get('/orders/artist'),
+    create:        (data)   => api.post('/orders', data),
+    getById:       (id)     => api.get(`/orders/${id}`),
+    update:        (id, data) => api.put(`/orders/${id}`, data),
+    updateStatus:  (id, status) => api.put(`/orders/${id}/status`, { status }),
+    cancel:        (id)     => api.put(`/orders/${id}`, { status: 'Cancelled' }),
+    delete:        (id)     => api.delete(`/orders/${id}`),
+};
+
+export const blogApi = {
+    getAll:   (params) => api.get('/blogposts', { params }),
+    getById:  (id)     => api.get(`/blogposts/${id}`),
+    create:   (data)   => api.post('/blogposts', data),
+    update:   (id, data) => api.put(`/blogposts/${id}`, data),
+    approve:  (id)     => api.put(`/blogposts/${id}/approve`),
+    reject:   (id)     => api.put(`/blogposts/${id}/reject`),
+    delete:   (id)     => api.delete(`/blogposts/${id}`),
 };
 
 export default api;

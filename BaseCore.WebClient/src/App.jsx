@@ -1,49 +1,78 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 
 import { AuthProvider } from './contexts/AuthContext';
-import { CartProvider } from './pages/user/Cart';
+import { CartProvider } from './contexts/CartContext';
+import { AuthModalProvider, useAuthModal } from './contexts/AuthModalContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './components/MainLayout';
+import AuthModal from './components/AuthModal';
 
 // Shared
-import Login    from './pages/Login';
-import Register from './pages/Register';
 import NotFound from './pages/NotFound';
 
-// User pages
-import Home              from './pages/user/Home';
-import Shop              from './pages/user/Shop';
-import Cart              from './pages/user/Cart';
-import ProductDetail     from './pages/user/ProductDetail';
+// Public pages
+import Home          from './pages/Home';
+import Shop          from './pages/Shop';
+import Cart          from './pages/Cart';
+import ProductDetail from './pages/ProductDetail';
+import Artists       from './pages/Artists';
+import ArtistDetail  from './pages/ArtistDetail';
+import Blog          from './pages/Blog';
+
+// User protected pages
 import MyOrders          from './pages/user/MyOrders';
 import Profile           from './pages/user/Profile';
 import Checkout          from './pages/user/Checkout';
 import OrderConfirmation from './pages/user/OrderConfirmation';
-import Artists           from './pages/user/Artists';
 
 // Admin pages
-import Dashboard  from './pages/admin/Dashboard';
-import Products   from './pages/admin/Products';
-import Categories from './pages/admin/Categories';
-import Orders     from './pages/admin/Orders';
-import Users      from './pages/admin/Users';
+import Dashboard      from './pages/admin/AdminDashboard';
+import Products       from './pages/admin/AdminProducts';
+import Categories     from './pages/admin/AdminCategories';
+import Orders         from './pages/admin/AdminOrders';
+import Users          from './pages/admin/UserManagement';
+import AdminBlogPosts from './pages/admin/AdminBlogPosts';
+
+// Artist pages
+import ArtistDashboard from './pages/artist/ArtistDashboard';
+import ArtistProducts  from './pages/artist/ArtistProducts';
+import ArtistBlog      from './pages/artist/ArtistBlog';
+import ArtistOrders    from './pages/artist/ArtistOrders';
+import ArtistProfile   from './pages/artist/ArtistProfile';
+
+function AuthRedirect({ tab }) {
+  const { openLogin, openRegister } = useAuthModal();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (tab === 'register') openRegister(); else openLogin();
+    if (window.history.length > 1) navigate(-1);
+    else navigate('/', { replace: true });
+  }, []); // eslint-disable-line
+  return null;
+}
 
 function AppRoutes() {
   return (
-    <Routes>
-      {/* PUBLIC */}
-      <Route path="/login"    element={<Login />} />
-      <Route path="/register" element={<Register />} />
+    <>
+      <AuthModal />
+      <Routes>
+        {/* /login và /register chuyển về modal */}
+        <Route path="/login"    element={<AuthRedirect tab="login" />} />
+        <Route path="/register" element={<AuthRedirect tab="register" />} />
 
       {/* USER PUBLIC */}
       <Route path="/"            element={<Home />} />
       <Route path="/shop"        element={<Shop />} />
-      <Route path="/cart"        element={<Cart />} />
       <Route path="/product/:id" element={<ProductDetail />} />
       <Route path="/artists"     element={<Artists />} />
+      <Route path="/artists/:id" element={<ArtistDetail />} />
+      <Route path="/blog"        element={<Blog />} />
 
       {/* USER PROTECTED */}
+      <Route path="/cart" element={
+        <ProtectedRoute><Cart /></ProtectedRoute>
+      } />
       <Route path="/profile" element={
         <ProtectedRoute><Profile /></ProtectedRoute>
       } />
@@ -53,7 +82,7 @@ function AppRoutes() {
       <Route path="/checkout" element={
         <ProtectedRoute><Checkout /></ProtectedRoute>
       } />
-      <Route path="/order-confirmation" element={
+      <Route path="/order-confirmation/:orderId" element={
         <ProtectedRoute><OrderConfirmation /></ProtectedRoute>
       } />
 
@@ -83,10 +112,33 @@ function AppRoutes() {
           <MainLayout><Users /></MainLayout>
         </ProtectedRoute>
       } />
+      <Route path="/admin/blog" element={
+        <ProtectedRoute adminOnly>
+          <MainLayout><AdminBlogPosts /></MainLayout>
+        </ProtectedRoute>
+      } />
+
+      {/* ARTIST PROTECTED */}
+      <Route path="/artist/dashboard" element={
+        <ProtectedRoute artistOnly><ArtistDashboard /></ProtectedRoute>
+      } />
+      <Route path="/artist/products" element={
+        <ProtectedRoute artistOnly><ArtistProducts /></ProtectedRoute>
+      } />
+      <Route path="/artist/blog" element={
+        <ProtectedRoute artistOnly><ArtistBlog /></ProtectedRoute>
+      } />
+      <Route path="/artist/orders" element={
+        <ProtectedRoute artistOnly><ArtistOrders /></ProtectedRoute>
+      } />
+      <Route path="/artist/profile" element={
+        <ProtectedRoute artistOnly><ArtistProfile /></ProtectedRoute>
+      } />
 
       <Route path="/404" element={<NotFound />} />
       <Route path="*"    element={<Navigate to="/404" replace />} />
     </Routes>
+    </>
   );
 }
 
@@ -95,7 +147,9 @@ function App() {
     <Router>
       <AuthProvider>
         <CartProvider>
-          <AppRoutes />
+          <AuthModalProvider>
+            <AppRoutes />
+          </AuthModalProvider>
         </CartProvider>
       </AuthProvider>
     </Router>

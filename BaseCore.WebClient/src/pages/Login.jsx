@@ -2,132 +2,164 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
+const inp = {
+  width: '100%', padding: '13px 16px',
+  border: '1.5px solid #e8e4df', background: 'white',
+  fontSize: '0.95rem', color: '#1a1a1a', outline: 'none',
+  boxSizing: 'border-box', transition: 'border-color 0.2s',
+};
+
 const Login = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [remember, setRemember] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
-    const { login } = useAuth();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [remember, setRemember] = useState(false);
+  const [showPass, setShowPass] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    const result = await login(username, password, remember);
+    if (result.success) {
+      const role = result.user?.role;
+      if (role === 'Admin' || role === 'Staff') navigate('/dashboard');
+      else if (role === 'Artist') navigate('/artist/dashboard');
+      else navigate('/');
+    } else {
+      setError(result.message);
+    }
+    setLoading(false);
+  };
 
-        const result = await login(username, password, remember);
+  return (
+    <div style={{ minHeight: '100vh', background: '#faf8f5', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 16px' }}>
 
-        if (result.success) {
-            // ✅ Redirect đúng theo role
-            const role = result.user?.role;
-            if (role === 'Admin' || role === 'Staff') {
-                navigate('/dashboard');
-            } else {
-                navigate('/');
-            }
-        } else {
-            setError(result.message);
-        }
-        setLoading(false);
-    };
+      {/* Logo góc trên */}
+      <div style={{ position: 'fixed', top: 24, left: 32 }}>
+        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: '1.4rem', color: '#c8a97a' }}>✦</span>
+          <span style={{ fontWeight: 300, fontSize: '1.2rem', color: '#1a1a1a', letterSpacing: '0.08em' }}>ARTHENTIC</span>
+        </Link>
+      </div>
 
-    return (
-        <div className="login-page" style={{ minHeight: '100vh' }}>
-            <div className="login-box">
-                <div className="login-logo">
-                    <a href="/"><b>BaseCore</b> Sales</a>
-                </div>
-                <div className="card">
-                    <div className="card-body login-card-body">
-                        <p className="login-box-msg">Đăng nhập để tiếp tục</p>
+      <div style={{ width: '100%', maxWidth: 440 }}>
 
-                        {error && (
-                            <div className="alert alert-danger alert-dismissible">
-                                <button type="button" className="close" onClick={() => setError('')}>
-                                    &times;
-                                </button>
-                                <i className="fas fa-exclamation-circle mr-1"></i>
-                                {error}
-                            </div>
-                        )}
-
-                        <form onSubmit={handleSubmit}>
-                            <div className="input-group mb-3">
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Tên đăng nhập"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
-                                    required autoFocus
-                                />
-                                <div className="input-group-append">
-                                    <div className="input-group-text">
-                                        <span className="fas fa-user"></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="input-group mb-3">
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    className="form-control"
-                                    placeholder="Mật khẩu"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                />
-                                <div className="input-group-append">
-                                    <div
-                                        className="input-group-text"
-                                        style={{ cursor: 'pointer' }}
-                                        onClick={() => setShowPassword(!showPassword)}
-                                    >
-                                        <span className={showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'}></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="row align-items-center mb-2">
-                                <div className="col-7">
-                                    <div className="icheck-primary">
-                                        <input
-                                            type="checkbox"
-                                            id="remember"
-                                            checked={remember}
-                                            onChange={(e) => setRemember(e.target.checked)}
-                                        />
-                                        <label htmlFor="remember">Ghi nhớ đăng nhập</label>
-                                    </div>
-                                </div>
-                                <div className="col-5">
-                                    <button
-                                        type="submit"
-                                        className="btn btn-primary btn-block"
-                                        disabled={loading}
-                                    >
-                                        {loading
-                                            ? <span className="spinner-border spinner-border-sm"></span>
-                                            : <><i className="fas fa-sign-in-alt mr-1"></i> Đăng nhập</>
-                                        }
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-
-                        <p className="mb-1 text-center">
-                            <Link to="/forgot-password">Quên mật khẩu?</Link>
-                        </p>
-                        <p className="mb-0 text-center">
-                            Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
-                        </p>
-                    </div>
-                </div>
-            </div>
+        {/* Tiêu đề */}
+        <div style={{ textAlign: 'center', marginBottom: 40 }}>
+          <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.18em', color: '#c8a97a', textTransform: 'uppercase', marginBottom: 12 }}>
+            Chào mừng trở lại
+          </p>
+          <h1 style={{ fontWeight: 200, fontSize: '2rem', color: '#1a1a1a', letterSpacing: '0.04em', margin: 0 }}>
+            Đăng nhập
+          </h1>
         </div>
-    );
+
+        {/* Form */}
+        <div style={{ background: 'white', padding: '40px 36px', boxShadow: '0 4px 40px rgba(0,0,0,0.06)' }}>
+
+          {error && (
+            <div style={{
+              background: '#fef2f2', border: '1px solid #fecaca',
+              color: '#991b1b', padding: '11px 16px', fontSize: '0.85rem',
+              marginBottom: 24, letterSpacing: '0.01em',
+            }}>
+              <i className="fas fa-exclamation-circle mr-2"></i>{error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 8 }}>
+                Tên đăng nhập
+              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                placeholder="Nhập tên đăng nhập"
+                required autoFocus
+                style={inp}
+                onFocus={e => e.target.style.borderColor = '#1a1a1a'}
+                onBlur={e => e.target.style.borderColor = '#e8e4df'}
+              />
+            </div>
+
+            <div style={{ marginBottom: 28 }}>
+              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 8 }}>
+                Mật khẩu
+              </label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPass ? 'text' : 'password'}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="Nhập mật khẩu"
+                  required
+                  style={{ ...inp, paddingRight: 44 }}
+                  onFocus={e => e.target.style.borderColor = '#1a1a1a'}
+                  onBlur={e => e.target.style.borderColor = '#e8e4df'}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPass(p => !p)}
+                  style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#aaa', padding: 0 }}>
+                  <i className={showPass ? 'fas fa-eye-slash' : 'fas fa-eye'}></i>
+                </button>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: '0.85rem', color: '#767676' }}>
+                <input
+                  type="checkbox"
+                  checked={remember}
+                  onChange={e => setRemember(e.target.checked)}
+                  style={{ accentColor: '#1a1a1a', width: 15, height: 15 }}
+                />
+                Ghi nhớ đăng nhập
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                width: '100%', padding: '14px 0',
+                background: loading ? '#ccc' : '#1a1a1a',
+                color: 'white', border: 'none',
+                fontSize: '0.8rem', fontWeight: 700,
+                letterSpacing: '0.15em', textTransform: 'uppercase',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                transition: 'background 0.2s',
+              }}
+            >
+              {loading
+                ? <><span className="spinner-border spinner-border-sm mr-2"></span>Đang xử lý...</>
+                : 'Đăng nhập'
+              }
+            </button>
+          </form>
+
+          <div style={{ marginTop: 28, textAlign: 'center', borderTop: '1px solid #f0ece6', paddingTop: 24 }}>
+            <p style={{ fontSize: '0.88rem', color: '#767676', margin: 0 }}>
+              Chưa có tài khoản?{' '}
+              <Link to="/register" style={{ color: '#1a1a1a', fontWeight: 700, textDecoration: 'none', borderBottom: '1px solid #1a1a1a' }}>
+                Đăng ký ngay
+              </Link>
+            </p>
+          </div>
+        </div>
+
+        <p style={{ textAlign: 'center', marginTop: 28, fontSize: '0.8rem', color: '#bbb' }}>
+          © 2026 Arthentic. Gallery nghệ thuật Việt Nam.
+        </p>
+      </div>
+    </div>
+  );
 };
 
 export default Login;

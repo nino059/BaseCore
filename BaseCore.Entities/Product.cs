@@ -12,6 +12,8 @@ namespace BaseCore.Entities
 
         public decimal Price { get; set; }
 
+        public decimal? DiscountPrice { get; set; }
+
         public int Stock { get; set; } = 1;
 
         [MaxLength(500)]
@@ -34,20 +36,11 @@ namespace BaseCore.Entities
         public string? Theme { get; set; }
 
         [MaxLength(100)]
-        public string? Technique { get; set; }
-
-        [MaxLength(50)]
-        public string? Size { get; set; }
-
-        public int? Year { get; set; }
-
-        [MaxLength(100)]
         public string? Material { get; set; }
 
-        public bool IsOriginal { get; set; } = true;
-
-        [MaxLength(50)]
-        public string? Condition { get; set; }
+        // Kích thước tính bằng cm
+        public int? Width  { get; set; }
+        public int? Height { get; set; }
 
         // Available | Unavailable | OutOfStock
         [MaxLength(20)]

@@ -4,6 +4,17 @@
   --bs-font-sans-serif: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+/* ─── Bảo vệ Font Awesome icons khỏi bị override font ─── */
+.fa, .fas, .far, .fab, .fal, .fad,
+.fa-solid, .fa-regular, .fa-brands, .fa-light,
+[class^="fa-"], [class*=" fa-"] {
+  font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+  font-style: normal !important;
+  font-variant: normal !important;
+  text-rendering: auto !important;
+  -webkit-font-smoothing: antialiased !important;
+}
+
 .btn {
   border-radius: 50px;
   padding: 12px 28px;

@@ -149,6 +149,18 @@
         }
       }
     },
+    "/api/users/artists": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/users": {
       "get": {
         "tags": [
@@ -395,7 +407,11 @@
             "type": "string",
             "nullable": true
           },
-          "position": {
+          "avatarUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "bio": {
             "type": "string",
             "nullable": true
           },

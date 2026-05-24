@@ -363,10 +363,10 @@ D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.APISer
 D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.APIService\obj\Debug\net10.0\staticwebassets.development.json
 D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.APIService\obj\Debug\net10.0\staticwebassets.build.endpoints.json
 D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.APIService\obj\Debug\net10.0\swae.build.ex.cache
-D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.APIService\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
 D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.APIService\obj\Debug\net10.0\BaseCore.C709CDC1.Up2Date
 D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.APIService\obj\Debug\net10.0\BaseCore.APIService.dll
 D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.APIService\obj\Debug\net10.0\refint\BaseCore.APIService.dll
 D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.APIService\obj\Debug\net10.0\BaseCore.APIService.pdb
 D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.APIService\obj\Debug\net10.0\BaseCore.APIService.genruntimeconfig.cache
 D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.APIService\obj\Debug\net10.0\ref\BaseCore.APIService.dll
+D:\Newfolder\Ky6\7. Công nghệ web\BaiTapLon\BaseCore\BaseCore\BaseCore.APIService\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
