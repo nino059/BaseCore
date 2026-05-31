@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import PublicLayout from '../components/PublicLayout';
 import { blogApi } from '../services/api';
@@ -27,7 +27,7 @@ const CatBadge = ({ cat, small }) => {
 const Blog = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeCat, setActiveCat] = useState('Tất cả');
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     blogApi.getAll({ pageSize: 100 })
@@ -39,16 +39,29 @@ const Blog = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  const cats = ['Tất cả', ...new Set(posts.map(p => p.category).filter(Boolean))];
-  const featured = posts[0] || null;
-  const rest = posts.slice(1);
-  const filtered = activeCat === 'Tất cả' ? rest : rest.filter(p => p.category === activeCat);
+  const filtered = useMemo(() => {
+    let result = posts;
+
+    // Search by title or author name
+    const q = search.trim().toLowerCase();
+    if (q) {
+      result = result.filter(p =>
+        (p.title || '').toLowerCase().includes(q) ||
+        (p.authorName || '').toLowerCase().includes(q)
+      );
+    }
+
+    return result;
+  }, [posts, search]);
+
+  const featured = (!search && posts.length > 0) ? posts[0] : null;
+  const listPosts = featured ? filtered.filter(p => p.id !== featured.id) : filtered;
 
   return (
     <PublicLayout>
       <style>{`
-        .blog-card { transition: box-shadow .25s, transform .25s; cursor: pointer; }
-        .blog-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,.1) !important; transform: translateY(-3px) !important; }
+        .blog-card { transition: box-shadow .3s cubic-bezier(0.23,1,0.32,1), transform .3s cubic-bezier(0.23,1,0.32,1); cursor: pointer; }
+        .blog-card:hover { box-shadow: 0 18px 48px rgba(0,0,0,.11) !important; transform: translateY(-4px) !important; }
         .cat-btn:hover { border-color: #1a1a1a !important; color: #1a1a1a !important; }
       `}</style>
 
@@ -70,7 +83,28 @@ const Blog = () => {
           </div>
         </div>
 
-        <div className="container" style={{ paddingTop: 40, paddingBottom: 64 }}>
+      {/* Search bar - giống hệt trang Artists (tìm theo tên bài viết hoặc tác giả) */}
+      <div style={{ background: '#faf8f5', borderBottom: '1px solid #e8e4df', padding: '14px 0' }}>
+        <div className="container" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <div style={{ position: 'relative', width: 280 }}>
+            <i className="fas fa-search" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#aaa', fontSize: '0.78rem' }} />
+            <input
+              type="text"
+              placeholder="Tìm bài viết hoặc tác giả..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{ width: '100%', padding: '8px 32px 8px 34px', border: '1px solid #e8e4df', fontSize: '0.82rem', outline: 'none', boxSizing: 'border-box', color: '#1a1a1a', background: 'white' }}
+              onFocus={e => e.target.style.borderColor = '#1a1a1a'}
+              onBlur={e => e.target.style.borderColor = '#e8e4df'}
+            />
+            {search && (
+              <button onClick={() => setSearch('')} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#aaa', fontSize: '1rem', padding: 0 }}>×</button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="container" style={{ paddingTop: 32, paddingBottom: 64 }}>
 
           {loading && (
             <div style={{ textAlign: 'center', padding: 80, color: '#aaa' }}>
@@ -87,10 +121,13 @@ const Blog = () => {
             </div>
           )}
 
+          {/* Featured post */}
           {!loading && featured && (
-            <>
-              {/* Featured post */}
-              <div style={{ background: 'white', border: '1px solid #e8e4df', overflow: 'hidden', marginBottom: 40, display: 'flex', flexWrap: 'wrap' }}>
+            <Link
+              to={`/blog/${featured.id}`}
+              style={{ textDecoration: 'none', color: 'inherit', display: 'block', marginBottom: 40 }}
+            >
+              <div style={{ background: '#f9f6f1', border: '1px solid #e6d9c9', overflow: 'hidden', display: 'flex', flexWrap: 'wrap', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}>
                 {featured.coverImageUrl ? (
                   <div style={{ width: 260, minWidth: 180, flexShrink: 0, overflow: 'hidden' }}>
                     <img src={featured.coverImageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', minHeight: 200 }} onError={e => e.target.style.display = 'none'} />
@@ -122,79 +159,78 @@ const Blog = () => {
                   </div>
                 </div>
               </div>
+            </Link>
+          )}
 
-              {/* Category filter */}
-              {cats.length > 1 && (
-                <div style={{ display: 'flex', gap: 6, marginBottom: 28, flexWrap: 'wrap', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.72rem', color: '#aaa', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 600, marginRight: 4 }}>Chủ đề:</span>
-                  {cats.map(cat => {
-                    const active = activeCat === cat;
-                    return (
-                      <button key={cat} className="cat-btn" onClick={() => setActiveCat(cat)}
-                        style={{
-                          padding: '6px 16px', border: `1.5px solid ${active ? '#1a1a1a' : '#e8e4df'}`,
-                          background: active ? '#1a1a1a' : 'white',
-                          color: active ? 'white' : '#767676',
-                          cursor: 'pointer', fontSize: '0.8rem',
-                          fontWeight: active ? 700 : 400, letterSpacing: '0.04em',
-                          transition: 'all 0.15s',
-                        }}>
-                        {cat}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
+          {/* Result count (search only) */}
+          {search && (
+            <div style={{ marginBottom: 24 }}>
+              <span style={{ fontSize: '0.8rem', color: '#777' }}>
+                {filtered.length} kết quả cho "{search}"
+              </span>
+            </div>
+          )}
 
-              {/* Posts grid */}
-              {filtered.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '60px 0', color: '#aaa', fontWeight: 300, fontSize: '0.95rem' }}>
-                  <p style={{ fontSize: '2rem', color: '#e8e4df', marginBottom: 12 }}>✦</p>
-                  Không có bài viết nào trong chủ đề này
-                </div>
-              ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: 22 }}>
-                  {filtered.map(post => (
-                    <div key={post.id} className="blog-card"
-                      style={{ background: 'white', border: '1px solid #e8e4df', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                      {post.coverImageUrl ? (
-                        <div style={{ height: 150, overflow: 'hidden' }}>
-                          <img src={post.coverImageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display = 'none'} />
-                        </div>
-                      ) : (
-                        <div style={{ height: 150, background: `hsl(${(post.id * 47) % 360}, 20%, 92%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <span style={{ fontSize: '2rem', color: `hsl(${(post.id * 47) % 360}, 35%, 60%)` }}>✦</span>
-                        </div>
-                      )}
-                      <div style={{ padding: '18px 20px 22px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                        <div style={{ display: 'flex', gap: 8, marginBottom: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-                          <CatBadge cat={post.category} small />
-                          {post.readTime && <span style={{ fontSize: '0.72rem', color: '#bbb' }}>{post.readTime} đọc</span>}
-                        </div>
-                        <h3 style={{ fontWeight: 500, fontSize: '0.97rem', color: '#1a1a1a', margin: '0 0 10px', lineHeight: 1.55 }}>
-                          {post.title}
-                        </h3>
-                        <p style={{ color: '#767676', fontSize: '0.85rem', fontWeight: 300, margin: '0 0 16px', lineHeight: 1.75, flex: 1,
-                          display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                          {post.excerpt}
-                        </p>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 14, borderTop: '1px solid #f0ece8' }}>
-                          <span style={{ fontSize: '0.78rem', color: '#8b6c4a', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '60%' }}>
-                            <i className="fas fa-user-circle mr-1" />{post.authorName}
-                          </span>
-                          <span style={{ fontSize: '0.72rem', color: '#bbb', flexShrink: 0 }}>{fmtDate(post.publishedAt || post.createdAt)}</span>
-                        </div>
-                      </div>
+          {/* Posts grid */}
+          {listPosts.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '60px 0', color: '#aaa', fontWeight: 300, fontSize: '0.95rem' }}>
+              <p style={{ fontSize: '2rem', color: '#e8e4df', marginBottom: 12 }}>✦</p>
+              {search ? 'Không tìm thấy bài viết phù hợp' : 'Chưa có bài viết nào'}
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: 22 }}>
+              {listPosts.map(post => (
+                <Link
+                  key={post.id}
+                  to={`/blog/${post.id}`}
+                  className="blog-card"
+                  style={{
+                    background: '#f9f6f1',
+                    border: '1px solid #e6d9c9',
+                    overflow: 'hidden',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.04)'
+                  }}
+                >
+                  {post.coverImageUrl ? (
+                    <div style={{ height: 150, overflow: 'hidden' }}>
+                      <img src={post.coverImageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display = 'none'} />
                     </div>
-                  ))}
-                </div>
-              )}
-            </>
+                  ) : (
+                    <div style={{ height: 150, background: `hsl(${(post.id * 47) % 360}, 20%, 92%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <span style={{ fontSize: '2rem', color: `hsl(${(post.id * 47) % 360}, 35%, 60%)` }}>✦</span>
+                    </div>
+                  )}
+                  <div style={{ padding: '18px 20px 22px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    <div style={{ display: 'flex', gap: 8, marginBottom: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+                      <CatBadge cat={post.category} small />
+                      {post.readTime && <span style={{ fontSize: '0.72rem', color: '#bbb' }}>{post.readTime} đọc</span>}
+                    </div>
+                    <h3 style={{ fontWeight: 500, fontSize: '0.97rem', color: '#1a1a1a', margin: '0 0 10px', lineHeight: 1.55 }}>
+                      {post.title}
+                    </h3>
+                    <p style={{ color: '#767676', fontSize: '0.85rem', fontWeight: 300, margin: '0 0 16px', lineHeight: 1.75, flex: 1,
+                      display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {post.excerpt}
+                    </p>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 14, borderTop: '1px solid #f0ece8' }}>
+                      <span style={{ fontSize: '0.78rem', color: '#8b6c4a', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '60%' }}>
+                        <i className="fas fa-user-circle mr-1" />{post.authorName}
+                      </span>
+                      <span style={{ fontSize: '0.72rem', color: '#bbb', flexShrink: 0 }}>{fmtDate(post.publishedAt || post.createdAt)}</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
           )}
 
           {/* Footer notice */}
           {!loading && posts.length > 0 && (
-            <div style={{ textAlign: 'center', marginTop: 52, padding: '20px', background: 'white', border: '1px solid #e8e4df' }}>
+            <div style={{ textAlign: 'center', marginTop: 52, padding: '20px', background: '#f9f6f1', border: '1px solid #e6d9c9' }}>
               <p style={{ color: '#aaa', fontSize: '0.85rem', fontWeight: 300, margin: 0, letterSpacing: '0.04em' }}>
                 ✦ &nbsp; Nội dung mới được cập nhật thường xuyên &nbsp; ✦
               </p>

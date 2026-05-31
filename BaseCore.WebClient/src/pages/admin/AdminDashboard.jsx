@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { productApi, userApi, categoryApi, orderApi } from "../../services/api";
+import { productApi, userApi, categoryApi, orderApi, blogApi } from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
 
 // ─── Constants ────────────────────────────────────────────────
@@ -60,7 +60,7 @@ const BarChart = ({ data, color = "#c8a97a" }) => {
 };
 
 // ─── Area Chart ───────────────────────────────────────────────
-const AreaChart = ({ data, color = "#10b981" }) => {
+const AreaChart = ({ data, color = "#10b981", showValues = false }) => {
   if (!data || data.length < 2) return null;
   const W = 480, H = 130, PX = 24, PY = 18, PB = 22;
   const maxVal = Math.max(...data.map(d => d.value), 1);
@@ -89,9 +89,23 @@ const AreaChart = ({ data, color = "#10b981" }) => {
         <circle key={i} cx={p[0]} cy={p[1]} r="4" fill="white" stroke={color} strokeWidth="2.5" />
       ))}
       {data.map((d, i) => (
-        <text key={i} x={pts[i][0]} y={H + PB - 3} textAnchor="middle" fontSize="10" fill="#94a3b8">
-          {d.label}
-        </text>
+        <g key={i}>
+          <text x={pts[i][0]} y={H + PB - 3} textAnchor="middle" fontSize="10" fill="#94a3b8">
+            {d.label}
+          </text>
+          {showValues && d.value > 0 && (
+            <text 
+              x={pts[i][0]} 
+              y={pts[i][1] - 10} 
+              textAnchor="middle" 
+              fontSize="9" 
+              fontWeight="600" 
+              fill="#1a1a1a"
+            >
+              {Number(d.value).toLocaleString("vi-VN")}
+            </text>
+          )}
+        </g>
       ))}
     </svg>
   );
@@ -105,7 +119,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   const [loading,       setLoading]       = useState(true);
-  const [stats,         setStats]         = useState({ products: 0, activeProducts: 0, hiddenProducts: 0, categories: 0, users: 0, orders: 0, revenue: 0 });
+  const [stats,         setStats]         = useState({ products: 0, activeProducts: 0, hiddenProducts: 0, categories: 0, users: 0, orders: 0, blogs: 0, revenue: 0 });
   const [monthlyOrders, setMonthlyOrders] = useState([]);
   const [monthlyRev,    setMonthlyRev]    = useState([]);
   const [statusDist,    setStatusDist]    = useState([]);
@@ -114,23 +128,29 @@ const Dashboard = () => {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      // Tạo 6 tháng gần nhất
-      const last6 = Array.from({ length: 6 }, (_, i) => {
-        const d = new Date();
-        d.setMonth(d.getMonth() - (5 - i));
-        return {
-          month: d.getMonth(),
-          year:  d.getFullYear(),
-          label: d.toLocaleString("vi-VN", { month: "short" }),
-        };
-      });
+      // Tạo 6 tháng gần nhất - an toàn, tránh lỗi năm và múi giờ
+      const getLast6Months = () => {
+        const months = [];
+        const now = new Date();
+        for (let i = 5; i >= 0; i--) {
+          const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+          months.push({
+            year: d.getFullYear(),
+            month: d.getMonth(),
+            label: d.toLocaleString("vi-VN", { month: "short" }),
+          });
+        }
+        return months;
+      };
+      const last6 = getLast6Months();
 
-      const [prodRes, prodActiveRes, catRes, usersRes, ordersRes] = await Promise.all([
-        productApi.getAll({ pageSize: 1, admin: true }),          // tổng tất cả sản phẩm
-        productApi.getAll({ pageSize: 1 }),                    // chỉ Available + inStock
+      const [prodRes, prodActiveRes, catRes, usersRes, ordersRes, blogsRes] = await Promise.all([
+        productApi.getAll({ pageSize: 1, admin: true }),
+        productApi.getAll({ pageSize: 1 }),
         categoryApi.getAll(),
         userApi.getAll({ pageSize: 1 }),
         orderApi.getAll({ pageSize: 200 }),
+        blogApi.getAll({ pageSize: 1 }),
       ]);
 
       const usersCount    = usersRes.data?.totalCount || 0;
@@ -145,6 +165,8 @@ const Dashboard = () => {
       const totalProducts  = prodRes.data?.totalCount || 0;
       const activeProducts = prodActiveRes.data?.totalCount || 0;
 
+      const blogsCount = blogsRes.data?.totalCount || (Array.isArray(blogsRes.data?.items) ? blogsRes.data.items.length : 0);
+
       setStats({
         products:       totalProducts,
         activeProducts,
@@ -152,27 +174,33 @@ const Dashboard = () => {
         categories: catRes.data?.length || 0,
         users:      usersCount,
         orders:     orders.length,
+        blogs:      blogsCount,
         revenue,
       });
 
-      // ── Monthly order count ───────────────────────────────
+      // ── Monthly order count & revenue (hardened) ───────────────────────────────
+      const safeParseDate = (dateStr) => {
+        if (!dateStr) return null;
+        const d = new Date(dateStr);
+        return isNaN(d.getTime()) ? null : d;
+      };
+
       setMonthlyOrders(last6.map(m => ({
         label: m.label,
         value: orders.filter(o => {
-          const d = new Date(o.orderDate);
-          return d.getMonth() === m.month && d.getFullYear() === m.year;
+          const d = safeParseDate(o.orderDate);
+          return d && d.getMonth() === m.month && d.getFullYear() === m.year;
         }).length,
       })));
 
-      // ── Monthly revenue (chỉ Completed) ──────────────────
       setMonthlyRev(last6.map(m => ({
         label: m.label,
         value: orders
           .filter(o => {
-            const d = new Date(o.orderDate);
-            return d.getMonth() === m.month && d.getFullYear() === m.year && o.status === "Completed";
+            const d = safeParseDate(o.orderDate);
+            return d && d.getMonth() === m.month && d.getFullYear() === m.year && o.status === "Completed";
           })
-          .reduce((s, o) => s + (o.totalAmount || 0), 0),
+          .reduce((s, o) => s + (Number(o.totalAmount) || 0), 0),
       })));
 
       // ── Status distribution ───────────────────────────────
@@ -209,28 +237,6 @@ const Dashboard = () => {
   return (
     <div>
 
-      {/* ── Header ─────────────────────────────────────────── */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 22 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{
-            width: 46, height: 46, borderRadius: 13,
-            background: "linear-gradient(135deg,#c8a97a,#8b6c4a)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0 4px 14px rgba(99,102,241,.35)", flexShrink: 0,
-          }}>
-            <i className="fas fa-chart-bar" style={{ color: "white", fontSize: "1.1rem" }}></i>
-          </div>
-          <div>
-            <h1 style={{ fontSize: "1.35rem", fontWeight: 800, color: "#1e293b", margin: 0, lineHeight: 1.2 }}>
-              Bảng Điều Khiển
-            </h1>
-            <p style={{ fontSize: "0.82rem", color: "#94a3b8", margin: "4px 0 0" }}>
-              Xin chào, <strong style={{ color: "#1e293b" }}>{user?.fullName || user?.username || "bạn"}</strong>
-            </p>
-          </div>
-        </div>
-      </div>
-
       {loading ? (
         <div style={{ textAlign: "center", padding: "100px 0" }}>
           <div className="spinner-border" style={{ color: "#c8a97a", width: 44, height: 44 }} />
@@ -241,15 +247,15 @@ const Dashboard = () => {
           {/* ── KPI Cards ──────────────────────────────────── */}
           <div style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill,minmax(165px,1fr))",
+            gridTemplateColumns: "repeat(5, 1fr)",
             gap: 16, marginBottom: 24,
           }}>
             {[
-              { label: "Đang bán",       value: stats.activeProducts, color: "#c8a97a", icon: "fa-box",         href: "/products",   sub: stats.hiddenProducts > 0 ? `${stats.hiddenProducts} ẩn/hết` : null },
-              { label: "Danh mục",       value: stats.categories,     color: "#8b6c4a", icon: "fa-tags",         href: "/categories", sub: null },
-              { label: "Tổng đơn hàng",  value: stats.orders,         color: "#f59e0b", icon: "fa-shopping-bag", href: "/orders",     sub: null },
-              { label: "Người dùng",     value: stats.users,          color: "#10b981", icon: "fa-users",        href: "/users",      sub: null },
-              { label: "Doanh thu",      value: fmt(stats.revenue),   color: "#ef4444", icon: "fa-coins",        href: null,          sub: null },
+              { label: "Tác phẩm",   value: stats.activeProducts, color: "#c8a97a", icon: "fa-palette",      href: "/products",   sub: stats.hiddenProducts > 0 ? `${stats.hiddenProducts} ẩn/hết` : null },
+              { label: "Thể loại",   value: stats.categories,     color: "#8b6c4a", icon: "fa-layer-group",   href: "/categories", sub: null },
+              { label: "Đơn hàng",   value: stats.orders,         color: "#f59e0b", icon: "fa-shopping-bag",  href: "/orders",     sub: null },
+              { label: "Bài viết",   value: stats.blogs,          color: "#7c3aed", icon: "fa-pen-fancy",     href: "/admin/blog", sub: null },
+              { label: "Người dùng", value: stats.users,          color: "#10b981", icon: "fa-users",         href: "/users",      sub: null },
             ].map((k, i) => (
               <div key={i}
                 style={{
@@ -321,14 +327,17 @@ const Dashboard = () => {
                     Doanh thu theo tháng
                   </h6>
                   <p style={{ fontSize: "0.76rem", color: "#94a3b8", margin: "2px 0 0" }}>
-                    Đơn hoàn thành · 6 tháng gần nhất
+                    6 tháng gần nhất
                   </p>
                 </div>
                 <div style={{ width: 34, height: 34, borderRadius: 9, background: "#10b98118", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <i className="fas fa-chart-area" style={{ color: "#10b981", fontSize: "0.9rem" }} />
                 </div>
               </div>
-              <AreaChart data={monthlyRev} color="#10b981" />
+              <AreaChart data={monthlyRev} color="#10b981" showValues={true} />
+              <div style={{ fontSize: "0.75rem", color: "#10b981", marginTop: 6, textAlign: "right", fontWeight: 600 }}>
+                Đơn vị: VNĐ
+              </div>
             </div>
           </div>
 

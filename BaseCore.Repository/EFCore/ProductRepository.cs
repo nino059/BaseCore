@@ -29,7 +29,7 @@ namespace BaseCore.Repository.EFCore
             }
             else if (publicOnly)
             {
-                query = query.Where(p => p.Status == "Available" && p.Stock > 0);
+                query = query.Where(p => p.Status == "ForSale" || p.Status == "Available");
             }
 
             if (!string.IsNullOrEmpty(keyword))

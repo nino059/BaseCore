@@ -31,7 +31,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401) {
+        const url = error.config?.url || '';
+        const isAuthEndpoint = url.includes('/auth/login') || url.includes('/auth/register');
+        if (error.response?.status === 401 && !isAuthEndpoint) {
             localStorage.removeItem('token'); localStorage.removeItem('user');
             sessionStorage.removeItem('token'); sessionStorage.removeItem('user');
             window.location.href = '/login';
@@ -71,8 +73,13 @@ export const productApi = {
     update:  (id, data) => api.put(`/products/${id}`, data),
     delete:  (id)     => api.delete(`/products/${id}`),
     getByCategory: (categoryId) => api.get(`/products/category/${categoryId}`),
-    approve: (id)     => api.put(`/products/${id}/approve`),
-    reject:  (id)     => api.put(`/products/${id}/reject`),
+
+    // Admin actions
+    approve:     (id)       => api.put(`/products/${id}/approve`),
+    reject:      (id, note) => api.put(`/products/${id}/reject`,      { note }),
+
+    // Artist actions
+    restock:     (id)       => api.put(`/products/${id}/restock`),
 
     uploadImage: (file) => {
         const form = new FormData();
@@ -84,11 +91,12 @@ export const productApi = {
 };
 
 export const categoryApi = {
-    getAll:  () => api.get('/categories'),
-    getById: (id) => api.get(`/categories/${id}`),
-    create:  (data) => api.post('/categories', data),
-    update:  (id, data) => api.put(`/categories/${id}`, data),
-    delete:  (id) => api.delete(`/categories/${id}`),
+    getAll:      () => api.get('/categories'),
+    getById:     (id) => api.get(`/categories/${id}`),
+    getProducts: (id) => api.get(`/categories/${id}/products`),
+    create:      (data) => api.post('/categories', data),
+    update:      (id, data) => api.put(`/categories/${id}`, data),
+    delete:      (id) => api.delete(`/categories/${id}`),
 };
 
 export const orderApi = {
@@ -99,7 +107,7 @@ export const orderApi = {
     getById:       (id)     => api.get(`/orders/${id}`),
     update:        (id, data) => api.put(`/orders/${id}`, data),
     updateStatus:  (id, status) => api.put(`/orders/${id}/status`, { status }),
-    cancel:        (id)     => api.put(`/orders/${id}`, { status: 'Cancelled' }),
+    cancel:        (id)     => api.put(`/orders/${id}/cancel`),
     delete:        (id)     => api.delete(`/orders/${id}`),
 };
 
@@ -111,6 +119,21 @@ export const blogApi = {
     approve:  (id)     => api.put(`/blogposts/${id}/approve`),
     reject:   (id)     => api.put(`/blogposts/${id}/reject`),
     delete:   (id)     => api.delete(`/blogposts/${id}`),
+
+    uploadImage: (file) => {
+        const form = new FormData();
+        form.append('file', file);
+        return api.post('/products/upload-image', form, {
+            headers: { 'Content-Type': undefined },
+        });
+    },
+};
+
+export const notificationApi = {
+    getAll:         () => api.get('/notifications'),
+    getUnreadCount: () => api.get('/notifications/unread-count'),
+    markRead:       (id) => api.put(`/notifications/${id}/read`),
+    markAllRead:    () => api.put('/notifications/read-all'),
 };
 
 export default api;

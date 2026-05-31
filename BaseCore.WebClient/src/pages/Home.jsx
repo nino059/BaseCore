@@ -33,7 +33,11 @@ const ArtCard = ({ product, addedId, onAdd }) => {
               <i className="fas fa-image" style={{ fontSize: '2rem' }} />
             </div>
           )}
-          {product.stock === 0 && (
+          {product.status === 'ForSale' ? (
+            <div style={{ position: 'absolute', top: 10, left: 10, background: '#065f46', color: 'white', padding: '3px 10px', fontSize: '0.66rem', fontWeight: 700, letterSpacing: '0.08em' }}>ĐANG BÁN</div>
+          ) : product.status === 'Ordered' ? (
+            <div style={{ position: 'absolute', top: 10, left: 10, background: '#92400e', color: 'white', padding: '3px 10px', fontSize: '0.66rem', fontWeight: 700, letterSpacing: '0.08em' }}>ĐÃ ĐẶT</div>
+          ) : (
             <div style={{ position: 'absolute', top: 10, left: 10, background: '#1a1a1a', color: 'white', padding: '3px 10px', fontSize: '0.66rem', fontWeight: 700, letterSpacing: '0.08em' }}>ĐÃ BÁN</div>
           )}
           {hasDisc && (
@@ -44,7 +48,7 @@ const ArtCard = ({ product, addedId, onAdd }) => {
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.28)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
             opacity: hov ? 1 : 0, transition: 'opacity .25s' }}>
             <span style={{ background: 'white', color: '#1a1a1a', padding: '8px 16px', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.06em' }}>XEM NGAY</span>
-            {product.stock > 0 && !isArtist && (
+            {product.status === 'ForSale' && !isArtist && (
               <button onClick={e => onAdd(e, product)} style={{ background: addedId === product.id ? '#27ae60' : '#1a1a1a', color: 'white', border: 'none', cursor: 'pointer', padding: '8px 12px', fontSize: '0.72rem', fontWeight: 700, transition: 'background .2s' }}>
                 {addedId === product.id ? <i className="fas fa-check" /> : <i className="fas fa-cart-plus" />}
               </button>
@@ -53,7 +57,10 @@ const ArtCard = ({ product, addedId, onAdd }) => {
         </div>
         <div style={{ fontSize: '0.72rem', color: '#8b6c4a', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 5 }}>
           {(product.artistName || product.artist)
-            ? <Link to="/artists" onClick={e => e.stopPropagation()} style={{ color: '#8b6c4a', textDecoration: 'none' }}
+            ? <Link
+                to={product.sellerId ? `/artists/${product.sellerId}` : '/artists'}
+                onClick={e => e.stopPropagation()}
+                style={{ color: '#8b6c4a', textDecoration: 'none' }}
                 onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
                 onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
               >{product.artistName || product.artist}</Link>
@@ -63,9 +70,9 @@ const ArtCard = ({ product, addedId, onAdd }) => {
         <div style={{ fontWeight: 500, fontSize: '0.88rem', color: '#1a1a1a', marginBottom: 5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {product.name}
         </div>
-        <div style={{ fontWeight: 700, fontSize: '0.88rem', color: '#1a1a1a' }}>
-          {product.stock === 0 ? 'Liên hệ' : fmt(price)}
-          {hasDisc && product.stock > 0 && (
+        <div style={{ fontWeight: 700, fontSize: '0.88rem', color: product.status === 'ForSale' ? '#1a1a1a' : '#9ca3af' }}>
+          {fmt(price)}
+          {hasDisc && product.status === 'ForSale' && (
             <span style={{ fontSize: '0.75rem', color: '#aaa', textDecoration: 'line-through', marginLeft: 8, fontWeight: 400 }}>{fmt(product.price)}</span>
           )}
         </div>
@@ -128,7 +135,7 @@ const Home = () => {
     allProducts.forEach(p => {
       const name = p.artistName || p.artist;
       if (!name) return;
-      if (!map[name]) map[name] = { name, count: 0, cover: null };
+      if (!map[name]) map[name] = { name, count: 0, cover: null, sellerId: p.sellerId || null };
       map[name].count++;
       if (!map[name].cover && p.imageUrl) map[name].cover = toImg(p.imageUrl);
     });
@@ -393,7 +400,7 @@ const Home = () => {
             <SecHead label="Nghệ sĩ" title="Họa Sĩ Nổi Bật" linkTo="/artists" linkText="Tất cả họa sĩ" />
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 28 }}>
               {artists.map(artist => (
-                <Link key={artist.name} to={`/shop?artist=${encodeURIComponent(artist.name)}`} className="art-artist" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link key={artist.name} to={artist.sellerId ? `/artists/${artist.sellerId}` : '/artists'} className="art-artist" style={{ textDecoration: 'none', color: 'inherit' }}>
                   <div className="art-artist-img" style={{ paddingBottom: '120%', position: 'relative', background: '#f2ede8', marginBottom: 14 }}>
                     {artist.cover ? (
                       <img src={artist.cover} alt={artist.name} loading="lazy"

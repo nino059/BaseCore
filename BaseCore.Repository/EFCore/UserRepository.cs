@@ -9,7 +9,7 @@ namespace BaseCore.Repository.EFCore
     public interface IUserRepositoryEF : IRepository<User>
     {
         Task<User?> GetByUsernameAsync(string username);
-        Task<(List<User> Users, int TotalCount)> SearchAsync(string? keyword, int page, int pageSize);
+        Task<(List<User> Users, int TotalCount)> SearchAsync(string? keyword, int page, int pageSize, int? userType = null);
     }
 
     public class UserRepositoryEF : Repository<User>, IUserRepositoryEF
@@ -20,21 +20,24 @@ namespace BaseCore.Repository.EFCore
 
         public async Task<User?> GetByUsernameAsync(string username)
         {
-            return await _dbSet.FirstOrDefaultAsync(u => u.UserName == username && u.IsActive);
+            return await _dbSet.FirstOrDefaultAsync(u => u.UserName == username);
         }
 
-        public async Task<(List<User> Users, int TotalCount)> SearchAsync(string? keyword, int page, int pageSize)
+        public async Task<(List<User> Users, int TotalCount)> SearchAsync(string? keyword, int page, int pageSize, int? userType = null)
         {
             var query = _dbSet.AsQueryable();
 
             if (!string.IsNullOrEmpty(keyword))
             {
-                keyword = keyword.ToLower();
+                var kw = keyword.ToLower();
                 query = query.Where(u =>
-                    u.UserName.ToLower().Contains(keyword) ||
-                    u.Name.ToLower().Contains(keyword) ||
-                    (u.Email != null && u.Email.ToLower().Contains(keyword)));
+                    u.UserName.ToLower().Contains(kw) ||
+                    u.Name.ToLower().Contains(kw) ||
+                    (u.Email != null && u.Email.ToLower().Contains(kw)));
             }
+
+            if (userType.HasValue)
+                query = query.Where(u => u.UserType == userType.Value);
 
             var totalCount = await query.CountAsync();
 

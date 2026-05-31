@@ -10,19 +10,18 @@ namespace BaseCore.AuthService.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;
-        private const string SecretKey = "YourSecretKeyForAuthenticationShouldBeLongEnough";
+        private readonly IConfiguration _configuration;
         private const int TokenExpirationMinutes = 480; // 8 hours
 
-        public AuthController(IUserService userService)
+        public AuthController(IUserService userService, IConfiguration configuration)
         {
             _userService = userService;
+            _configuration = configuration;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            Console.WriteLine($"Username: {request.Username}");
-            Console.WriteLine($"Password: {request.Password}");
             if (request == null || string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password))
             {
                 return BadRequest(new { message = "Username and password are required" });
@@ -42,8 +41,12 @@ namespace BaseCore.AuthService.Controllers
                 _ => "User"
             };
 
+            var secretKey = _configuration["Jwt:SecretKey"] ?? _configuration["AppSettings:Secret"];
+            if (string.IsNullOrWhiteSpace(secretKey))
+                return StatusCode(500, new { message = "JWT secret is not configured" });
+
             var token = TokenHelper.GenerateToken(
-                SecretKey,
+                secretKey,
                 TokenExpirationMinutes,
                 user.Id.ToString(),
                 user.UserName,
@@ -88,7 +91,7 @@ namespace BaseCore.AuthService.Controllers
                     Id       = Guid.NewGuid().ToString(),
                     UserName = request.Username,
                     Name     = request.Name ?? request.Username,
-                    Email    = request.Email    ?? "",
+                    Email    = string.IsNullOrWhiteSpace(request.Email) ? $"{request.Username}@local.invalid" : request.Email.Trim(),
                     Phone    = request.Phone    ?? "",
                     Image    = "",
                     UserType = 0 // Default to regular user

@@ -69,10 +69,19 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // ✅ Cloudinary
 var cloudinarySection = builder.Configuration.GetSection("Cloudinary");
+var cloudinaryCloudName = cloudinarySection["CloudName"];
+var cloudinaryApiKey = cloudinarySection["ApiKey"];
+var cloudinaryApiSecret = cloudinarySection["ApiSecret"];
+if (string.IsNullOrWhiteSpace(cloudinaryCloudName) ||
+    string.IsNullOrWhiteSpace(cloudinaryApiKey) ||
+    string.IsNullOrWhiteSpace(cloudinaryApiSecret))
+{
+    throw new InvalidOperationException("Cloudinary configuration is not configured");
+}
 var cloudinary = new Cloudinary(new Account(
-    cloudinarySection["CloudName"],
-    cloudinarySection["ApiKey"],
-    cloudinarySection["ApiSecret"]
+    cloudinaryCloudName,
+    cloudinaryApiKey,
+    cloudinaryApiSecret
 ));
 cloudinary.Api.Secure = true;
 builder.Services.AddSingleton(cloudinary);
@@ -86,7 +95,12 @@ builder.Services.AddScoped<IUserRepositoryEF, UserRepositoryEF>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
 // JWT Authentication
-var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:SecretKey"] ?? "YourSecretKeyForAuthenticationShouldBeLongEnough");
+var secretKey = builder.Configuration["Jwt:SecretKey"] ?? builder.Configuration["AppSettings:Secret"];
+if (string.IsNullOrWhiteSpace(secretKey))
+{
+    throw new InvalidOperationException("JWT secret is not configured");
+}
+var key = Encoding.ASCII.GetBytes(secretKey);
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

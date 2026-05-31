@@ -14,8 +14,6 @@ namespace BaseCore.Entities
 
         public decimal? DiscountPrice { get; set; }
 
-        public int Stock { get; set; } = 1;
-
         [MaxLength(500)]
         public string ImageUrl { get; set; } = "";
 
@@ -42,9 +40,13 @@ namespace BaseCore.Entities
         public int? Width  { get; set; }
         public int? Height { get; set; }
 
-        // Available | Unavailable | OutOfStock
+        // Pending | ForSale | Ordered | Sold | Rejected
         [MaxLength(20)]
-        public string Status { get; set; } = "Available";
+        public string Status { get; set; } = "Pending";
+
+        // Ghi chú của admin khi từ chối (Rejected)
+        [MaxLength(500)]
+        public string? AdminNote { get; set; }
 
         [JsonIgnore]
         public Category? Category { get; set; }

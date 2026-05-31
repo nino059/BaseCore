@@ -198,45 +198,34 @@ const Artists = () => {
         .skel { background: #ede8e3; animation: shimmer 1.6s ease-in-out infinite; }
       `}</style>
 
-      {/* ── Hero ── */}
-      <div style={{
-        background: 'linear-gradient(135deg, #1a1a1a 0%, #2c2318 100%)',
-        padding: '72px 0 60px', textAlign: 'center', position: 'relative', overflow: 'hidden',
-        marginTop: -64,
-      }}>
-        {/* Decorative lines */}
-        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(200,169,122,0.06) 40px)', pointerEvents: 'none' }} />
-        <div className="container" style={{ position: 'relative' }}>
-          
-          {!loading && artists.length > 0 && (
-            <div style={{ marginTop: 28, display: 'flex', gap: 36, justifyContent: 'center' }}>
-              {[
-                { value: artists.length, label: 'Họa sĩ' },
-                { value: products.length, label: 'Tác phẩm' },
-              ].map(s => (
-                <div key={s.label} style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.8rem', fontWeight: 200, color: '#c8a97a', lineHeight: 1 }}>{s.value}</div>
-                  <div style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.14em', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginTop: 4 }}>{s.label}</div>
-                </div>
-              ))}
-            </div>
-          )}
+      {/* Page header - chỉ còn 1 dòng */}
+      <div style={{ background: 'white', borderBottom: '1px solid #e8e4df', padding: '28px 0 24px' }}>
+        <div className="container">
+          <h1 style={{ 
+            color: '#1a1a1a', 
+            fontWeight: 500, 
+            fontSize: 'clamp(1.9rem, 4.2vw, 2.7rem)', 
+            letterSpacing: '0.01em', 
+            margin: 0,
+            lineHeight: 1.15,
+            fontFamily: "'Playfair Display', serif"
+          }}>
+            NGƯỜI SÁNG TẠO NGHỆ THUẬT
+          </h1>
         </div>
       </div>
 
-      {/* ── Breadcrumb + search ── */}
-      <div style={{ background: 'white', borderBottom: '1px solid #e8e4df', padding: '14px 0' }}>
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-
-          {/* Search */}
-          <div style={{ position: 'relative', width: 260 }}>
+      {/* Search bar */}
+      <div style={{ background: '#faf8f5', borderBottom: '1px solid #e8e4df', padding: '16px 0' }}>
+        <div className="container" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <div style={{ position: 'relative', width: 280 }}>
             <i className="fas fa-search" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#aaa', fontSize: '0.78rem' }} />
             <input
               type="text"
               placeholder="Tìm họa sĩ..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              style={{ width: '100%', padding: '8px 32px 8px 34px', border: '1px solid #e8e4df', fontSize: '0.82rem', outline: 'none', boxSizing: 'border-box', color: '#1a1a1a', background: '#faf8f5' }}
+              style={{ width: '100%', padding: '8px 32px 8px 34px', border: '1px solid #e8e4df', fontSize: '0.82rem', outline: 'none', boxSizing: 'border-box', color: '#1a1a1a', background: 'white' }}
               onFocus={e => e.target.style.borderColor = '#1a1a1a'}
               onBlur={e => e.target.style.borderColor = '#e8e4df'}
             />

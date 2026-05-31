@@ -32,23 +32,15 @@ export const CartProvider = ({ children }) => {
   const addToCart = (product, qty = 1) =>
     setItems(prev => {
       const exist = prev.find(i => i.id === product.id);
-      const maxStock = product.stock ?? Infinity;
-      if (exist) {
-        const newQty = Math.min(exist.qty + qty, maxStock);
-        return prev.map(i => i.id === product.id ? { ...i, qty: newQty } : i);
-      }
-      return [...prev, { ...product, qty: Math.min(qty, maxStock) }];
+      if (exist) return prev; // tranh là độc bản, không thêm lại
+      return [...prev, { ...product, qty: 1 }];
     });
 
   const removeFromCart = (id) => setItems(prev => prev.filter(i => i.id !== id));
 
   const updateQty = (id, qty) => {
     if (qty < 1) { removeFromCart(id); return; }
-    setItems(prev => prev.map(i => {
-      if (i.id !== id) return i;
-      const maxStock = i.stock ?? Infinity;
-      return { ...i, qty: Math.min(qty, maxStock) };
-    }));
+    setItems(prev => prev.map(i => i.id === id ? { ...i, qty: 1 } : i));
   };
 
   const clearCart = () => setItems([]);

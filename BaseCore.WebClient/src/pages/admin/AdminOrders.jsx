@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { orderApi } from '../../services/api';
 
 // ─── Config trạng thái ────────────────────────────────────────
@@ -83,26 +83,17 @@ const pageNums = (page, total) => {
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════
 const Orders = () => {
-  const [orders,        setOrders]        = useState([]);
+  const [allOrders,     setAllOrders]     = useState([]);
   const [loading,       setLoading]       = useState(true);
   const [search,        setSearch]        = useState('');
   const [filterStatus,  setFilterStatus]  = useState('');
   const [page,          setPage]          = useState(1);
   const PAGE_SIZE = 10;
-  const [totalPages,    setTotalPages]    = useState(1);
-  const [totalCount,    setTotalCount]    = useState(0);
   const [showModal,     setShowModal]     = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [statusUpdate,  setStatusUpdate]  = useState('');
   const [updating,      setUpdating]      = useState(false);
-
-  // Stats từ full dataset
-  const [stats, setStats] = useState({ total:0, pending:0, processing:0, shipped:0, completed:0, cancelled:0 });
-
-  // Inline quick-status per row
   const [quickUpdating, setQuickUpdating] = useState({});
-
-  // Confirm + Toast
   const [confirm, setConfirm] = useState({ open:false, title:'', message:'', onConfirm:null });
   const [toasts,  setToasts]  = useState([]);
   const toastId = useRef(0);
@@ -116,43 +107,45 @@ const Orders = () => {
   const openConfirm  = (title, message, cb) => setConfirm({ open:true, title, message, onConfirm:cb });
   const closeConfirm = () => setConfirm(p => ({ ...p, open:false }));
 
-  // ── Load stats (full dataset) ──
-  const loadStats = useCallback(async () => {
-    try {
-      const res = await orderApi.getAll({ pageSize: 999 });
-      const raw = res.data;
-      const all = raw?.items || raw?.data || (Array.isArray(raw) ? raw : []);
-      setStats({
-        total:      raw?.totalCount || all.length,
-        pending:    all.filter(o => o.status === 'Pending').length,
-        processing: all.filter(o => o.status === 'Processing').length,
-        shipped:    all.filter(o => o.status === 'Shipped').length,
-        completed:  all.filter(o => o.status === 'Completed').length,
-        cancelled:  all.filter(o => o.status === 'Cancelled').length,
-      });
-    } catch {}
-  }, []);
-
-  // ── Load danh sách có phân trang & filter ──
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
-      const params = { page, pageSize: PAGE_SIZE };
-      if (search)       params.keyword = search;
-      if (filterStatus) params.status  = filterStatus;
-      const res  = await orderApi.getAll(params);
+      const res  = await orderApi.getAll({});
       const raw  = res.data;
       const list = raw?.items || raw?.data || (Array.isArray(raw) ? raw : []);
-      setOrders(list);
-      const count = raw?.totalCount || list.length;
-      setTotalCount(count);
-      setTotalPages(Math.max(1, Math.ceil(count / PAGE_SIZE)));
+      setAllOrders(list);
     } catch (e) { console.error(e); }
     finally { setLoading(false); }
-  }, [search, filterStatus, page]);
+  }, []);
 
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
-  useEffect(() => { loadStats();   }, [loadStats]);
+
+  // ── Client-side filter + paginate ──
+  const filtered = useMemo(() => {
+    let list = allOrders;
+    if (filterStatus) list = list.filter(o => o.status === filterStatus);
+    if (search) {
+      const kw = search.toLowerCase();
+      list = list.filter(o =>
+        String(o.id).includes(kw) ||
+        (o.customerName || o.userName || '').toLowerCase().includes(kw)
+      );
+    }
+    return list;
+  }, [allOrders, filterStatus, search]);
+
+  const totalCount = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const orders     = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  const stats = useMemo(() => ({
+    total:      allOrders.length,
+    pending:    allOrders.filter(o => o.status === 'Pending').length,
+    processing: allOrders.filter(o => o.status === 'Processing').length,
+    shipped:    allOrders.filter(o => o.status === 'Shipped').length,
+    completed:  allOrders.filter(o => o.status === 'Completed').length,
+    cancelled:  allOrders.filter(o => o.status === 'Cancelled').length,
+  }), [allOrders]);
 
   // ── Xem chi tiết đơn hàng ──
   const handleViewDetail = async (id) => {
@@ -176,10 +169,8 @@ const Orders = () => {
     try {
       await orderApi.update(selectedOrder.id, { status: statusUpdate });
       setSelectedOrder(prev => ({ ...prev, status: statusUpdate }));
-      // Cập nhật ngay trong bảng danh sách
-      setOrders(prev => prev.map(o => o.id === selectedOrder.id ? { ...o, status: statusUpdate } : o));
+      setAllOrders(prev => prev.map(o => o.id === selectedOrder.id ? { ...o, status: statusUpdate } : o));
       showToast('Cập nhật trạng thái thành công');
-      loadStats();
     } catch { showToast('Cập nhật thất bại', 'error'); }
     finally { setUpdating(false); }
   };
@@ -189,26 +180,11 @@ const Orders = () => {
     setQuickUpdating(p => ({ ...p, [orderId]: true }));
     try {
       await orderApi.update(orderId, { status: newStatus });
-      setOrders(p => p.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
-      loadStats();
+      setAllOrders(p => p.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
       showToast('Đã cập nhật trạng thái');
     } catch { showToast('Cập nhật thất bại', 'error'); }
     finally { setQuickUpdating(p => ({ ...p, [orderId]: false })); }
   };
-
-  // ── Xóa đơn hàng ──
-  const handleDelete = (id) => openConfirm(
-    'Xóa đơn hàng',
-    `Bạn có chắc muốn xóa vĩnh viễn đơn hàng #${id}? Thao tác này không thể hoàn tác.`,
-    async () => {
-      closeConfirm();
-      try {
-        await orderApi.delete(id);
-        showToast('Đã xóa đơn hàng thành công');
-        fetchOrders(); loadStats();
-      } catch { showToast('Xóa thất bại!', 'error'); }
-    }
-  );
 
   const hasFilter = search || filterStatus;
 
@@ -237,28 +213,8 @@ const Orders = () => {
       <Toast toasts={toasts} />
       <ConfirmDialog {...confirm} onCancel={closeConfirm} />
 
-      {/* ── Tiêu đề ── */}
-      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24 }}>
-        <div style={{ display:'flex', alignItems:'center', gap:14 }}>
-          <div style={{
-            width:46, height:46, borderRadius:13,
-            background:'linear-gradient(135deg,#f59e0b,#f97316)',
-            display:'flex', alignItems:'center', justifyContent:'center',
-            boxShadow:'0 4px 14px rgba(245,158,11,.35)', flexShrink:0,
-          }}>
-            <i className="fas fa-shopping-bag" style={{ color:'white', fontSize:'1.05rem' }}></i>
-          </div>
-          <div>
-            <h1 style={{ fontSize:'1.35rem', fontWeight:800, color:'#1e293b', margin:0 }}>Quản lý Đơn hàng</h1>
-            <p style={{ fontSize:'0.82rem', color:'#94a3b8', margin:'4px 0 0' }}>
-              {loading ? 'Đang tải...' : `${stats.total} đơn hàng trong hệ thống`}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* ── KPI Cards (click để lọc) ── */}
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(130px,1fr))', gap:14, marginBottom:22 }}>
+      {/* ── KPI Cards ── */}
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(6,1fr)', gap:12, marginBottom:18 }}>
         {[
           { label:'Tổng đơn',     value:stats.total,      icon:'fa-list',         color:'#c8a97a', bg:'#f5edd6', key:''           },
           { label:'Chờ xác nhận', value:stats.pending,    icon:'fa-clock',        color:'#f59e0b', bg:'#fef3c7', key:'Pending'    },
@@ -269,24 +225,16 @@ const Orders = () => {
         ].map((s, i) => {
           const active = i === 0 ? !filterStatus : filterStatus === s.key;
           return (
-            <div key={i}
+            <div key={i} className="kpi-card"
               onClick={() => { setFilterStatus(f => f === s.key ? '' : s.key); setPage(1); }}
-              style={{
-                borderTop: `3px solid ${active ? s.color : '#f1f5f9'}`,
-                background: active ? s.bg + '55' : 'white',
-                boxShadow: active ? `0 6px 24px ${s.color}28` : '0 2px 12px rgba(0,0,0,.06)',
-                cursor:'pointer', transition:'all .2s', borderRadius:14, padding:'16px 18px',
-              }}>
+              style={{ borderTop:`3px solid ${active ? s.color : '#f1f5f9'}`, background: active ? s.bg+'55' : 'white' }}>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start' }}>
                 <div>
                   <div style={{ fontSize:'1.8rem', fontWeight:900, color:s.color, lineHeight:1 }}>{s.value}</div>
-                  <div style={{ fontSize:'0.79rem', fontWeight:700, color:'#374151', marginTop:4 }}>{s.label}</div>
-                  <div style={{ fontSize:'0.71rem', color: active ? s.color : '#94a3b8', marginTop:3, fontWeight: active ? 700 : 400 }}>
-                    {active ? <><i className="fas fa-check-circle mr-1"></i>Đang lọc</> : 'Nhấn để lọc'}
-                  </div>
+                  <div style={{ fontSize:'0.75rem', fontWeight:700, color:'#374151', marginTop:4 }}>{s.label}</div>
                 </div>
-                <div style={{ width:40, height:40, borderRadius:10, background:s.bg, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                  <i className={`fas ${s.icon}`} style={{ color:s.color, fontSize:'1rem' }}></i>
+                <div style={{ width:36, height:36, borderRadius:10, background:s.bg, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                  <i className={`fas ${s.icon}`} style={{ color:s.color, fontSize:'0.9rem' }}></i>
                 </div>
               </div>
             </div>
@@ -295,60 +243,21 @@ const Orders = () => {
       </div>
 
       {/* ── Bộ lọc ── */}
-      <div style={{
-        background:'white', borderRadius:14, padding:'14px 18px',
-        boxShadow:'0 2px 12px rgba(0,0,0,.06)', marginBottom:18,
-      }}>
-        {/* Inputs row */}
+      <div style={{ background:'white', borderRadius:14, padding:'14px 18px', boxShadow:'0 2px 12px rgba(0,0,0,.06)', marginBottom:18 }}>
         <div style={{ display:'flex', gap:10, flexWrap:'wrap', alignItems:'center' }}>
           <div style={{ flex:'1 1 200px', position:'relative', minWidth:160 }}>
             <i className="fas fa-search" style={{ position:'absolute', left:11, top:'50%', transform:'translateY(-50%)', color:'#9ca3af', fontSize:'0.82rem' }}></i>
-            <input
-              className="form-control"
-              placeholder="Tìm mã đơn, tên khách hàng..."
-              value={search}
-              onChange={e => { setSearch(e.target.value); setPage(1); }}
-              style={{ paddingLeft:32, borderRadius:9, border:'1.5px solid #e5e7eb', fontSize:'0.88rem' }}
-            />
+            <input className="form-control" placeholder="Tìm mã đơn, tên khách hàng..."
+              value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
+              style={{ paddingLeft:32, borderRadius:9, border:'1.5px solid #e5e7eb', fontSize:'0.88rem' }} />
           </div>
-          <select className="form-control" value={filterStatus}
-            onChange={e => { setFilterStatus(e.target.value); setPage(1); }}
-            style={{ flex:'1 1 160px', maxWidth:200, borderRadius:9, border:'1.5px solid #e5e7eb', fontSize:'0.88rem' }}>
-            <option value="">Tất cả trạng thái</option>
-            {Object.entries(STATUS_CFG).map(([k, v]) => (
-              <option key={k} value={k}>{v.label}</option>
-            ))}
-          </select>
           {hasFilter && (
             <button onClick={() => { setSearch(''); setFilterStatus(''); setPage(1); }}
-              style={{ padding:'8px 16px', borderRadius:9, border:'1.5px solid #fecaca', background:'#fef2f2', color:'#ef4444', fontWeight:600, cursor:'pointer', fontSize:'0.85rem', display:'flex', alignItems:'center', gap:6 }}>
-              <i className="fas fa-times-circle"></i> Xóa lọc
+              style={{ padding:'7px 14px', borderRadius:9, border:'1.5px solid #fecaca', background:'#fef2f2', color:'#ef4444', fontWeight:600, cursor:'pointer', fontSize:'0.83rem' }}>
+              <i className="fas fa-times-circle mr-1"></i> Xóa lọc
             </button>
           )}
         </div>
-
-        {/* Active filter chips */}
-        {hasFilter && (
-          <div style={{ marginTop:10, display:'flex', flexWrap:'wrap', gap:6, alignItems:'center' }}>
-            {search.trim() && (
-              <span className="chip" style={{ borderColor:'#c4b5fd', background:'#f5edd6', color:'#c8a97a' }}>
-                <i className="fas fa-search" style={{ fontSize:'0.65rem' }}></i>
-                "{search.trim()}"
-                <button className="chip-close" onClick={() => { setSearch(''); setPage(1); }}>×</button>
-              </span>
-            )}
-            {filterStatus && (
-              <span className="chip" style={{ background:STATUS_CFG[filterStatus]?.bg, color:STATUS_CFG[filterStatus]?.color, borderColor:STATUS_CFG[filterStatus]?.color + '50' }}>
-                <i className="fas fa-circle" style={{ fontSize:'0.5rem' }}></i>
-                {STATUS_CFG[filterStatus]?.label}
-                <button className="chip-close" onClick={() => { setFilterStatus(''); setPage(1); }}>×</button>
-              </span>
-            )}
-            <span style={{ marginLeft:'auto', fontSize:'0.8rem', color:'#94a3b8', fontWeight:600 }}>
-              <strong style={{ color:'#475569' }}>{totalCount}</strong> kết quả
-            </span>
-          </div>
-        )}
       </div>
 
       {/* ── Bảng đơn hàng ── */}
@@ -432,20 +341,25 @@ const Orders = () => {
                     {/* Khách hàng */}
                     <td style={{ padding:'12px 14px' }}>
                       <div style={{ fontWeight:600, fontSize:'0.86rem', color:'#1e293b' }}>
-                        {o.userName || o.userEmail || `User #${o.userId}`}
+                        {o.userName || `User #${o.userId}`}
                       </div>
-                      {o.userEmail && o.userName && (
-                        <div style={{ fontSize:'0.76rem', color:'#94a3b8' }}>{o.userEmail}</div>
+                      {o.userPhone && (
+                        <div style={{ fontSize:'0.76rem', color:'#94a3b8' }}>
+                          <i className="fas fa-phone" style={{ fontSize:'0.65rem', marginRight:3 }}></i>{o.userPhone}
+                        </div>
                       )}
                     </td>
 
                     {/* Sản phẩm */}
-                    <td style={{ padding:'12px 14px', maxWidth:160 }}>
-                      <div style={{ fontSize:'0.84rem', color:'#475569', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+                    <td style={{ padding:'12px 14px', maxWidth:180 }}>
+                      <div style={{ fontSize:'0.84rem', color:'#1e293b', fontWeight:600, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
                         {o.items?.length > 0
-                          ? `${o.items[0].productName}${o.items.length > 1 ? ` +${o.items.length - 1}` : ''}`
-                          : `${o.itemCount || 0} sản phẩm`}
+                          ? o.items[0].productName
+                          : '—'}
                       </div>
+                      {o.items?.length > 1 && (
+                        <div style={{ fontSize:'0.74rem', color:'#94a3b8' }}>+{o.items.length - 1} tranh khác</div>
+                      )}
                     </td>
 
                     {/* Tổng tiền */}
@@ -461,26 +375,13 @@ const Orders = () => {
                     {/* Thao tác */}
                     <td style={{ padding:'12px 14px', textAlign:'center', whiteSpace:'nowrap' }}>
                       <button
-                        className="action-btn"
                         onClick={() => handleViewDetail(o.id)}
-                        title="Xem chi tiết & sửa trạng thái"
                         style={{
-                          width:32, height:32, borderRadius:8, border:'1.5px solid #c8a97a',
-                          background:'#fdf6e3', color:'#c8a97a', cursor:'pointer',
-                          display:'inline-flex', alignItems:'center', justifyContent:'center', marginRight:6,
+                          background:'none', border:'1px solid #c8a97a', color:'#c8a97a',
+                          borderRadius:6, padding:'4px 10px', cursor:'pointer',
+                          fontSize:'0.72rem', fontWeight:700, whiteSpace:'nowrap',
                         }}>
-                        <i className="fas fa-eye" style={{ fontSize:'0.75rem' }}></i>
-                      </button>
-                      <button
-                        className="action-btn"
-                        onClick={() => handleDelete(o.id)}
-                        title="Xóa đơn hàng"
-                        style={{
-                          width:32, height:32, borderRadius:8, border:'1.5px solid #ef4444',
-                          background:'#fef2f2', color:'#ef4444', cursor:'pointer',
-                          display:'inline-flex', alignItems:'center', justifyContent:'center',
-                        }}>
-                        <i className="fas fa-trash" style={{ fontSize:'0.75rem' }}></i>
+                        Chi tiết
                       </button>
                     </td>
                   </tr>
@@ -606,14 +507,12 @@ const Orders = () => {
                   <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px 16px' }}>
                     <div style={{ fontSize:'0.85rem' }}>
                       <span style={{ color:'#6b7280' }}>Khách hàng: </span>
-                      <strong>{selectedOrder.userName || `User #${selectedOrder.userId}`}</strong>
+                      <strong>{selectedOrder.userName || '—'}</strong>
                     </div>
-                    {selectedOrder.userEmail && (
-                      <div style={{ fontSize:'0.85rem' }}>
-                        <span style={{ color:'#6b7280' }}>Email: </span>
-                        <span>{selectedOrder.userEmail}</span>
-                      </div>
-                    )}
+                    <div style={{ fontSize:'0.85rem' }}>
+                      <span style={{ color:'#6b7280' }}>Số điện thoại: </span>
+                      <span>{selectedOrder.userPhone || selectedOrder.phone || '—'}</span>
+                    </div>
                     <div style={{ fontSize:'0.85rem' }}>
                       <span style={{ color:'#6b7280' }}>Tổng tiền: </span>
                       <strong style={{ color:'#dc2626', fontSize:'1rem' }}>{fmt(selectedOrder.totalAmount)}</strong>
@@ -621,6 +520,10 @@ const Orders = () => {
                     <div style={{ fontSize:'0.85rem', display:'flex', alignItems:'center', gap:6 }}>
                       <span style={{ color:'#6b7280' }}>Trạng thái: </span>
                       <StatusBadge status={selectedOrder.status} />
+                    </div>
+                    <div style={{ fontSize:'0.85rem' }}>
+                      <span style={{ color:'#6b7280' }}>Thanh toán: </span>
+                      <span>{selectedOrder.paymentMethod || 'COD'}</span>
                     </div>
                     {(selectedOrder.shippingAddress || selectedOrder.address) && (
                       <div style={{ fontSize:'0.85rem', gridColumn:'1 / -1', paddingTop:8, borderTop:'1px solid #e5e7eb', marginTop:4 }}>
@@ -648,7 +551,7 @@ const Orders = () => {
                 <table style={{ width:'100%', borderCollapse:'collapse' }}>
                   <thead>
                     <tr style={{ background:'#f8fafc' }}>
-                      {['Sản phẩm','SL','Đơn giá','Thành tiền'].map((h, i) => (
+                      {['Sản phẩm','Đơn giá','Thành tiền'].map((h, i) => (
                         <th key={i} style={{
                           padding:'9px 12px', fontSize:'0.73rem', fontWeight:700,
                           color:'#64748b', textTransform:'uppercase', letterSpacing:'0.04em',
@@ -660,7 +563,7 @@ const Orders = () => {
                   <tbody>
                     {(selectedOrder.items || []).length === 0 ? (
                       <tr>
-                        <td colSpan={4} style={{ textAlign:'center', padding:'20px 0', color:'#94a3b8', fontSize:'0.85rem' }}>
+                        <td colSpan={3} style={{ textAlign:'center', padding:'20px 0', color:'#94a3b8', fontSize:'0.85rem' }}>
                           Không có thông tin sản phẩm
                         </td>
                       </tr>
@@ -677,19 +580,18 @@ const Orders = () => {
                             </span>
                           </div>
                         </td>
-                        <td style={{ padding:'10px 12px', textAlign:'center', fontWeight:700 }}>{item.quantity}</td>
                         <td style={{ padding:'10px 12px', textAlign:'center', fontSize:'0.85rem', color:'#64748b' }}>
                           {fmt(item.unitPrice)}
                         </td>
                         <td style={{ padding:'10px 12px', textAlign:'center', fontWeight:800, color:'#c8a97a' }}>
-                          {fmt((item.quantity || 0) * (item.unitPrice || 0))}
+                          {fmt(item.unitPrice)}
                         </td>
                       </tr>
                     ))}
                   </tbody>
                   <tfoot>
                     <tr style={{ background:'#f8fafc' }}>
-                      <td colSpan={3} style={{ padding:'10px 12px', textAlign:'right', fontWeight:700, fontSize:'0.88rem' }}>
+                      <td colSpan={2} style={{ padding:'10px 12px', textAlign:'right', fontWeight:700, fontSize:'0.88rem' }}>
                         Tổng cộng:
                       </td>
                       <td style={{ padding:'10px 12px', textAlign:'center', fontWeight:900, fontSize:'1rem', color:'#c8a97a' }}>
@@ -711,6 +613,11 @@ const Orders = () => {
           </div>
         </div>
       )}
+      <style>{`
+        .kpi-card { background:white; border-radius:14px; padding:20px; cursor:pointer;
+          transition:all .2s; border-top:3px solid #f1f5f9; box-shadow:0 2px 12px rgba(0,0,0,.06); }
+        .kpi-card:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(0,0,0,.10); }
+      `}</style>
     </div>
   );
 };

@@ -98,15 +98,6 @@ const Cart = () => {
                         </div>
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 0, flexShrink: 0, border: '1.5px solid #e8e4df' }}>
-                        <button onClick={() => updateQty(item.id, item.qty - 1)} style={{ width: 32, height: 32, border: 'none', background: 'white', cursor: 'pointer', fontSize: '1rem', color: '#1a1a1a' }}>−</button>
-                        <span style={{ width: 32, textAlign: 'center', fontWeight: 600, fontSize: '0.88rem' }}>{item.qty}</span>
-                        <button
-                          onClick={() => updateQty(item.id, item.qty + 1)}
-                          disabled={item.stock != null && item.qty >= item.stock}
-                          style={{ width: 32, height: 32, border: 'none', background: 'white', cursor: item.stock != null && item.qty >= item.stock ? 'not-allowed' : 'pointer', fontSize: '1rem', color: item.stock != null && item.qty >= item.stock ? '#ccc' : '#1a1a1a' }}>+</button>
-                      </div>
-
                       <div style={{ fontWeight: 700, color: '#1a1a1a', minWidth: 90, textAlign: 'right', flexShrink: 0 }}>
                         {fmt(lineTotal)}
                       </div>

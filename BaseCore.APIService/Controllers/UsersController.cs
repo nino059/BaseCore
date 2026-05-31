@@ -4,6 +4,7 @@ using BaseCore.Entities;
 using BaseCore.Repository.EFCore;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using BaseCore.Common;
 using System.Security.Claims;
 
 namespace BaseCore.APIService.Controllers
@@ -112,7 +113,7 @@ namespace BaseCore.APIService.Controllers
         {
             var (users, _) = await _userRepository.SearchAsync(null, 1, 9999);
             var artists = users
-                .Where(u => u.UserType == 2 && u.IsActive)
+                .Where(u => u.UserType == 2)
                 .Select(u => new { u.Id, u.Name, avatarUrl = u.Image ?? "", bio = u.Bio ?? "" })
                 .ToList();
             return Ok(artists);
@@ -126,18 +127,23 @@ namespace BaseCore.APIService.Controllers
         public async Task<IActionResult> GetAll(
             [FromQuery] string? keyword,
             [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 20)
+            [FromQuery] int pageSize = 20,
+            [FromQuery] int? userType = null)
         {
-            var (users, totalCount) = await _userRepository.SearchAsync(keyword, page, pageSize);
+            var (users, totalCount) = await _userRepository.SearchAsync(keyword, page, pageSize, userType);
             return Ok(new
             {
                 items = users.Select(u => new
                 {
-                    u.Id, u.UserName, u.Name, u.Email, u.Phone,
+                    u.Id,
+                    username  = u.UserName,
+                    u.Name,
+                    u.Email,
+                    u.Phone,
                     avatarUrl = u.Image ?? "",
-                    u.UserType,
-                    role = u.UserType switch { 1 => "Admin", 2 => "Artist", _ => "User" },
-                    u.IsActive, u.Created
+                    userType  = u.UserType,
+                    role      = u.UserType switch { 1 => "Admin", 2 => "Artist", _ => "User" },
+                    u.Created
                 }),
                 totalCount, page, pageSize,
                 totalPages = (int)Math.Ceiling((double)totalCount / pageSize)
@@ -161,12 +167,16 @@ namespace BaseCore.APIService.Controllers
 
             return Ok(new
             {
-                user.Id, user.UserName, user.Name, user.Email, user.Phone,
+                user.Id,
+                username  = user.UserName,
+                user.Name,
+                user.Email,
+                user.Phone,
                 avatarUrl = user.Image ?? "",
-                bio = user.Bio ?? "",
-                user.UserType,
-                role = user.UserType switch { 1 => "Admin", 2 => "Artist", _ => "User" },
-                user.IsActive, user.Created
+                bio       = user.Bio ?? "",
+                userType  = user.UserType,
+                role      = user.UserType switch { 1 => "Admin", 2 => "Artist", _ => "User" },
+                user.Created
             });
         }
 
@@ -193,13 +203,35 @@ namespace BaseCore.APIService.Controllers
             if (callerRole == "Admin" && dto.UserType.HasValue)
                 user.UserType = dto.UserType.Value;
 
+            if (!string.IsNullOrEmpty(dto.NewPassword))
+            {
+                if (dto.NewPassword.Length < 6)
+                    return BadRequest(new { message = "Mat khau moi phai co it nhat 6 ky tu" });
+
+                if (callerRole != "Admin")
+                {
+                    if (string.IsNullOrEmpty(dto.CurrentPassword))
+                        return BadRequest(new { message = "Vui long nhap mat khau hien tai" });
+
+                    var validCurrentPassword = user.Salt != null && user.Salt.Length > 1
+                        ? TokenHelper.IsValidPassword(dto.CurrentPassword, user.Salt, user.Password)
+                        : user.Password == dto.CurrentPassword;
+
+                    if (!validCurrentPassword)
+                        return BadRequest(new { message = "Mat khau hien tai khong dung" });
+                }
+
+                user.Password = TokenHelper.HashPassword(dto.NewPassword, out var salt);
+                user.Salt = salt;
+            }
+
             await _userRepository.UpdateAsync(user);
             return Ok(new
             {
                 user.Id, user.UserName, user.Name, user.Email, user.Phone,
                 avatarUrl = user.Image ?? "",
                 bio = user.Bio ?? "",
-                user.UserType, user.IsActive
+                user.UserType
             });
         }
 
@@ -213,9 +245,8 @@ namespace BaseCore.APIService.Controllers
             var user = await _userRepository.GetByIdAsync(id);
             if (user == null) return NotFound(new { message = "Không tìm thấy người dùng" });
 
-            user.IsActive = false;
-            await _userRepository.UpdateAsync(user);
-            return Ok(new { message = "Đã vô hiệu hóa tài khoản" });
+            await _userRepository.DeleteAsync(user);
+            return Ok(new { message = "Đã xóa tài khoản" });
         }
     }
 
@@ -225,6 +256,8 @@ namespace BaseCore.APIService.Controllers
         public string? Phone     { get; set; }
         public string? AvatarUrl { get; set; }
         public string? Bio       { get; set; }
+        public string? CurrentPassword { get; set; }
+        public string? NewPassword { get; set; }
         public int?    UserType  { get; set; }
     }
 }

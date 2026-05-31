@@ -49,7 +49,6 @@ namespace BaseCore.AuthService.Controllers
                 Email     = u.Email,
                 Phone     = u.Phone,
                 AvatarUrl = u.Image ?? "",
-                IsActive  = u.IsActive,
                 UserType  = u.UserType,
                 Created   = u.Created
             });
@@ -87,7 +86,6 @@ namespace BaseCore.AuthService.Controllers
                 Phone     = user.Phone,
                 AvatarUrl = user.Image ?? "",
                 Bio       = user.Bio   ?? "",
-                IsActive  = user.IsActive,
                 UserType  = user.UserType,
                 Created   = user.Created
             });
@@ -111,7 +109,7 @@ namespace BaseCore.AuthService.Controllers
                     Id       = Guid.NewGuid().ToString(),
                     UserName = request.Username,
                     Name     = request.Name ?? request.Username,
-                    Email    = request.Email ?? "",
+                    Email    = string.IsNullOrWhiteSpace(request.Email) ? $"{request.Username}@local.invalid" : request.Email.Trim(),
                     Phone    = request.Phone ?? "",
                     Image    = "",
                     UserType = request.UserType
@@ -127,7 +125,6 @@ namespace BaseCore.AuthService.Controllers
                     Email     = createdUser.Email,
                     Phone     = createdUser.Phone,
                     AvatarUrl = createdUser.Image ?? "",
-                    IsActive  = createdUser.IsActive,
                     UserType  = createdUser.UserType,
                     Created   = createdUser.Created
                 });
@@ -160,15 +157,36 @@ namespace BaseCore.AuthService.Controllers
             if (request.AvatarUrl != null) existingUser.Image = request.AvatarUrl;
             if (request.Bio       != null) existingUser.Bio   = request.Bio;
 
-            // Only Admin can change role / active status
+            // Only Admin can change role
             if (callerRole == "Admin")
             {
                 if (request.Email    != null) existingUser.Email    = request.Email;
                 if (request.UserType.HasValue) existingUser.UserType = request.UserType.Value;
-                if (request.IsActive.HasValue) existingUser.IsActive = request.IsActive.Value;
             }
 
-            await _userService.Update(existingUser, request.Password);
+            // Đổi mật khẩu — yêu cầu xác thực mật khẩu cũ
+            string passwordToSet = null;
+            if (!string.IsNullOrEmpty(request.NewPassword))
+            {
+                if (string.IsNullOrEmpty(request.CurrentPassword))
+                    return BadRequest(new { message = "Vui lòng nhập mật khẩu hiện tại" });
+
+                var verified = await _userService.Authenticate(existingUser.UserName, request.CurrentPassword);
+                if (verified == null)
+                    return BadRequest(new { message = "Mật khẩu hiện tại không đúng" });
+
+                if (request.NewPassword.Length < 6)
+                    return BadRequest(new { message = "Mật khẩu mới phải có ít nhất 6 ký tự" });
+
+                passwordToSet = request.NewPassword;
+            }
+            else if (!string.IsNullOrEmpty(request.Password) && callerRole == "Admin")
+            {
+                // Admin đặt mật khẩu trực tiếp (không cần xác thực cũ)
+                passwordToSet = request.Password;
+            }
+
+            await _userService.Update(existingUser, passwordToSet);
 
             return Ok(new UserResponse
             {
@@ -179,7 +197,6 @@ namespace BaseCore.AuthService.Controllers
                 Phone     = existingUser.Phone,
                 AvatarUrl = existingUser.Image ?? "",
                 Bio       = existingUser.Bio   ?? "",
-                IsActive  = existingUser.IsActive,
                 UserType  = existingUser.UserType,
                 Created   = existingUser.Created
             });
@@ -208,7 +225,6 @@ namespace BaseCore.AuthService.Controllers
         public string?   Phone     { get; set; }
         public string?   AvatarUrl { get; set; }
         public string?   Bio       { get; set; }
-        public bool     IsActive  { get; set; }
         public int      UserType  { get; set; }
         public DateTime Created   { get; set; }
     }
@@ -226,13 +242,14 @@ namespace BaseCore.AuthService.Controllers
 
     public class UpdateUserRequest
     {
-        public string? Password  { get; set; }
-        public string? Name      { get; set; }
-        public string? Email     { get; set; }
-        public string? Phone     { get; set; }
-        public string? AvatarUrl { get; set; }
-        public string? Bio       { get; set; }
-        public int?    UserType  { get; set; }
-        public bool?   IsActive  { get; set; }
+        public string? Password        { get; set; }  // Admin only
+        public string? CurrentPassword { get; set; }  // Xác thực khi đổi mật khẩu
+        public string? NewPassword     { get; set; }  // Mật khẩu mới
+        public string? Name            { get; set; }
+        public string? Email           { get; set; }
+        public string? Phone           { get; set; }
+        public string? AvatarUrl       { get; set; }
+        public string? Bio             { get; set; }
+        public int?    UserType        { get; set; }
     }
 }

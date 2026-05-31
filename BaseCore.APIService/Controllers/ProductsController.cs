@@ -1,13 +1,23 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BaseCore.Entities;
+using BaseCore.Repository;
 using BaseCore.Repository.EFCore;
+using BaseCore.APIService.Helpers;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using System.Security.Claims;
 
 namespace BaseCore.APIService.Controllers
 {
+    /*
+     * Sơ đồ trạng thái tranh:
+     *  Pending → ForSale | Rejected
+     *  ForSale → Ordered (đặt hàng) | Sold (restock từ Sold)
+     *  Ordered → Sold (giao xong) | ForSale (hủy đơn)
+     *  Sold    → ForSale (restock)
+     *  Rejected: không thể chuyển trạng thái nữa
+     */
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
@@ -15,23 +25,24 @@ namespace BaseCore.APIService.Controllers
         private readonly IProductRepositoryEF _productRepository;
         private readonly ICategoryRepositoryEF _categoryRepository;
         private readonly Cloudinary _cloudinary;
+        private readonly AppDbContext _db;
 
         public ProductsController(
             IProductRepositoryEF productRepository,
             ICategoryRepositoryEF categoryRepository,
-            Cloudinary cloudinary)
+            Cloudinary cloudinary,
+            AppDbContext db)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
             _cloudinary = cloudinary;
+            _db = db;
         }
 
-        // ─────────────────────────────────────────────
+        // ── Upload ảnh ────────────────────────────────────────────────────────
         // POST /api/products/upload-image
-        // Upload ảnh lên Cloudinary qua backend (có auth)
-        // ─────────────────────────────────────────────
         [HttpPost("upload-image")]
-        [Authorize]
+        [Authorize(Roles = "Artist,Admin")]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -61,11 +72,7 @@ namespace BaseCore.APIService.Controllers
                 if (result.Error != null)
                     return StatusCode(500, new { message = result.Error.Message });
 
-                return Ok(new
-                {
-                    url = result.SecureUrl.ToString(),
-                    publicId = result.PublicId
-                });
+                return Ok(new { url = result.SecureUrl.ToString(), publicId = result.PublicId });
             }
             catch (Exception ex)
             {
@@ -73,11 +80,10 @@ namespace BaseCore.APIService.Controllers
             }
         }
 
-        // ─────────────────────────────────────────────
-        // GET /api/products              ← public: chỉ Available + inStock
-        // GET /api/products?admin=1      ← admin: tất cả sản phẩm
-        // GET /api/products?sellerId=xxx ← artist: tranh của mình (kể cả Pending)
-        // ─────────────────────────────────────────────
+        // ── Danh sách sản phẩm ───────────────────────────────────────────────
+        // GET /api/products              ← public: chỉ ForSale
+        // GET /api/products?admin=1      ← admin: tất cả
+        // GET /api/products?sellerId=xxx ← artist: tất cả tranh của mình
         [HttpGet]
         public async Task<IActionResult> GetAll(
             [FromQuery] string? keyword,
@@ -87,14 +93,20 @@ namespace BaseCore.APIService.Controllers
             [FromQuery] bool admin = false,
             [FromQuery] string? sellerId = null)
         {
-            bool publicOnly = !admin && string.IsNullOrEmpty(sellerId);
-            var (products, totalCount) = await _productRepository.SearchAsync(keyword, categoryId, page, pageSize, publicOnly, sellerId);
+            var callerRole = User.FindFirst(ClaimTypes.Role)?.Value;
+            var callerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var isAdmin = callerRole == "Admin";
+            var canViewAllPrivate = admin && isAdmin;
+            var canViewSellerPrivate = canViewAllPrivate || (!string.IsNullOrEmpty(sellerId) && sellerId == callerId);
 
-            var items = products.Select(p => ToDto(p)).ToList();
+            var effectiveSellerId = canViewSellerPrivate ? sellerId : null;
+            var publicOnly = !canViewAllPrivate && !canViewSellerPrivate;
+
+            var (products, totalCount) = await _productRepository.SearchAsync(keyword, categoryId, page, pageSize, publicOnly, effectiveSellerId);
 
             return Ok(new
             {
-                items,
+                items = products.Select(p => ToDto(p)).ToList(),
                 totalCount,
                 page,
                 pageSize,
@@ -102,9 +114,7 @@ namespace BaseCore.APIService.Controllers
             });
         }
 
-        // ─────────────────────────────────────────────
         // GET /api/products/{id}
-        // ─────────────────────────────────────────────
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id, [FromQuery] bool admin = false)
         {
@@ -112,30 +122,32 @@ namespace BaseCore.APIService.Controllers
             if (product == null)
                 return NotFound(new { message = "Không tìm thấy sản phẩm" });
 
-            // Public: ẩn sản phẩm không Available hoặc hết hàng
-            if (!admin && (product.Status != "Available" || product.Stock <= 0))
+            var callerRole = User.FindFirst(ClaimTypes.Role)?.Value;
+            var callerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var canViewPrivate = (admin && callerRole == "Admin") || (!string.IsNullOrEmpty(callerId) && product.SellerId == callerId);
+
+            if (!canViewPrivate && !IsSellable(product.Status))
                 return NotFound(new { message = "Sản phẩm không còn bán" });
 
             return Ok(ToDto(product));
         }
 
-        // ─────────────────────────────────────────────
+        // ── Tạo tranh mới ────────────────────────────────────────────────────
         // POST /api/products
-        // ─────────────────────────────────────────────
+        // Artist đăng → Pending. Admin tạo → ForSale ngay.
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Artist,Admin")]
         public async Task<IActionResult> Create([FromBody] ProductCreateDto dto)
         {
             var callerRole = User.FindFirst(ClaimTypes.Role)?.Value;
             var callerId   = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+            if (callerRole != "Admin" && callerRole != "Artist")
+                return Forbid();
+
             var category = await _categoryRepository.GetByIdAsync(dto.CategoryId);
             if (category == null)
                 return BadRequest(new { message = "Thể loại không tồn tại" });
-
-            // Artist: default Pending + auto-set SellerId
-            string defaultStatus = callerRole == "Artist" ? "Pending" : (dto.Status ?? "Available");
-            string? sellerId = callerRole == "Artist" ? callerId : dto.SellerId;
 
             var product = new Product
             {
@@ -143,57 +155,72 @@ namespace BaseCore.APIService.Controllers
                 ArtistName    = dto.ArtistName  ?? "",
                 Price         = dto.Price,
                 DiscountPrice = dto.DiscountPrice,
-                Stock         = dto.Stock,
                 CategoryId    = dto.CategoryId,
                 Description   = dto.Description ?? "",
                 ImageUrl      = dto.ImageUrl    ?? "",
-                SellerId      = sellerId,
+                SellerId      = callerRole == "Artist" ? callerId : dto.SellerId,
                 Theme         = dto.Theme,
                 Material      = dto.Material,
                 Width         = dto.Width,
                 Height        = dto.Height,
-                Status        = defaultStatus
+                Status        = callerRole == "Artist" ? "Pending" : "ForSale"
             };
 
             await _productRepository.AddAsync(product);
+
+            // Notify Admin khi artist đăng tranh mới chờ duyệt
+            if (callerRole == "Artist")
+            {
+                var adminIds = await NotificationHelper.GetAdminUserIdsAsync(_db);
+                foreach (var adminId in adminIds)
+                    await NotificationHelper.CreateAsync(_db, adminId,
+                        "Tranh mới chờ duyệt",
+                        $"Họa sĩ vừa đăng tranh \"{product.Name}\" — cần xét duyệt.",
+                        "product", product.Id.ToString());
+            }
+
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, ToDto(product));
         }
 
-        // ─────────────────────────────────────────────
+        // ── Cập nhật thông tin tranh ─────────────────────────────────────────
         // PUT /api/products/{id}
-        // ─────────────────────────────────────────────
+        // Chỉ sửa được khi Status = Pending hoặc ForSale hoặc Sold (không cho sửa khi Ordered/Rejected)
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Artist,Admin")]
         public async Task<IActionResult> Update(int id, [FromBody] ProductUpdateDto dto)
         {
+            var callerRole = User.FindFirst(ClaimTypes.Role)?.Value;
+            var callerId   = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             var product = await _productRepository.GetByIdAsync(id);
             if (product == null)
                 return NotFound(new { message = "Không tìm thấy sản phẩm" });
 
-            if (dto.Name        != null) product.Name          = dto.Name;
-            if (dto.ArtistName  != null) product.ArtistName    = dto.ArtistName;
-            if (dto.Price       != null) product.Price         = dto.Price.Value;
+            if (callerRole != "Admin" && (callerRole != "Artist" || product.SellerId != callerId))
+                return Forbid();
+
+            // Artist không được sửa khi đang có đơn hoặc bị từ chối
+            if (callerRole == "Artist" && !new[] { "Pending", "ForSale", "Sold" }.Contains(product.Status))
+                return BadRequest(new { message = "Không thể sửa tranh đang có đơn hàng" });
+
+            if (dto.Name        != null) product.Name         = dto.Name;
+            if (dto.ArtistName  != null) product.ArtistName   = dto.ArtistName;
+            if (dto.Price       != null) product.Price        = dto.Price.Value;
             product.DiscountPrice = dto.DiscountPrice;
-            if (dto.Stock       != null) product.Stock         = dto.Stock.Value;
             if (dto.CategoryId  != null) product.CategoryId  = dto.CategoryId.Value;
             if (dto.Description != null) product.Description = dto.Description;
             if (dto.ImageUrl    != null) product.ImageUrl    = dto.ImageUrl;
-            if (dto.SellerId    != null) product.SellerId    = dto.SellerId;
             if (dto.Theme       != null) product.Theme       = dto.Theme;
             if (dto.Material    != null) product.Material    = dto.Material;
             if (dto.Width       != null) product.Width       = dto.Width;
             if (dto.Height      != null) product.Height      = dto.Height;
-            if (dto.Status      != null) product.Status      = dto.Status;
-
 
             await _productRepository.UpdateAsync(product);
             return Ok(ToDto(product));
         }
 
-        // ─────────────────────────────────────────────
-        // DELETE /api/products/{id}  — Admin only
-        // Xóa hẳn nếu không có đơn hàng; ẩn (Unavailable) nếu có
-        // ─────────────────────────────────────────────
+        // ── Xóa tranh ────────────────────────────────────────────────────────
+        // DELETE /api/products/{id} — Admin only
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
@@ -209,16 +236,13 @@ namespace BaseCore.APIService.Controllers
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException)
             {
-                // Sản phẩm đã có trong đơn hàng — ẩn thay vì xóa cứng
-                product.Status = "Unavailable";
-                await _productRepository.UpdateAsync(product);
-                return Ok(new { message = "Sản phẩm đã được ẩn (có đơn hàng liên kết)", deleted = false });
+                return BadRequest(new { message = "Không thể xóa tranh đang có đơn hàng liên kết" });
             }
         }
 
-        // ─────────────────────────────────────────────
-        // PUT /api/products/{id}/approve — Admin
-        // ─────────────────────────────────────────────
+        // ── Admin duyệt ──────────────────────────────────────────────────────
+        // PUT /api/products/{id}/approve
+        // Chỉ duyệt được tranh đang Pending
         [HttpPut("{id}/approve")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Approve(int id)
@@ -226,84 +250,154 @@ namespace BaseCore.APIService.Controllers
             var product = await _productRepository.GetByIdAsync(id);
             if (product == null) return NotFound(new { message = "Không tìm thấy sản phẩm" });
 
-            product.Status = "Available";
+            if (product.Status != "Pending")
+                return BadRequest(new { message = $"Chỉ có thể duyệt tranh đang ở trạng thái Chờ duyệt (hiện tại: {product.Status})" });
+
+            product.Status    = "ForSale";
+            product.AdminNote = null;
             await _productRepository.UpdateAsync(product);
+
+            if (!string.IsNullOrEmpty(product.SellerId))
+                await NotificationHelper.CreateAsync(_db, product.SellerId,
+                    "Tranh được duyệt ✓",
+                    $"Tranh \"{product.Name}\" đã được duyệt và hiện đang bán.",
+                    "product", product.Id.ToString());
+
             return Ok(ToDto(product));
         }
 
-        // ─────────────────────────────────────────────
-        // PUT /api/products/{id}/reject — Admin
-        // ─────────────────────────────────────────────
+        // ── Admin từ chối ────────────────────────────────────────────────────
+        // PUT /api/products/{id}/reject
+        // Chỉ từ chối được tranh đang Pending, kèm lý do bắt buộc
         [HttpPut("{id}/reject")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Reject(int id)
+        public async Task<IActionResult> Reject(int id, [FromBody] AdminNoteDto dto)
         {
+            if (string.IsNullOrWhiteSpace(dto.Note))
+                return BadRequest(new { message = "Vui lòng cung cấp lý do từ chối" });
+
             var product = await _productRepository.GetByIdAsync(id);
             if (product == null) return NotFound(new { message = "Không tìm thấy sản phẩm" });
 
-            product.Status = "Rejected";
+            if (product.Status != "Pending")
+                return BadRequest(new { message = $"Chỉ có thể từ chối tranh đang ở trạng thái Chờ duyệt (hiện tại: {product.Status})" });
+
+            product.Status    = "Rejected";
+            product.AdminNote = dto.Note.Trim();
+            await _productRepository.UpdateAsync(product);
+
+            if (!string.IsNullOrEmpty(product.SellerId))
+                await NotificationHelper.CreateAsync(_db, product.SellerId,
+                    "Tranh bị từ chối",
+                    $"Tranh \"{product.Name}\" bị từ chối: {dto.Note.Trim()}",
+                    "product", product.Id.ToString());
+
+            return Ok(ToDto(product));
+        }
+
+        // ── Artist đánh lại còn hàng ─────────────────────────────────────────
+        // PUT /api/products/{id}/restock
+        // Chuyển Sold → ForSale (họa sĩ vẽ lại hoặc muốn bán lại)
+        [HttpPut("{id}/restock")]
+        [Authorize(Roles = "Artist")]
+        public async Task<IActionResult> Restock(int id)
+        {
+            var callerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var product = await _productRepository.GetByIdAsync(id);
+            if (product == null) return NotFound(new { message = "Không tìm thấy sản phẩm" });
+
+            if (product.SellerId != callerId)
+                return Forbid();
+
+            if (product.Status != "Sold")
+                return BadRequest(new { message = "Chỉ có thể đánh còn hàng cho tranh đã bán (Sold)" });
+
+            product.Status = "ForSale";
             await _productRepository.UpdateAsync(product);
             return Ok(ToDto(product));
         }
 
-        // ─────────────────────────────────────────────
+        // ── Lấy theo danh mục ────────────────────────────────────────────────
         // GET /api/products/category/{categoryId}
-        // ─────────────────────────────────────────────
         [HttpGet("category/{categoryId}")]
         public async Task<IActionResult> GetByCategory(int categoryId)
         {
             var products = await _productRepository.GetByCategoryAsync(categoryId);
-            return Ok(products.Select(p => ToDto(p)).ToList());
+            // Chỉ trả về tranh đang ForSale cho public
+            return Ok(products.Where(p => IsSellable(p.Status)).Select(p => ToDto(p)).ToList());
         }
 
-        // ─────────────────────────────────────────────
-        // Helper: map entity → DTO (tránh circular reference)
-        // ─────────────────────────────────────────────
+        // ── Helper ───────────────────────────────────────────────────────────
         private static object ToDto(Product p) => new
         {
-            p.Id, p.Name, p.ArtistName, p.Price, p.DiscountPrice, p.Stock,
+            p.Id, p.Name, p.ArtistName, p.Price, p.DiscountPrice,
             p.Description, p.ImageUrl, p.CategoryId, p.SellerId,
             p.Theme, p.Material, p.Width, p.Height,
-            p.Status,
+            // Normalize legacy status values from old database records
+            Status = NormalizeProductStatus(p.Status),
+            p.AdminNote,
             categoryName = p.Category?.Name ?? ""
         };
+
+        private static bool IsSellable(string? status)
+        {
+            var normalized = NormalizeProductStatus(status);
+            return normalized == "ForSale";
+        }
+
+        /// <summary>
+        /// Normalizes legacy product status values to the current system.
+        /// This ensures the frontend always receives clean data even if the database still has old values.
+        /// </summary>
+        private static string NormalizeProductStatus(string? status)
+        {
+            return status switch
+            {
+                "Available" => "ForSale",
+                "Unavailable" or "Hidden" => "Rejected",
+                "OutOfStock" => "Sold",
+                null or "" => "Pending",
+                _ => status
+            };
+        }
     }
 
-    // ─── DTOs ───────────────────────────────────────
+    // ─── DTOs ───────────────────────────────────────────────────────────────
 
     public class ProductCreateDto
     {
-        public string  Name        { get; set; } = "";
-        public string? ArtistName  { get; set; }
-        public decimal Price       { get; set; }
+        public string   Name          { get; set; } = "";
+        public string?  ArtistName    { get; set; }
+        public decimal  Price         { get; set; }
         public decimal? DiscountPrice { get; set; }
-        public int     Stock       { get; set; } = 1;
-        public int     CategoryId  { get; set; }
-        public string? Description { get; set; }
-        public string? ImageUrl    { get; set; }
-        public string? SellerId    { get; set; }
-        public string? Theme       { get; set; }
-        public string? Material    { get; set; }
-        public int?    Width       { get; set; }
-        public int?    Height      { get; set; }
-        public string? Status      { get; set; }
+        public int      CategoryId    { get; set; }
+        public string?  Description   { get; set; }
+        public string?  ImageUrl      { get; set; }
+        public string?  SellerId      { get; set; }
+        public string?  Theme         { get; set; }
+        public string?  Material      { get; set; }
+        public int?     Width         { get; set; }
+        public int?     Height        { get; set; }
     }
 
     public class ProductUpdateDto
     {
-        public string?  Name        { get; set; }
-        public string?  ArtistName  { get; set; }
-        public decimal? Price       { get; set; }
+        public string?  Name          { get; set; }
+        public string?  ArtistName    { get; set; }
+        public decimal? Price         { get; set; }
         public decimal? DiscountPrice { get; set; }
-        public int?     Stock       { get; set; }
-        public int?     CategoryId  { get; set; }
-        public string?  Description { get; set; }
-        public string?  ImageUrl    { get; set; }
-        public string?  SellerId    { get; set; }
-        public string?  Theme       { get; set; }
-        public string?  Material    { get; set; }
-        public int?     Width       { get; set; }
-        public int?     Height      { get; set; }
-        public string?  Status      { get; set; }
+        public int?     CategoryId    { get; set; }
+        public string?  Description   { get; set; }
+        public string?  ImageUrl      { get; set; }
+        public string?  Theme         { get; set; }
+        public string?  Material      { get; set; }
+        public int?     Width         { get; set; }
+        public int?     Height        { get; set; }
+    }
+
+    public class AdminNoteDto
+    {
+        public string Note { get; set; } = "";
     }
 }

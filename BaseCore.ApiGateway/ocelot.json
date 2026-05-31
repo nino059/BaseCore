@@ -54,11 +54,23 @@
             "DownstreamHostAndPorts": [
                 {
                     "Host": "localhost",
-                    "Port": 5003
+                    "Port": 5001
                 }
             ],
             "UpstreamPathTemplate": "/api/users/{everything}",
-            "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ]
+            "UpstreamHttpMethod": [ "GET", "PUT", "DELETE", "OPTIONS" ]
+        },
+        {
+            "DownstreamPathTemplate": "/api/users",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 5001
+                }
+            ],
+            "UpstreamPathTemplate": "/api/users",
+            "UpstreamHttpMethod": [ "GET", "OPTIONS" ]
         },
         {
             "DownstreamPathTemplate": "/api/users",
@@ -70,7 +82,7 @@
                 }
             ],
             "UpstreamPathTemplate": "/api/users",
-            "UpstreamHttpMethod": [ "GET", "POST", "OPTIONS" ]
+            "UpstreamHttpMethod": [ "POST" ]
         },
         {
             "DownstreamPathTemplate": "/api/roles/{everything}",
@@ -142,6 +154,34 @@
                 }
             ],
             "UpstreamPathTemplate": "/api/categories",
+            "UpstreamHttpMethod": [ "GET", "POST", "OPTIONS" ]
+        },
+        {
+            "DownstreamPathTemplate": "/api/notifications/{everything}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 5001 }],
+            "UpstreamPathTemplate": "/api/notifications/{everything}",
+            "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ]
+        },
+        {
+            "DownstreamPathTemplate": "/api/notifications",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 5001 }],
+            "UpstreamPathTemplate": "/api/notifications",
+            "UpstreamHttpMethod": [ "GET", "OPTIONS" ]
+        },
+        {
+            "DownstreamPathTemplate": "/api/blogposts/{everything}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 5001 }],
+            "UpstreamPathTemplate": "/api/blogposts/{everything}",
+            "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ]
+        },
+        {
+            "DownstreamPathTemplate": "/api/blogposts",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 5001 }],
+            "UpstreamPathTemplate": "/api/blogposts",
             "UpstreamHttpMethod": [ "GET", "POST", "OPTIONS" ]
         },
         {

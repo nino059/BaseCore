@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import NotificationBell from './NotificationBell';
 
-const SIDEBAR_W   = 230;
+const SIDEBAR_W   = 240;
 const COLLAPSED_W = 64;
 
 const NAV = [
   { path: '/artist/dashboard', icon: 'fa-tachometer-alt', label: 'Tổng quan' },
-  { path: '/artist/products',  icon: 'fa-palette',        label: 'Tranh của tôi' },
+  { path: '/artist/products',  icon: 'fa-palette',        label: 'Tác phẩm' },
   { path: '/artist/blog',      icon: 'fa-pen-fancy',      label: 'Bài viết' },
   { path: '/artist/orders',    icon: 'fa-shopping-bag',   label: 'Đơn hàng' },
   { path: '/artist/profile',   icon: 'fa-user-circle',    label: 'Hồ sơ' },
@@ -18,7 +19,7 @@ const ArtistLayout = ({ children }) => {
   const location  = useLocation();
   const navigate  = useNavigate();
 
-  const [pinned,  setPinned]  = useState(false);
+  const [pinned,  setPinned]  = useState(false);  // giống Admin: khi mới đăng nhập thì không ghim
   const [hovered, setHovered] = useState(false);
   const [dropOpen, setDropOpen] = useState(false);
   const dropRef = useRef(null);
@@ -35,7 +36,7 @@ const ArtistLayout = ({ children }) => {
     return () => document.removeEventListener('mousedown', h);
   }, []);
 
-  const handleLogout = () => { logout(); navigate('/'); };
+  const handleLogout = () => { logout(); navigate('/login'); };
   const isActive = (path) => location.pathname.startsWith(path);
 
   const initial = (user?.name || user?.username || 'A')[0].toUpperCase();
@@ -60,32 +61,36 @@ const ArtistLayout = ({ children }) => {
 
       <style>{`
         .al-link { display:flex; align-items:center; gap:12px; padding:10px; border-radius:10px; margin-bottom:2px;
-          text-decoration:none; color:rgba(255,255,255,0.6); transition:all .18s; whiteSpace:nowrap; border:1px solid transparent; }
-        .al-link:hover { background:rgba(200,169,122,0.15) !important; color:#e8d5a8 !important; }
+          text-decoration:none !important; color:rgba(255,255,255,0.6); transition:all .18s; whiteSpace:nowrap; border:1px solid transparent; }
+        .al-link:hover { text-decoration:none !important; }
+        .al-link:hover { background:rgba(200,169,122,0.12) !important; color:#e8d5a8 !important; }
+        .al-link:hover i { color:#e8d5a8 !important; }
         .al-link.active { background:linear-gradient(135deg,rgba(200,169,122,0.28),rgba(139,108,74,0.22)) !important;
-          color:#c8a97a !important; border:1px solid rgba(200,169,122,0.35) !important; }
-        .al-link.active i { color:#c8a97a !important; }
+          color:#e8d5a8 !important; border:1px solid rgba(200,169,122,0.35) !important; }
+        .al-link.active i { color:#e8d5a8 !important; }
         .al-link-bottom { display:flex; align-items:center; gap:12px; padding:10px; border-radius:10px;
           text-decoration:none; color:rgba(255,255,255,0.45); transition:color .2s; whiteSpace:nowrap; border:none;
           background:transparent; width:100%; cursor:pointer; font-size:0.85rem; }
         .al-link-bottom:hover { color:rgba(255,255,255,0.8) !important; }
       `}</style>
 
-      {/* ══ SIDEBAR ══ */}
+      {/* ══ SIDEBAR (phiên bản Artist gốc) ══ */}
       <aside
         onMouseEnter={() => !pinned && setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         style={{
           width: sidebarW,
           minHeight: '100vh',
-          background: 'linear-gradient(180deg,#1a1a2e 0%,#16213e 60%,#0f3460 100%)',
+          background: 'linear-gradient(180deg, #1a1614 0%, #231e1b 60%, #2c2520 100%)',
           display: 'flex',
           flexDirection: 'column',
           position: 'fixed',
           top: 0, left: 0, bottom: 0,
           zIndex: hovered && !pinned ? 300 : 100,
           transition: 'width 0.22s cubic-bezier(.4,0,.2,1)',
-          boxShadow: isOpen ? '6px 0 32px rgba(0,0,0,0.28)' : '2px 0 12px rgba(0,0,0,0.15)',
+          boxShadow: isOpen
+            ? '6px 0 32px rgba(0,0,0,0.28)'
+            : '2px 0 12px rgba(0,0,0,0.15)',
           overflow: 'hidden',
         }}>
 
@@ -96,7 +101,7 @@ const ArtistLayout = ({ children }) => {
           height:64, flexShrink:0,
         }}>
           <div style={{ width:36, height:36, borderRadius:10, flexShrink:0,
-            background:'linear-gradient(135deg,#c8a97a,#8b6c4a)',
+            background:'linear-gradient(135deg,#e8d5a8,#c8a97a)',
             display:'flex', alignItems:'center', justifyContent:'center' }}>
             <i className="fas fa-palette" style={{ color:'white', fontSize:'1rem' }}></i>
           </div>
@@ -105,7 +110,7 @@ const ArtistLayout = ({ children }) => {
             opacity: isOpen ? 1 : 0, transition:'opacity 0.15s', whiteSpace:'nowrap',
           }}>
             <div style={{ color:'white', fontWeight:800, fontSize:'1rem', lineHeight:1.1 }}>Arthentic</div>
-            <div style={{ color:'rgba(255,255,255,0.45)', fontSize:'0.68rem' }}>Không gian họa sĩ</div>
+            <div style={{ color:'rgba(255,255,255,0.45)', fontSize:'0.68rem' }}>Artist Panel</div>
           </div>
           {isOpen && (
             <button
@@ -133,7 +138,7 @@ const ArtistLayout = ({ children }) => {
           padding:'12px', borderBottom:'1px solid rgba(255,255,255,0.08)',
           display:'flex', alignItems:'center', gap:10, flexShrink:0,
         }}>
-          <AvatarBubble size={36} fontSize="0.95rem" />
+          <AvatarBubble />
           <div style={{
             overflow:'hidden', flex:1,
             opacity: isOpen ? 1 : 0, transition:'opacity 0.15s', whiteSpace:'nowrap',
@@ -159,14 +164,18 @@ const ArtistLayout = ({ children }) => {
               <Link key={item.path} to={item.path}
                 className={`al-link${active ? ' active' : ''}`}
                 title={!isOpen ? item.label : undefined}
+                style={{ gap: 12 }}
               >
                 <i className={`fas ${item.icon}`} style={{
                   fontSize:'1rem', width:20, textAlign:'center', flexShrink:0,
-                  color: active ? '#c8a97a' : 'rgba(255,255,255,0.5)',
+                  color: active ? '#e8d5a8' : 'rgba(255,255,255,0.5)',
                 }}></i>
                 <span style={{
-                  fontWeight: active ? 700 : 500, fontSize:'0.88rem',
-                  opacity: isOpen ? 1 : 0, transition:'opacity 0.15s', overflow:'hidden',
+                  fontWeight: active ? 700 : 500, fontSize: '0.88rem',
+                  opacity: isOpen ? 1 : 0,
+                  transition: 'opacity 0.15s',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
                 }}>
                   {item.label}
                 </span>
@@ -183,13 +192,15 @@ const ArtistLayout = ({ children }) => {
 
         {/* Bottom */}
         <div style={{ padding:'8px', borderTop:'1px solid rgba(255,255,255,0.08)', flexShrink:0 }}>
-          <Link to="/" className="al-link-bottom" title={!isOpen ? 'Trang chủ' : undefined}>
-            <i className="fas fa-home" style={{ width:20, textAlign:'center', flexShrink:0 }}></i>
-            <span style={{ opacity: isOpen ? 1 : 0, transition:'opacity 0.15s' }}>Trang chủ</span>
-          </Link>
-          <button onClick={handleLogout} className="al-link-bottom" title={!isOpen ? 'Đăng xuất' : undefined}>
+          <button onClick={handleLogout} className="al-link-bottom" title={!isOpen ? 'Đăng xuất' : undefined}
+            style={{ gap: 12 }}>
             <i className="fas fa-sign-out-alt" style={{ width:20, textAlign:'center', flexShrink:0 }}></i>
-            <span style={{ opacity: isOpen ? 1 : 0, transition:'opacity 0.15s' }}>Đăng xuất</span>
+            <span style={{
+              opacity: isOpen ? 1 : 0,
+              transition: 'opacity 0.15s',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}>Đăng xuất</span>
           </button>
         </div>
       </aside>
@@ -216,6 +227,10 @@ const ArtistLayout = ({ children }) => {
               {NAV.find(n => location.pathname.startsWith(n.path))?.label || 'Không gian họa sĩ'}
             </span>
           </div>
+
+          {/* Right controls: Bell + Avatar */}
+          <div style={{ display:'flex', alignItems:'center', gap:4 }}>
+          <NotificationBell theme="light" />
 
           {/* Avatar dropdown */}
           <div ref={dropRef} style={{ position:'relative' }}>
@@ -262,6 +277,7 @@ const ArtistLayout = ({ children }) => {
                 </button>
               </div>
             )}
+          </div>
           </div>
         </header>
 

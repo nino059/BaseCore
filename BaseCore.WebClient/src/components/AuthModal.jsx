@@ -53,15 +53,19 @@ const AuthModal = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
+
     const result = await login(username, password, remember);
+
     if (result.success) {
-      close();
+      close();                    // Chỉ đóng khi thành công
       const role = result.user?.role;
       if (role === 'Admin' || role === 'Staff') navigate('/dashboard');
       else if (role === 'Artist') navigate('/artist/dashboard');
     } else {
-      setError(result.message);
+      setError(result.message || 'Tên đăng nhập hoặc mật khẩu không đúng');
+      // Không close() ở đây
     }
+
     setLoading(false);
   };
 

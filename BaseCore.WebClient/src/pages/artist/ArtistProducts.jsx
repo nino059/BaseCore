@@ -8,17 +8,17 @@ const THEMES    = ['Phong cảnh','Chân dung','Tĩnh vật','Trừu tượng','
 const MATERIALS = ['Giấy dó','Giấy điệp','Lụa','Vải bố','Sơn mài','Gỗ','Gốm sứ','Giấy thường','Tre, nứa, mây','Chất liệu khác'];
 
 const STATUS_CFG = {
-  Pending:   { label:'Chờ duyệt', color:'#92400e', bg:'#fef3c7' },
-  Available: { label:'Đang bán',  color:'#065f46', bg:'#d1fae5' },
-  Rejected:  { label:'Từ chối',   color:'#991b1b', bg:'#fee2e2' },
-  OutOfStock:{ label:'Hết hàng',  color:'#374151', bg:'#f3f4f6' },
-  Unavailable:{ label:'Đã ẩn',   color:'#6b7280', bg:'#f3f4f6' },
+  Pending:  { label:'Chờ duyệt', color:'#92400e', bg:'#fef3c7', icon:'fa-clock' },
+  ForSale:  { label:'Đang bán',  color:'#065f46', bg:'#d1fae5', icon:'fa-check-circle' },
+  Ordered:  { label:'Đã đặt',    color:'#1e40af', bg:'#dbeafe', icon:'fa-shopping-cart' },
+  Sold:     { label:'Đã bán',    color:'#6b7280', bg:'#f3f4f6', icon:'fa-box' },
+  Rejected: { label:'Từ chối',   color:'#991b1b', bg:'#fee2e2', icon:'fa-ban' },
 };
 
 const fmt = (n) => new Intl.NumberFormat('vi-VN').format(n) + '₫';
 const emptyForm = {
   name:'', artistName:'', categoryId:'',
-  price:'', stock:1, theme:'', material:'',
+  price:'', theme:'', material:'',
   width:'', height:'', description:'', imageUrl:'',
 };
 
@@ -129,24 +129,28 @@ const ArtistProducts = () => {
 
   // ── Stats ─────────────────────────────────────────────────
   const stats = useMemo(() => ({
-    total:     allProducts.length,
-    selling:   allProducts.filter(p => p.status === 'Available').length,
-    pending:   allProducts.filter(p => p.status === 'Pending').length,
-    rejected:  allProducts.filter(p => p.status === 'Rejected').length,
+    total:    allProducts.length,
+    forSale:  allProducts.filter(p => p.status === 'ForSale').length,
+    pending:  allProducts.filter(p => p.status === 'Pending').length,
+    ordered:  allProducts.filter(p => p.status === 'Ordered').length,
+    sold:     allProducts.filter(p => p.status === 'Sold').length,
+    rejected: allProducts.filter(p => p.status === 'Rejected').length,
   }), [allProducts]);
 
   // ── Tabs & filter ─────────────────────────────────────────
   const tabs = [
-    { key:'all',       label:'Tất cả',     count: stats.total },
-    { key:'Pending',   label:'Chờ duyệt',  count: stats.pending },
-    { key:'Available', label:'Đang bán',   count: stats.selling },
-    { key:'Rejected',  label:'Từ chối',    count: stats.rejected },
+    { key:'all',      label:'Tất cả',    count: stats.total },
+    { key:'Pending',  label:'Chờ duyệt', count: stats.pending },
+    { key:'ForSale',  label:'Đang bán',  count: stats.forSale },
+    { key:'Ordered',  label:'Đã đặt',    count: stats.ordered },
+    { key:'Sold',     label:'Đã bán',    count: stats.sold },
+    { key:'Rejected', label:'Từ chối',   count: stats.rejected },
   ];
   const filtered = tabStatus === 'all' ? allProducts : allProducts.filter(p => p.status === tabStatus);
 
   // ── Modal helpers ─────────────────────────────────────────
   const ch  = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }));
-  const adj = (k, d) => setForm(f => ({ ...f, [k]: String(Math.max(k==='stock'?1:1, Number(f[k]||0)+d)) }));
+  const adj = (k, d) => setForm(f => ({ ...f, [k]: String(Math.max(1, Number(f[k]||0)+d)) }));
 
   const openAdd = () => {
     setEditing(null);
@@ -162,7 +166,6 @@ const ArtistProducts = () => {
       artistName:  p.artistName  || user?.name || '',
       categoryId:  p.categoryId  || '',
       price:       p.price ? String(Math.round(Number(p.price))) : '',
-      stock:       p.stock ?? 1,
       theme:       p.theme       || '',
       material:    p.material    || '',
       width:       p.width       || '',
@@ -206,7 +209,6 @@ const ArtistProducts = () => {
         artistName:  form.artistName.trim() || user?.name || '',
         categoryId:  Number(form.categoryId),
         price:       Number(form.price),
-        stock:       Number(form.stock) || 1,
         theme:       form.theme,
         material:    form.material,
         width:       Number(form.width),
@@ -243,6 +245,16 @@ const ArtistProducts = () => {
     }
   );
 
+  const handleRestock = async (id) => {
+    try {
+      await productApi.restock(id);
+      showToast('Đã đánh dấu còn hàng — tranh trở lại Đang bán');
+      load();
+    } catch (err) {
+      showToast('Không thể cập nhật: ' + (err.response?.data?.message || err.message), 'error');
+    }
+  };
+
   // ══════════════════════════════════════════════════════════
   return (
     <ArtistLayout>
@@ -252,9 +264,13 @@ const ArtistProducts = () => {
         .ap-row:hover { background:#fffbf4 !important; }
         .ap-action { transition:all .15s; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
         .ap-action:hover { transform:scale(1.1); }
-        .kpi-card-artist { background:white; border-radius:14px; padding:20px;
+        .kpi-card-artist { background:white; border-radius:14px; padding:18px;
           box-shadow:0 2px 12px rgba(0,0,0,.06); cursor:pointer; transition:all .2s; border-top:3px solid #f1f5f9; }
         .kpi-card-artist:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(0,0,0,.10); }
+        .tab-btn { padding:7px 16px; border-radius:20px; border:1.5px solid #e2e8f0; background:white;
+          font-size:0.78rem; font-weight:600; color:#64748b; cursor:pointer; transition:all .15s; white-space:nowrap; }
+        .tab-btn.active { border-color:#c8a97a; background:#fdf6ec; color:#8b6c4a; }
+        .tab-btn:hover:not(.active) { border-color:#c8a97a; color:#8b6c4a; }
       `}</style>
 
       <Toast toasts={toasts} />
@@ -262,24 +278,6 @@ const ArtistProducts = () => {
 
       {/* ── Header ── */}
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:22 }}>
-        <div style={{ display:'flex', alignItems:'center', gap:14 }}>
-          <div style={{
-            width:46, height:46, borderRadius:13,
-            background:'linear-gradient(135deg,#c8a97a,#8b6c4a)',
-            display:'flex', alignItems:'center', justifyContent:'center',
-            boxShadow:'0 4px 14px rgba(200,169,122,.4)', flexShrink:0,
-          }}>
-            <i className="fas fa-palette" style={{ color:'white', fontSize:'1.1rem' }}></i>
-          </div>
-          <div>
-            <h1 style={{ fontSize:'1.35rem', fontWeight:800, color:'#1e293b', margin:0, lineHeight:1.2 }}>
-              Tranh của tôi
-            </h1>
-            <p style={{ fontSize:'0.82rem', color:'#94a3b8', margin:'4px 0 0' }}>
-              {loading ? 'Đang tải...' : `${stats.total} tác phẩm`}
-            </p>
-          </div>
-        </div>
         <button onClick={openAdd} style={{
           display:'flex', alignItems:'center', gap:8,
           padding:'10px 22px', borderRadius:11, border:'none',
@@ -291,13 +289,13 @@ const ArtistProducts = () => {
         </button>
       </div>
 
-      {/* ── KPI Cards ── */}
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:14, marginBottom:18 }}>
+      {/* ── KPI Cards — chỉ 1 dòng (4 box chính) ── */}
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12, marginBottom:18 }}>
         {[
-          { label:'Tổng tác phẩm', value:stats.total,    color:'#c8a97a', bg:'#fdf6ec', icon:'fa-images',       key:'all'       },
-          { label:'Đang bán',      value:stats.selling,  color:'#10b981', bg:'#d1fae5', icon:'fa-check-circle', key:'Available' },
-          { label:'Chờ duyệt',     value:stats.pending,  color:'#f59e0b', bg:'#fef3c7', icon:'fa-clock',        key:'Pending'   },
-          { label:'Bị từ chối',    value:stats.rejected, color:'#ef4444', bg:'#fee2e2', icon:'fa-times-circle', key:'Rejected'  },
+          { label:'Tổng tác phẩm', value:stats.total,    color:'#c8a97a', bg:'#fdf6ec', icon:'fa-images',       key:'all' },
+          { label:'Đang bán',      value:stats.forSale,  color:'#10b981', bg:'#d1fae5', icon:'fa-check-circle', key:'ForSale' },
+          { label:'Chờ duyệt',     value:stats.pending,  color:'#f59e0b', bg:'#fef3c7', icon:'fa-clock',        key:'Pending' },
+          { label:'Đã bán',        value:stats.sold,     color:'#6b7280', bg:'#f3f4f6', icon:'fa-box',          key:'Sold' },
         ].map((s, i) => {
           const active = tabStatus === s.key;
           return (
@@ -310,15 +308,15 @@ const ArtistProducts = () => {
               }}>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start' }}>
                 <div>
-                  <div style={{ fontSize:'2.1rem', fontWeight:900, color:s.color, lineHeight:1 }}>{s.value}</div>
-                  <div style={{ fontSize:'0.82rem', fontWeight:700, color:'#374151', marginTop:5 }}>{s.label}</div>
-                  <div style={{ fontSize:'0.72rem', color: active ? s.color : '#94a3b8', marginTop:3, fontWeight: active ? 700 : 400 }}>
+                  <div style={{ fontSize:'2rem', fontWeight:900, color:s.color, lineHeight:1 }}>{s.value}</div>
+                  <div style={{ fontSize:'0.78rem', fontWeight:700, color:'#374151', marginTop:4 }}>{s.label}</div>
+                  <div style={{ fontSize:'0.7rem', color: active ? s.color : '#94a3b8', marginTop:2, fontWeight: active ? 700 : 400 }}>
                     {active ? <><i className="fas fa-check-circle mr-1"></i>Đang xem</> : 'Nhấn để lọc'}
                   </div>
                 </div>
-                <div style={{ width:44, height:44, borderRadius:12, background:s.bg, flexShrink:0,
+                <div style={{ width:38, height:38, borderRadius:10, background:s.bg, flexShrink:0,
                   display:'flex', alignItems:'center', justifyContent:'center' }}>
-                  <i className={`fas ${s.icon}`} style={{ color:s.color, fontSize:'1.1rem' }}></i>
+                  <i className={`fas ${s.icon}`} style={{ color:s.color, fontSize:'1rem' }}></i>
                 </div>
               </div>
             </div>
@@ -328,18 +326,22 @@ const ArtistProducts = () => {
 
       {/* ── Table ── */}
       <div style={{ background:'white', borderRadius:14, boxShadow:'0 2px 16px rgba(0,0,0,.07)', overflow:'hidden' }}>
-        <div style={{
-          padding:'14px 20px', borderBottom:'1px solid #f1f5f9',
-          display:'flex', justifyContent:'space-between', alignItems:'center',
-        }}>
-          <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-            <i className="fas fa-table" style={{ color:'#c8a97a', fontSize:'0.85rem' }}></i>
-            <span style={{ fontWeight:700, color:'#1e293b', fontSize:'0.92rem' }}>Danh sách tác phẩm</span>
-            {!loading && (
-              <span style={{ background:'#fdf6ec', color:'#c8a97a', borderRadius:20, padding:'2px 10px', fontSize:'0.73rem', fontWeight:700 }}>
-                {filtered.length}
-              </span>
-            )}
+        {/* Tab bar */}
+        <div style={{ padding:'12px 18px', borderBottom:'1px solid #f1f5f9', display:'flex', gap:8, flexWrap:'wrap', alignItems:'center', justifyContent:'space-between' }}>
+          <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
+            {tabs.map(t => (
+              <button key={t.key} className={`tab-btn${tabStatus === t.key ? ' active' : ''}`}
+                onClick={() => setTabStatus(t.key)}>
+                {t.label}
+                {t.count > 0 && (
+                  <span style={{ marginLeft:5, background: tabStatus===t.key ? '#c8a97a' : '#e2e8f0',
+                    color: tabStatus===t.key ? 'white' : '#64748b',
+                    borderRadius:20, padding:'1px 7px', fontSize:'0.7rem', fontWeight:700 }}>
+                    {t.count}
+                  </span>
+                )}
+              </button>
+            ))}
           </div>
           <button onClick={load} title="Làm mới"
             style={{ width:32, height:32, borderRadius:8, border:'1.5px solid #e2e8f0', background:'white', color:'#64748b', cursor:'pointer',
@@ -357,7 +359,7 @@ const ArtistProducts = () => {
           <div style={{ textAlign:'center', padding:'70px 0' }}>
             <div style={{ fontSize:'3rem', marginBottom:14 }}>🎨</div>
             <div style={{ fontWeight:700, color:'#475569', marginBottom:6 }}>
-              {tabStatus === 'all' ? 'Chưa có tác phẩm nào' : `Không có tranh ${tabs.find(t=>t.key===tabStatus)?.label}`}
+              {tabStatus === 'all' ? 'Chưa có tác phẩm nào' : `Không có tranh "${tabs.find(t=>t.key===tabStatus)?.label}"`}
             </div>
             <div style={{ fontSize:'0.83rem', color:'#94a3b8', marginBottom:18 }}>
               {tabStatus === 'all' ? 'Thêm tác phẩm đầu tiên để bắt đầu' : 'Chuyển sang tab khác để xem'}
@@ -374,18 +376,22 @@ const ArtistProducts = () => {
             <table style={{ width:'100%', borderCollapse:'collapse' }}>
               <thead>
                 <tr style={{ background:'#f8fafc', borderBottom:'2px solid #f1f5f9' }}>
-                  {['#','Ảnh','Tác phẩm','Chất liệu','Giá bán','Kho','Trạng thái','Thao tác'].map((h, i) => (
+                  {['#','Ảnh','Tác phẩm','Chất liệu','Giá bán','Trạng thái','Thao tác'].map((h, i) => (
                     <th key={i} style={{
                       padding:'11px 14px', fontSize:'0.72rem', fontWeight:700,
                       color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.06em',
-                      textAlign:(i===0||i>=6)?'center':'left', whiteSpace:'nowrap',
+                      textAlign:(i===0||i>=5)?'center':'left', whiteSpace:'nowrap',
                     }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((p, idx) => {
-                  const sc = STATUS_CFG[p.status] || STATUS_CFG.OutOfStock;
+                  const sc = STATUS_CFG[p.status] || STATUS_CFG.Pending;
+                  const canEdit   = ['Pending','ForSale','Sold'].includes(p.status);
+                  const canRestock = p.status === 'Sold';
+                  const canDelete = ['Pending','Rejected'].includes(p.status);
+
                   return (
                     <tr key={p.id} className="ap-row"
                       style={{ background: idx%2===1 ? '#fafbff' : 'white' }}>
@@ -405,7 +411,7 @@ const ArtistProducts = () => {
                         }
                       </td>
 
-                      <td style={{ padding:'12px 14px', maxWidth:180 }}>
+                      <td style={{ padding:'12px 14px', maxWidth:200 }}>
                         <div style={{ fontWeight:700, color:'#1e293b', fontSize:'0.88rem', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
                           {p.name}
                         </div>
@@ -413,6 +419,13 @@ const ArtistProducts = () => {
                           {p.categoryName || '—'}
                           {(p.width && p.height) && ` · ${p.width}×${p.height}cm`}
                         </div>
+                        {p.status === 'Rejected' && p.adminNote && (
+                          <div style={{ marginTop:5, fontSize:'0.73rem', color:'#dc2626',
+                            background:'#fef2f2', borderRadius:6, padding:'3px 8px', display:'inline-block', maxWidth:180 }}>
+                            <i className="fas fa-times-circle mr-1"></i>
+                            {p.adminNote}
+                          </div>
+                        )}
                       </td>
 
                       <td style={{ padding:'12px 14px', fontSize:'0.85rem', color:'#475569' }}>
@@ -425,36 +438,36 @@ const ArtistProducts = () => {
 
                       <td style={{ padding:'12px 14px', textAlign:'center' }}>
                         <span style={{
-                          display:'inline-block', padding:'3px 10px', borderRadius:20,
-                          fontSize:'0.78rem', fontWeight:700, minWidth:38, textAlign:'center',
-                          background: p.stock > 5 ? '#d1fae5' : p.stock > 0 ? '#fef3c7' : '#fee2e2',
-                          color:      p.stock > 5 ? '#10b981' : p.stock > 0 ? '#d97706' : '#ef4444',
-                        }}>
-                          {p.stock}
-                        </span>
-                      </td>
-
-                      <td style={{ padding:'12px 14px', textAlign:'center' }}>
-                        <span style={{
                           fontSize:'0.72rem', fontWeight:700, letterSpacing:'0.06em',
                           color:sc.color, background:sc.bg, borderRadius:20, padding:'3px 10px',
                           whiteSpace:'nowrap',
                         }}>
+                          <i className={`fas ${sc.icon} mr-1`} style={{ fontSize:'0.65rem' }}></i>
                           {sc.label}
                         </span>
                       </td>
 
                       <td style={{ padding:'12px 14px', textAlign:'center', whiteSpace:'nowrap' }}>
-                        <button className="ap-action" onClick={() => openEdit(p)} title="Chỉnh sửa"
-                          style={{ width:32, height:32, borderRadius:8, border:'1.5px solid #fde68a', background:'#fef9c3', color:'#92400e', marginRight:6 }}>
-                          <i className="fas fa-pencil-alt" style={{ fontSize:'0.73rem' }}></i>
-                        </button>
-                        {['Pending','Rejected'].includes(p.status) && (
-                          <button className="ap-action" onClick={() => handleDelete(p.id, p.name)} title="Xóa"
-                            style={{ width:32, height:32, borderRadius:8, border:'1.5px solid #fecaca', background:'#fef2f2', color:'#ef4444' }}>
-                            <i className="fas fa-trash" style={{ fontSize:'0.73rem' }}></i>
-                          </button>
-                        )}
+                        <div style={{ display:'flex', gap:5, justifyContent:'center', flexWrap:'wrap' }}>
+                          {canEdit && (
+                            <button className="ap-action" onClick={() => openEdit(p)} title="Chỉnh sửa"
+                              style={{ width:30, height:30, borderRadius:7, border:'1.5px solid #fde68a', background:'#fef9c3', color:'#92400e' }}>
+                              <i className="fas fa-pencil-alt" style={{ fontSize:'0.68rem' }}></i>
+                            </button>
+                          )}
+                          {canRestock && (
+                            <button className="ap-action" onClick={() => handleRestock(p.id)} title="Đánh dấu còn hàng"
+                              style={{ width:30, height:30, borderRadius:7, border:'1.5px solid #bfdbfe', background:'#eff6ff', color:'#1e40af' }}>
+                              <i className="fas fa-redo" style={{ fontSize:'0.68rem' }}></i>
+                            </button>
+                          )}
+                          {canDelete && (
+                            <button className="ap-action" onClick={() => handleDelete(p.id, p.name)} title="Xóa"
+                              style={{ width:30, height:30, borderRadius:7, border:'1.5px solid #fecaca', background:'#fef2f2', color:'#ef4444' }}>
+                              <i className="fas fa-trash" style={{ fontSize:'0.68rem' }}></i>
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   );
@@ -663,14 +676,14 @@ const ArtistProducts = () => {
                   </div>
                 </div>
 
-                {/* Giá & kho */}
+                {/* Giá bán */}
                 <div style={{ background:'#fffbf4', borderRadius:12, border:'1.5px solid #e8d5a8' }}>
                   <div style={{ padding:'10px 14px 6px', borderBottom:'1px solid #f5ede0', borderLeft:'3px solid #10b981', borderRadius:'11px 11px 0 0' }}>
                     <span style={{ fontWeight:700, fontSize:'0.8rem', color:'#374151' }}>
-                      <i className="fas fa-tag mr-1" style={{ color:'#10b981' }}></i>Giá bán & Kho
+                      <i className="fas fa-tag mr-1" style={{ color:'#10b981' }}></i>Giá bán
                     </span>
                   </div>
-                  <div style={{ padding:'14px', display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+                  <div style={{ padding:'14px' }}>
                     <F label="Giá bán (VNĐ)" required>
                       <div style={{ display:'flex', gap:3 }}>
                         <button type="button" onClick={() => adj('price',-100000)}
@@ -686,16 +699,6 @@ const ArtistProducts = () => {
                           ≈ {new Intl.NumberFormat('vi-VN',{style:'currency',currency:'VND'}).format(form.price)}
                         </div>
                       )}
-                    </F>
-                    <F label="Số lượng">
-                      <div style={{ display:'flex', gap:3, alignItems:'center' }}>
-                        <button type="button" onClick={() => adj('stock',-1)}
-                          style={{ flexShrink:0, width:28, height:36, borderRadius:7, border:'1.5px solid #e5e7eb', background:'#f8fafc', cursor:'pointer', fontWeight:700, fontSize:'0.78rem', color:'#6b7280' }}>−</button>
-                        <input className="form-control" type="number" min={1} value={form.stock} onChange={ch('stock')}
-                          style={{ borderRadius:7, fontSize:'0.88rem', border:'1.5px solid #e5e7eb', textAlign:'center' }} />
-                        <button type="button" onClick={() => adj('stock',1)}
-                          style={{ flexShrink:0, width:28, height:36, borderRadius:7, border:'1.5px solid #e5e7eb', background:'#f8fafc', cursor:'pointer', fontWeight:700, fontSize:'0.78rem', color:'#6b7280' }}>+</button>
-                      </div>
                     </F>
                   </div>
                 </div>

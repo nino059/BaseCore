@@ -1,15 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BaseCore.Entities;
+using BaseCore.Repository;
 using BaseCore.Repository.EFCore;
+using BaseCore.APIService.Helpers;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace BaseCore.APIService.Controllers
 {
-    /// <summary>
-    /// Order API Controller
-    /// Teaching: RESTful API, Business Logic, Authentication (Bài 10, 11)
-    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -18,20 +17,20 @@ namespace BaseCore.APIService.Controllers
         private readonly IOrderRepositoryEF _orderRepository;
         private readonly IOrderDetailRepositoryEF _orderDetailRepository;
         private readonly IProductRepositoryEF _productRepository;
+        private readonly AppDbContext _db;
 
         public OrdersController(
             IOrderRepositoryEF orderRepository,
             IOrderDetailRepositoryEF orderDetailRepository,
-            IProductRepositoryEF productRepository)
+            IProductRepositoryEF productRepository,
+            AppDbContext db)
         {
             _orderRepository = orderRepository;
             _orderDetailRepository = orderDetailRepository;
             _productRepository = productRepository;
+            _db = db;
         }
 
-        /// <summary>
-        /// Get orders for current user
-        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetMyOrders()
         {
@@ -40,68 +39,120 @@ namespace BaseCore.APIService.Controllers
                 return Unauthorized();
 
             var orders = await _orderRepository.GetByUserAsync(userId);
-            return Ok(orders);
+            var result = new List<object>();
+
+            foreach (var order in orders)
+            {
+                var details = await _orderDetailRepository.GetByOrderAsync(order.Id);
+                result.Add(ToOrderDto(order, details));
+            }
+
+            return Ok(result);
         }
 
-        /// <summary>
-        /// Get all orders (Admin only)
-        /// </summary>
         [HttpGet("all")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllOrders()
         {
             var orders = await _orderRepository.GetAllAsync();
-            return Ok(orders);
+            var orderIds = orders.Select(o => o.Id).ToList();
+            var userIds = orders.Select(o => o.UserId).Distinct().ToList();
+
+            var users = await _db.Users
+                .Where(u => userIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id, u => new { u.Name, u.Phone });
+
+            var allDetails = await _db.OrderDetails
+                .Include(d => d.Product)
+                .Where(d => orderIds.Contains(d.OrderId))
+                .ToListAsync();
+
+            var detailsByOrder = allDetails
+                .GroupBy(d => d.OrderId)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            var result = orders.Select(o => {
+                var u = users.GetValueOrDefault(o.UserId);
+                var details = detailsByOrder.GetValueOrDefault(o.Id, new List<OrderDetail>());
+                return new {
+                    o.Id, o.UserId, o.OrderDate, o.TotalAmount, o.Status,
+                    o.ShippingAddress, o.PaymentMethod, o.Note, o.Phone,
+                    userName  = u?.Name  ?? "",
+                    userPhone = u?.Phone ?? "",
+                    items = details.Select(d => new {
+                        d.ProductId,
+                        productName = d.Product?.Name ?? "",
+                        imageUrl    = d.Product?.ImageUrl ?? "",
+                        d.UnitPrice,
+                    }),
+                };
+            });
+            return Ok(result);
         }
 
-        /// <summary>
-        /// Get order by ID
-        /// </summary>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
+            var callerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var callerRole = User.FindFirst(ClaimTypes.Role)?.Value;
+
             var order = await _orderRepository.GetByIdAsync(id);
-            if (order == null) return NotFound(new { message = "Order not found" });
+            if (order == null)
+                return NotFound(new { message = "Khong tim thay don hang" });
 
             var details = await _orderDetailRepository.GetByOrderAsync(id);
-            return Ok(new { order, details });
+            var canView = callerRole == "Admin"
+                || order.UserId == callerId
+                || details.Any(d => d.Product?.SellerId == callerId);
+
+            if (!canView)
+                return Forbid();
+
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == order.UserId);
+            return Ok(ToOrderDto(order, details, user));
         }
 
-        /// <summary>
-        /// Create new order
-        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateOrderDto dto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid))
+            if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-            // Validate products and calculate total
+            if (dto?.Items == null || dto.Items.Count == 0)
+                return BadRequest(new { message = "Don hang phai co it nhat mot san pham" });
+
+            var duplicatedProductId = dto.Items
+                .GroupBy(i => i.ProductId)
+                .FirstOrDefault(g => g.Count() > 1)?.Key;
+            if (duplicatedProductId.HasValue)
+                return BadRequest(new { message = $"San pham {duplicatedProductId.Value} bi lap trong don hang" });
+
+            await using var transaction = await _db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
+
             decimal totalAmount = 0;
             var orderDetails = new List<OrderDetail>();
+            var productsToUpdate = new List<Product>();
 
             foreach (var item in dto.Items)
             {
                 var product = await _productRepository.GetByIdAsync(item.ProductId);
                 if (product == null)
-                    return BadRequest(new { message = $"Product {item.ProductId} not found" });
+                    return BadRequest(new { message = $"Khong tim thay san pham {item.ProductId}" });
 
-                if (product.Stock < item.Quantity)
-                    return BadRequest(new { message = $"Insufficient stock for {product.Name}" });
+                if (!IsSellableProductStatus(product.Status))
+                    return BadRequest(new { message = $"Tranh '{product.Name}' hien khong the dat mua (trang thai: {product.Status})" });
 
-                totalAmount += product.Price * item.Quantity;
+                var salePrice = product.DiscountPrice ?? product.Price;
+                totalAmount += salePrice;
+
                 orderDetails.Add(new OrderDetail
                 {
                     ProductId = item.ProductId,
-                    Quantity = item.Quantity,
-                    UnitPrice = product.Price
+                    Quantity = 1,
+                    UnitPrice = salePrice
                 });
-
-                // Update stock, tự đánh OutOfStock nếu hết
-                product.Stock -= item.Quantity;
-                if (product.Stock <= 0) product.Status = "OutOfStock";
-                await _productRepository.UpdateAsync(product);
+                productsToUpdate.Add(product);
             }
 
             var order = new Order
@@ -118,128 +169,286 @@ namespace BaseCore.APIService.Controllers
 
             await _orderRepository.AddAsync(order);
 
-            // Add order details
-            foreach (var detail in orderDetails)
+            foreach (var (detail, product) in orderDetails.Zip(productsToUpdate))
             {
                 detail.OrderId = order.Id;
                 await _orderDetailRepository.AddAsync(detail);
+
+                product.Status = "Ordered";
+                await _productRepository.UpdateAsync(product);
             }
 
-            return CreatedAtAction(nameof(GetById), new { id = order.Id }, new { order, details = orderDetails });
+            var artistGroups = productsToUpdate
+                .Where(p => !string.IsNullOrEmpty(p.SellerId))
+                .GroupBy(p => p.SellerId!)
+                .Select(g => new { SellerId = g.Key, Names = g.Select(p => p.Name).ToList() })
+                .ToList();
+
+            await transaction.CommitAsync();
+
+            foreach (var group in artistGroups)
+            {
+                var names = string.Join(", ", group.Names.Select(name => $"\"{name}\""));
+                await TryCreateNotificationAsync(
+                    group.SellerId,
+                    "Don hang moi",
+                    $"Don #{order.Id} vua duoc dat - tranh {names}.",
+                    "order",
+                    order.Id.ToString());
+            }
+
+            return CreatedAtAction(nameof(GetById), new { id = order.Id }, new
+            {
+                id = order.Id,
+                orderId = order.Id,
+                order,
+                details = orderDetails,
+                items = orderDetails.Select(ToItemDto)
+            });
         }
 
-        /// <summary>
-        /// Update order status — Artist only, with strict forward-only transition
-        /// </summary>
         [HttpPut("{id}/status")]
         [Authorize(Roles = "Artist")]
         public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateStatusDto dto)
         {
             var artistId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(artistId)) return Unauthorized();
+            if (string.IsNullOrEmpty(artistId))
+                return Unauthorized();
 
             var order = await _orderRepository.GetByIdAsync(id);
-            if (order == null) return NotFound(new { message = "Đơn hàng không tìm thấy" });
+            if (order == null)
+                return NotFound(new { message = "Khong tim thay don hang" });
 
-            // Verify this artist has products in the order
             var details = await _orderDetailRepository.GetByOrderAsync(id);
-            var hasArtistProduct = details.Any(d => d.Product?.SellerId == artistId);
-            if (!hasArtistProduct)
+            var artistDetails = details.Where(d => d.Product?.SellerId == artistId).ToList();
+            if (!artistDetails.Any())
                 return Forbid();
 
-            // Validate transition rules (forward-only, Cancelled allowed except from Completed)
             var validTransitions = new Dictionary<string, string[]>
             {
-                ["Pending"]    = new[] { "Processing", "Cancelled" },
-                ["Processing"] = new[] { "Shipping",   "Cancelled" },
-                ["Shipping"]   = new[] { "Completed",  "Cancelled" },
-                ["Completed"]  = Array.Empty<string>(),
-                ["Cancelled"]  = Array.Empty<string>(),
+                ["Pending"] = new[] { "Processing", "Cancelled" },
+                ["Processing"] = new[] { "Shipping", "Cancelled" },
+                ["Shipping"] = new[] { "Completed", "Cancelled" },
+                ["Completed"] = Array.Empty<string>(),
+                ["Cancelled"] = Array.Empty<string>(),
             };
 
             if (!validTransitions.TryGetValue(order.Status, out var allowed) || !allowed.Contains(dto.Status))
-                return BadRequest(new { message = $"Không thể chuyển từ '{order.Status}' sang '{dto.Status}'" });
+                return BadRequest(new { message = $"Khong the chuyen tu '{order.Status}' sang '{dto.Status}'" });
+
+            await using var transaction = await _db.Database.BeginTransactionAsync();
 
             order.Status = dto.Status;
             await _orderRepository.UpdateAsync(order);
 
+            if (dto.Status == "Completed")
+            {
+                foreach (var detail in artistDetails)
+                {
+                    var product = await _productRepository.GetByIdAsync(detail.ProductId);
+                    if (product != null)
+                    {
+                        product.Status = "Sold";
+                        await _productRepository.UpdateAsync(product);
+                    }
+                }
+            }
+            else if (dto.Status == "Cancelled")
+            {
+                foreach (var detail in artistDetails)
+                {
+                    var product = await _productRepository.GetByIdAsync(detail.ProductId);
+                    if (product != null && product.Status == "Ordered")
+                    {
+                        product.Status = "ForSale";
+                        await _productRepository.UpdateAsync(product);
+                    }
+                }
+            }
+
+            await transaction.CommitAsync();
+
+            var statusLabel = dto.Status switch
+            {
+                "Processing" => "Dang xu ly",
+                "Shipping" => "Dang giao hang",
+                "Completed" => "Da giao thanh cong",
+                "Cancelled" => "Da bi huy",
+                _ => dto.Status
+            };
+
+            await TryCreateNotificationAsync(
+                order.UserId,
+                $"Don hang #{order.Id}: {statusLabel}",
+                $"Don hang #{order.Id} cua ban da chuyen sang trang thai \"{statusLabel}\".",
+                "order",
+                order.Id.ToString());
+
             return Ok(order);
         }
 
-        /// <summary>
-        /// Get orders containing artist's products — Artist only
-        /// </summary>
         [HttpGet("artist")]
         [Authorize(Roles = "Artist")]
         public async Task<IActionResult> GetArtistOrders()
         {
             var artistId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(artistId)) return Unauthorized();
+            if (string.IsNullOrEmpty(artistId))
+                return Unauthorized();
 
             var allOrders = await _orderRepository.GetAllAsync();
             var result = new List<object>();
+
+            var userIds = allOrders.Select(o => o.UserId).Distinct().ToList();
+            var userNames = await _db.Users
+                .Where(u => userIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id, u => u.Name ?? u.UserName);
 
             foreach (var order in allOrders)
             {
                 var details = await _orderDetailRepository.GetByOrderAsync(order.Id);
                 var artistDetails = details.Where(d => d.Product?.SellerId == artistId).ToList();
-                if (artistDetails.Any())
+                if (!artistDetails.Any())
+                    continue;
+
+                result.Add(new
                 {
-                    result.Add(new
+                    order.Id,
+                    order.UserId,
+                    customerName = userNames.TryGetValue(order.UserId, out var n) ? n : "",
+                    order.OrderDate,
+                    order.Status,
+                    order.ShippingAddress,
+                    order.Phone,
+                    items = artistDetails.Select(d => new
                     {
-                        order.Id,
-                        order.UserId,
-                        order.OrderDate,
-                        order.Status,
-                        order.ShippingAddress,
-                        order.Phone,
-                        items = artistDetails.Select(d => new
-                        {
-                            d.ProductId,
-                            productName = d.Product?.Name ?? "",
-                            d.Quantity,
-                            d.UnitPrice,
-                            total = d.Quantity * d.UnitPrice
-                        })
-                    });
-                }
+                        d.ProductId,
+                        productName = d.Product?.Name ?? "",
+                        productStatus = NormalizeProductStatus(d.Product?.Status),
+                        d.UnitPrice
+                    })
+                });
             }
 
             return Ok(result);
         }
 
-        /// <summary>
-        /// Cancel order
-        /// </summary>
         [HttpPut("{id}/cancel")]
         public async Task<IActionResult> CancelOrder(int id)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var callerRole = User.FindFirst(ClaimTypes.Role)?.Value;
+
             var order = await _orderRepository.GetByIdAsync(id);
-            if (order == null) return NotFound(new { message = "Order not found" });
+            if (order == null)
+                return NotFound(new { message = "Khong tim thay don hang" });
+
+            var cancelDetails = await _orderDetailRepository.GetByOrderAsync(id);
+            var callerOwnsAnyProduct = cancelDetails.Any(d => d.Product?.SellerId == userId);
+
+            if (callerRole != "Admin" && order.UserId != userId && !(callerRole == "Artist" && callerOwnsAnyProduct))
+                return Forbid();
 
             if (order.Status == "Completed")
-                return BadRequest(new { message = "Cannot cancel completed order" });
+                return BadRequest(new { message = "Khong the huy don hang da hoan thanh" });
 
-            // Restore stock
-            var details = await _orderDetailRepository.GetByOrderAsync(id);
-            foreach (var detail in details)
+            if (order.Status == "Cancelled")
+                return BadRequest(new { message = "Don hang da duoc huy roi" });
+
+            await using var transaction = await _db.Database.BeginTransactionAsync();
+
+            foreach (var detail in cancelDetails)
             {
                 var product = await _productRepository.GetByIdAsync(detail.ProductId);
-                if (product != null)
+                if (product != null && (product.Status == "Ordered" || product.Status == "Shipping"))
                 {
-                    product.Stock += detail.Quantity;
-                    if (product.Status == "OutOfStock" && product.Stock > 0)
-                        product.Status = "Available";
+                    product.Status = "ForSale";
                     await _productRepository.UpdateAsync(product);
                 }
             }
 
             order.Status = "Cancelled";
             await _orderRepository.UpdateAsync(order);
+            await transaction.CommitAsync();
 
-            return Ok(new { message = "Order cancelled successfully", order });
+            if (callerRole != "Artist")
+            {
+                var artistIds = cancelDetails
+                    .Where(d => !string.IsNullOrEmpty(d.Product?.SellerId))
+                    .Select(d => d.Product!.SellerId!)
+                    .Distinct();
+
+                foreach (var artistId in artistIds)
+                {
+                    await TryCreateNotificationAsync(
+                        artistId,
+                        $"Don hang #{order.Id} bi huy",
+                        $"Nguoi mua da huy don hang #{order.Id}.",
+                        "order",
+                        order.Id.ToString());
+                }
+            }
+            else
+            {
+                await TryCreateNotificationAsync(
+                    order.UserId,
+                    $"Don hang #{order.Id} bi huy",
+                    $"Don hang #{order.Id} da bi huy boi hoa si.",
+                    "order",
+                    order.Id.ToString());
+            }
+
+            return Ok(new { message = "Da huy don hang thanh cong", order });
         }
-     
+
+        private static object ToOrderDto(Order order, List<OrderDetail> details, User? user = null)
+        {
+            return new
+            {
+                order.Id,
+                order.UserId,
+                order.OrderDate,
+                order.TotalAmount,
+                order.Status,
+                order.ShippingAddress,
+                order.PaymentMethod,
+                order.Note,
+                order.Phone,
+                userName  = user?.Name  ?? "",
+                userPhone = user?.Phone ?? "",
+                items = details.Select(ToItemDto),
+            };
+        }
+
+        private static object ToItemDto(OrderDetail detail) => new
+        {
+            detail.ProductId,
+            productName = detail.Product?.Name ?? "",
+            imageUrl = detail.Product?.ImageUrl ?? "",
+            artistName = detail.Product?.ArtistName ?? "",
+            detail.UnitPrice,
+            price = detail.UnitPrice,
+            detail.Quantity,
+            productStatus = NormalizeProductStatus(detail.Product?.Status),
+        };
+
+        private static bool IsSellableProductStatus(string? status)
+            => status == "ForSale" || status == "Available";
+
+        private static string NormalizeProductStatus(string? status)
+            => status == "Available" ? "ForSale" : status ?? "";
+
+        private async Task TryCreateNotificationAsync(string userId, string title, string message, string type, string? refId = null)
+        {
+            try
+            {
+                await NotificationHelper.CreateAsync(_db, userId, title, message, type, refId);
+            }
+            catch
+            {
+                foreach (var entry in _db.ChangeTracker.Entries<Notification>().Where(e => e.State == EntityState.Added).ToList())
+                    entry.State = EntityState.Detached;
+            }
+        }
     }
 
     public class CreateOrderDto
@@ -254,7 +463,6 @@ namespace BaseCore.APIService.Controllers
     public class OrderItemDto
     {
         public int ProductId { get; set; }
-        public int Quantity { get; set; }
     }
 
     public class UpdateStatusDto

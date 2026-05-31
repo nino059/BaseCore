@@ -122,21 +122,16 @@ const ArtistProfile = () => {
     <ArtistLayout>
       <div style={{ maxWidth: 680, margin: '0 auto' }}>
 
-        {/* Page title */}
-        <div style={{ marginBottom: 28 }}>
-          <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.16em', color: '#c8a97a', textTransform: 'uppercase', marginBottom: 4 }}>
-            Hồ sơ
-          </p>
-          <h1 style={{ fontWeight: 300, fontSize: '1.8rem', color: '#1a1a1a', margin: 0 }}>
-            Chỉnh sửa hồ sơ
-          </h1>
-        </div>
-
         {/* Avatar card */}
         <div style={{
-          background: 'white', border: '1px solid #e8e4df',
-          borderRadius: 12, padding: '32px',
-          display: 'flex', alignItems: 'center', gap: 28,
+          background: 'white',
+          borderRadius: 14,
+          boxShadow: '0 2px 12px rgba(0,0,0,.06)',
+          border: '1px solid #f0ede8',
+          padding: '28px 32px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 28,
           marginBottom: 24,
         }}>
           {/* Avatar với nút upload */}
@@ -241,7 +236,7 @@ const ArtistProfile = () => {
         </div>
 
         {/* Form */}
-        <div style={{ background: 'white', border: '1px solid #e8e4df', borderRadius: 12, padding: '32px' }}>
+        <div style={{ background: 'white', borderRadius: 14, boxShadow: '0 2px 12px rgba(0,0,0,.06)', padding: '32px' }}>
 
           {/* Tab: Thông tin */}
           {tab === 'info' && (

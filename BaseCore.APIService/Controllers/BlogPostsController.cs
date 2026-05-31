@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BaseCore.Entities;
 using BaseCore.Repository;
+using BaseCore.APIService.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -76,25 +77,54 @@ namespace BaseCore.APIService.Controllers
         [Authorize(Roles = "Artist,Admin")]
         public async Task<IActionResult> Create([FromBody] BlogPostDto dto)
         {
-            var callerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var callerId   = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var callerName = User.FindFirst(ClaimTypes.Name)?.Value ?? User.FindFirst("name")?.Value ?? "";
+            var callerRole = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            string authorId   = callerId ?? "";
+            string authorName = dto.AuthorName ?? callerName;
+
+            // Admin nhập tên họa sĩ → tìm user khớp để liên kết
+            if (callerRole == "Admin" && !string.IsNullOrWhiteSpace(dto.AuthorName))
+            {
+                var matched = await _db.Users
+                    .Where(u => u.Name == dto.AuthorName || u.UserName == dto.AuthorName)
+                    .FirstOrDefaultAsync();
+                if (matched != null)
+                {
+                    authorId   = matched.Id;
+                    authorName = matched.Name ?? matched.UserName ?? dto.AuthorName;
+                }
+            }
 
             var post = new BlogPost
             {
-                Title        = dto.Title,
-                Excerpt      = dto.Excerpt ?? "",
-                Content      = dto.Content ?? "",
-                Category     = dto.Category ?? "",
-                AuthorId     = callerId ?? "",
-                AuthorName   = dto.AuthorName ?? callerName,
+                Title         = dto.Title,
+                Excerpt       = dto.Excerpt ?? "",
+                Content       = dto.Content ?? "",
+                Category      = dto.Category ?? "",
+                AuthorId      = authorId,
+                AuthorName    = authorName,
                 CoverImageUrl = dto.CoverImageUrl,
-                Status       = "Pending",
-                CreatedAt    = DateTime.UtcNow,
-                ReadTime     = dto.ReadTime
+                Status        = callerRole == "Admin" ? "Published" : "Pending",
+                CreatedAt     = DateTime.UtcNow,
+                ReadTime      = dto.ReadTime
             };
 
             _db.BlogPosts.Add(post);
             await _db.SaveChangesAsync();
+
+            // Notify Admin khi artist đăng bài mới chờ duyệt
+            if (callerRole == "Artist")
+            {
+                var adminIds = await NotificationHelper.GetAdminUserIdsAsync(_db);
+                foreach (var adminId in adminIds)
+                    await NotificationHelper.CreateAsync(_db, adminId,
+                        "Bài viết mới chờ duyệt",
+                        $"Họa sĩ vừa đăng bài \"{post.Title}\" — cần xét duyệt.",
+                        "blog", post.Id.ToString());
+            }
+
             return CreatedAtAction(nameof(GetById), new { id = post.Id }, post);
         }
 
@@ -134,6 +164,13 @@ namespace BaseCore.APIService.Controllers
             post.Status = "Published";
             post.PublishedAt = DateTime.UtcNow;
             await _db.SaveChangesAsync();
+
+            if (!string.IsNullOrEmpty(post.AuthorId))
+                await NotificationHelper.CreateAsync(_db, post.AuthorId,
+                    "Bài viết được duyệt ✓",
+                    $"Bài viết \"{post.Title}\" đã được duyệt và công khai.",
+                    "blog", post.Id.ToString());
+
             return Ok(post);
         }
 
@@ -147,6 +184,13 @@ namespace BaseCore.APIService.Controllers
 
             post.Status = "Rejected";
             await _db.SaveChangesAsync();
+
+            if (!string.IsNullOrEmpty(post.AuthorId))
+                await NotificationHelper.CreateAsync(_db, post.AuthorId,
+                    "Bài viết bị từ chối",
+                    $"Bài viết \"{post.Title}\" đã bị từ chối.",
+                    "blog", post.Id.ToString());
+
             return Ok(post);
         }
 

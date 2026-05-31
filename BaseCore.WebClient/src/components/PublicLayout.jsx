@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import { useAuthModal } from '../contexts/AuthModalContext';
+import NotificationBell from './NotificationBell';
 
 const NAV_ITEMS = [
   { to: '/',        label: 'Trang chủ' },
@@ -122,20 +123,26 @@ const PublicLayout = ({ children }) => {
           {/* ── Right controls ── */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginLeft: 'auto' }}>
 
-            {/* Cart */}
-            {user && !isAdmin && !isArtist && (
-              <Link to="/cart" style={{ position: 'relative', color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-                <i className="fas fa-shopping-bag" style={{ fontSize: '1rem' }}></i>
-                {cartCount > 0 && (
-                  <span style={{
-                    position: 'absolute', top: -7, right: -9,
-                    background: '#c8a97a', color: 'white',
-                    borderRadius: '50%', width: 17, height: 17,
-                    fontSize: 10, fontWeight: 700,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>{cartCount > 9 ? '9+' : cartCount}</span>
+            {/* Bell + Cart (nhóm gần nhau) */}
+            {user && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <NotificationBell theme="dark" />
+                {!isAdmin && !isArtist && (
+                  <Link to="/cart" style={{ position: 'relative', color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', padding: '6px 8px' }}>
+                    <i className="fas fa-shopping-bag" style={{ fontSize: '1rem' }}></i>
+                    {cartCount > 0 && (
+                      <span style={{
+                        position: 'absolute', top: 2, right: 2,
+                        background: '#c8a97a', color: 'white',
+                        borderRadius: '50%', width: 17, height: 17,
+                        fontSize: 10, fontWeight: 700,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        border: '1.5px solid rgba(20,16,12,0.9)',
+                      }}>{cartCount > 9 ? '9+' : cartCount}</span>
+                    )}
+                  </Link>
                 )}
-              </Link>
+              </div>
             )}
 
             {/* User section */}
@@ -145,11 +152,16 @@ const PublicLayout = ({ children }) => {
                   style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0' }}>
                   <div style={{
                     width: 33, height: 33, borderRadius: '50%', flexShrink: 0,
-                    background: '#c8a97a', display: 'flex', alignItems: 'center',
+                    background: user.avatarUrl ? '#f0ece8' : '#c8a97a',
+                    display: 'flex', alignItems: 'center',
                     justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '0.85rem',
                     border: '2px solid rgba(255,255,255,0.2)',
+                    overflow: 'hidden',
                   }}>
-                    {(user.fullName || user.username || 'U')[0].toUpperCase()}
+                    {user.avatarUrl
+                      ? <img src={user.avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display='none'; }} />
+                      : (user.fullName || user.name || user.username || 'U')[0].toUpperCase()
+                    }
                   </div>
                   <i className="fas fa-chevron-down" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.56rem', transition: 'transform 0.2s', transform: dropOpen ? 'rotate(180deg)' : 'none' }}></i>
                 </button>

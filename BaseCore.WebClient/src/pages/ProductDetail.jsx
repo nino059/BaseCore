@@ -25,7 +25,6 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [qty, setQty] = useState(1);
   const [addedMsg, setAddedMsg] = useState('');
   const { addToCart } = useCart();
   const { user, isArtist } = useAuth();
@@ -46,8 +45,8 @@ const ProductDetail = () => {
 
   const handleAddToCart = () => {
     if (!user) { openLogin(); return; }
-    addToCart(product, qty);
-    setAddedMsg(`Đã thêm ${qty} sản phẩm vào giỏ hàng`);
+    addToCart(product, 1);
+    setAddedMsg('Đã thêm vào giỏ hàng');
     setTimeout(() => setAddedMsg(''), 3000);
   };
 
@@ -80,7 +79,7 @@ const ProductDetail = () => {
     ? (product.imageUrl.startsWith('http') ? product.imageUrl : `http://localhost:5000${product.imageUrl}`)
     : null;
 
-  const inStock = product.stock > 0;
+  const inStock = product.status === 'ForSale';
 
   return (
     <PublicLayout>
@@ -177,24 +176,23 @@ const ProductDetail = () => {
               )}
 
               <div style={{ marginBottom: 28 }}>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em', color: inStock ? '#2d6a4f' : '#991b1b' }}>
-                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: inStock ? '#52b788' : '#ef4444', display: 'inline-block' }}></span>
-                  {inStock ? `Còn ${product.stock} tác phẩm` : 'Hết hàng'}
-                </span>
-              </div>
-
-              {inStock && !isArtist && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 28 }}>
-                  <span style={{ fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.1em', color: '#8b6c4a', textTransform: 'uppercase' }}>
-                    Số lượng
+                {product.status === 'ForSale' ? (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em', color: '#2d6a4f' }}>
+                    <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#52b788', display: 'inline-block' }}></span>
+                    Còn hàng
                   </span>
-                  <div style={{ display: 'flex', alignItems: 'center', border: '1.5px solid #e8e4df' }}>
-                    <button onClick={() => setQty(q => Math.max(1, q - 1))} style={{ width: 38, height: 38, background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: '#1a1a1a' }}>−</button>
-                    <span style={{ width: 36, textAlign: 'center', fontWeight: 600, fontSize: '0.95rem', color: '#1a1a1a' }}>{qty}</span>
-                    <button onClick={() => setQty(q => Math.min(product.stock, q + 1))} style={{ width: 38, height: 38, background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: '#1a1a1a' }}>+</button>
-                  </div>
-                </div>
-              )}
+                ) : product.status === 'Ordered' ? (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em', color: '#92400e' }}>
+                    <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#f59e0b', display: 'inline-block' }}></span>
+                    Đã có người đặt
+                  </span>
+                ) : (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em', color: '#991b1b' }}>
+                    <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#ef4444', display: 'inline-block' }}></span>
+                    Đã bán
+                  </span>
+                )}
+              </div>
 
               {addedMsg && (
                 <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', color: '#166534', padding: '11px 16px', fontSize: '0.85rem', marginBottom: 20, letterSpacing: '0.01em' }}>

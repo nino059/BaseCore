@@ -1,0 +1,74 @@
+# ============================
+# .NET / C# / Visual Studio
+# ============================
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.dbmdl
+*.jfm
+*.pfx
+*.publishsettings
+*.publishproj
+*.nupkg
+*.snupkg
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# ============================
+# React / Vite / Node.js
+# ============================
+node_modules/
+dist/
+.vite/
+*.local
+.env
+.env.local
+.env.*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ============================
+# Appsettings (QUAN TRỌNG - BẢO MẬT)
+# ============================
+appsettings.json
+appsettings.Production.json
+appsettings.Staging.json
+
+# Cho phép file mẫu (nếu có)
+!appsettings.Example.json
+!appsettings.Development.json
+
+# ============================
+# Logs & Debug
+# ============================
+logs/
+*.log
+*.log.*
+
+# ============================
+# Hệ điều hành & Editor
+# ============================
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ============================
+# Build & Temporary
+# ============================
+*.tmp
+*.temp
+*.cache
+*.bak

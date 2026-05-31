@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
@@ -19,12 +19,14 @@ import ProductDetail from './pages/ProductDetail';
 import Artists       from './pages/Artists';
 import ArtistDetail  from './pages/ArtistDetail';
 import Blog          from './pages/Blog';
+import BlogDetail    from './pages/BlogDetail';
 
 // User protected pages
 import MyOrders          from './pages/user/MyOrders';
 import Profile           from './pages/user/Profile';
 import Checkout          from './pages/user/Checkout';
 import OrderConfirmation from './pages/user/OrderConfirmation';
+import OrderDetail       from './pages/OrderDetail';
 
 // Admin pages
 import Dashboard      from './pages/admin/AdminDashboard';
@@ -41,6 +43,12 @@ import ArtistBlog      from './pages/artist/ArtistBlog';
 import ArtistOrders    from './pages/artist/ArtistOrders';
 import ArtistProfile   from './pages/artist/ArtistProfile';
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
+
 function AuthRedirect({ tab }) {
   const { openLogin, openRegister } = useAuthModal();
   const navigate = useNavigate();
@@ -55,6 +63,7 @@ function AuthRedirect({ tab }) {
 function AppRoutes() {
   return (
     <>
+      <ScrollToTop />
       <AuthModal />
       <Routes>
         {/* /login và /register chuyển về modal */}
@@ -68,6 +77,7 @@ function AppRoutes() {
       <Route path="/artists"     element={<Artists />} />
       <Route path="/artists/:id" element={<ArtistDetail />} />
       <Route path="/blog"        element={<Blog />} />
+      <Route path="/blog/:id"    element={<BlogDetail />} />
 
       {/* USER PROTECTED */}
       <Route path="/cart" element={
@@ -78,6 +88,9 @@ function AppRoutes() {
       } />
       <Route path="/my-orders" element={
         <ProtectedRoute><MyOrders /></ProtectedRoute>
+      } />
+      <Route path="/my-orders/:orderId" element={
+        <ProtectedRoute><OrderDetail /></ProtectedRoute>
       } />
       <Route path="/checkout" element={
         <ProtectedRoute><Checkout /></ProtectedRoute>
@@ -130,6 +143,9 @@ function AppRoutes() {
       } />
       <Route path="/artist/orders" element={
         <ProtectedRoute artistOnly><ArtistOrders /></ProtectedRoute>
+      } />
+      <Route path="/artist/orders/:orderId" element={
+        <ProtectedRoute artistOnly><OrderDetail /></ProtectedRoute>
       } />
       <Route path="/artist/profile" element={
         <ProtectedRoute artistOnly><ArtistProfile /></ProtectedRoute>

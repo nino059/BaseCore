@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import NotificationBell from './NotificationBell';
 
 const SIDEBAR_WIDTH   = 240;
 const COLLAPSED_WIDTH = 64;
@@ -49,12 +50,6 @@ const MainLayout = ({ children }) => {
             <style>{`
                 .sidebar-link:hover { background: rgba(200,169,122,0.12) !important; color: #e8d5a8 !important; }
                 .sidebar-link:hover i { color: #e8d5a8 !important; }
-                .nav-tooltip { position: absolute; left: 72px; background: #1e293b; color: white;
-                    padding: 5px 10px; borderRadius: 6px; fontSize: 12px; fontWeight: 600;
-                    whiteSpace: nowrap; pointerEvents: none; zIndex: 9999;
-                    boxShadow: 0 4px 12px rgba(0,0,0,0.3); }
-                .nav-tooltip::before { content:''; position:absolute; left:-5px; top:50%; transform:translateY(-50%);
-                    borderRight: 5px solid #1e293b; borderTop: 5px solid transparent; borderBottom: 5px solid transparent; }
             `}</style>
 
             {/* ===== SIDEBAR ===== */}
@@ -136,12 +131,16 @@ const MainLayout = ({ children }) => {
                 }}>
                     <div style={{
                         width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
-                        background: 'linear-gradient(135deg, #e8d5a8, #c8a97a)',
+                        background: user?.avatarUrl ? '#f0ece8' : 'linear-gradient(135deg, #e8d5a8, #c8a97a)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        overflow: 'hidden', border: user?.avatarUrl ? '2px solid rgba(200,169,122,0.5)' : 'none',
                     }}>
-                        <span style={{ color: 'white', fontWeight: 700, fontSize: '0.95rem' }}>
-                            {(user?.username || user?.name || 'A')[0].toUpperCase()}
-                        </span>
+                        {user?.avatarUrl
+                            ? <img src={user.avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display='none'} />
+                            : <span style={{ color: 'white', fontWeight: 700, fontSize: '0.95rem' }}>
+                                {(user?.username || user?.name || 'A')[0].toUpperCase()}
+                              </span>
+                        }
                     </div>
                     <div style={{
                         overflow: 'hidden', flex: 1,
@@ -262,16 +261,23 @@ const MainLayout = ({ children }) => {
                         </span>
                     </div>
 
+                    {/* Right controls: Bell + Avatar */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <NotificationBell theme="light" />
+
                     {/* Avatar + dropdown */}
                     <div ref={dropdownRef} style={{ position: 'relative' }}>
                         <div
                             onClick={() => setDropdownOpen(o => !o)}
                             style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '4px 8px', borderRadius: 8, userSelect: 'none' }}
                         >
-                            <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg, #e8d5a8, #c8a97a)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <span style={{ color: 'white', fontWeight: 700, fontSize: '0.9rem' }}>
-                                    {(user?.username || user?.fullName || 'A')[0].toUpperCase()}
-                                </span>
+                            <div style={{ width: 34, height: 34, borderRadius: '50%', background: user?.avatarUrl ? '#f0ece8' : 'linear-gradient(135deg, #e8d5a8, #c8a97a)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: user?.avatarUrl ? '2px solid rgba(200,169,122,0.5)' : 'none' }}>
+                                {user?.avatarUrl
+                                    ? <img src={user.avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display='none'} />
+                                    : <span style={{ color: 'white', fontWeight: 700, fontSize: '0.9rem' }}>
+                                        {(user?.username || user?.fullName || 'A')[0].toUpperCase()}
+                                      </span>
+                                }
                             </div>
                             <div style={{ lineHeight: 1.2 }}>
                                 <div style={{ fontWeight: 600, fontSize: '0.88rem', color: '#1f2937' }}>{user?.fullName || user?.username}</div>
@@ -301,6 +307,7 @@ const MainLayout = ({ children }) => {
                                 </button>
                             </div>
                         )}
+                    </div>
                     </div>
                 </header>
 

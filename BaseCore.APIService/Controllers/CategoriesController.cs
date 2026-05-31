@@ -32,10 +32,32 @@ namespace BaseCore.APIService.Controllers
                     c.Slug,
                     c.Icon,
                     c.Color,
-                    productCount = _db.Products.Count(p => p.CategoryId == c.Id && p.Status == "Available")
+                    productCount      = _db.Products.Count(p => p.CategoryId == c.Id && p.Status == "ForSale"),
+                    totalProductCount = _db.Products.Count(p => p.CategoryId == c.Id)
                 })
                 .ToListAsync();
             return Ok(result);
+        }
+
+        /// <summary>Get products in a category (Admin)</summary>
+        [HttpGet("{id}/products")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetProducts(int id)
+        {
+            var category = await _categoryRepository.GetByIdAsync(id);
+            if (category == null)
+                return NotFound(new { message = "Category not found" });
+
+            var products = await _db.Products
+                .Where(p => p.CategoryId == id)
+                .OrderBy(p => p.Name)
+                .Select(p => new {
+                    p.Id, p.Name, p.Price, p.Status, p.ImageUrl,
+                    p.ArtistName, p.SellerId
+                })
+                .ToListAsync();
+
+            return Ok(new { category = new { category.Id, category.Name, category.Color, category.Icon }, products });
         }
 
         /// <summary>Get category by ID</summary>
@@ -46,7 +68,7 @@ namespace BaseCore.APIService.Controllers
             if (category == null)
                 return NotFound(new { message = "Category not found" });
 
-            var productCount = await _db.Products.CountAsync(p => p.CategoryId == id && p.Status == "Available");
+            var productCount = await _db.Products.CountAsync(p => p.CategoryId == id && (p.Status == "ForSale" || p.Status == "Available"));
 
             return Ok(new {
                 category.Id,
@@ -61,7 +83,7 @@ namespace BaseCore.APIService.Controllers
 
         /// <summary>Create new category</summary>
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] CategoryDto dto)
         {
             var existing = await _categoryRepository.GetByNameAsync(dto.Name);
@@ -92,7 +114,7 @@ namespace BaseCore.APIService.Controllers
 
         /// <summary>Update category</summary>
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, [FromBody] CategoryDto dto)
         {
             var category = await _categoryRepository.GetByIdAsync(id);
@@ -107,7 +129,7 @@ namespace BaseCore.APIService.Controllers
 
             await _categoryRepository.UpdateAsync(category);
 
-            var productCount = await _db.Products.CountAsync(p => p.CategoryId == id && p.Status == "Available");
+            var productCount = await _db.Products.CountAsync(p => p.CategoryId == id && (p.Status == "ForSale" || p.Status == "Available"));
 
             return Ok(new {
                 category.Id,
@@ -122,7 +144,7 @@ namespace BaseCore.APIService.Controllers
 
         /// <summary>Delete category</summary>
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var category = await _categoryRepository.GetByIdAsync(id);

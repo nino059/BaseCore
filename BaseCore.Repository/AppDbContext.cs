@@ -17,6 +17,7 @@ namespace BaseCore.Repository
         public DbSet<BlogPost> BlogPosts { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -53,7 +54,8 @@ namespace BaseCore.Repository
                 entity.Property(e => e.Description).HasMaxLength(1000);
                 entity.Property(e => e.ImageUrl).HasMaxLength(500);
                 entity.Property(e => e.ArtistName).HasMaxLength(200);
-                entity.Property(e => e.Status).HasMaxLength(20).HasDefaultValue("Available");
+                entity.Property(e => e.Status).HasMaxLength(20).HasDefaultValue("Pending");
+                entity.Property(e => e.AdminNote).HasMaxLength(500).IsRequired(false);
                 entity.Property(e => e.Theme).HasMaxLength(100);
                 entity.Property(e => e.Material).HasMaxLength(100);
                 entity.Property(e => e.SellerId).HasMaxLength(450);
@@ -104,6 +106,17 @@ namespace BaseCore.Repository
                 entity.Property(e => e.CoverImageUrl).HasMaxLength(500);
                 entity.Property(e => e.Status).HasMaxLength(20).HasDefaultValue("Pending");
                 entity.Property(e => e.ReadTime).HasMaxLength(20);
+            });
+
+            modelBuilder.Entity<Notification>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.UserId).HasMaxLength(450).IsRequired();
+                entity.Property(e => e.Title).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.Message).HasMaxLength(500).IsRequired();
+                entity.Property(e => e.Type).HasMaxLength(20).IsRequired();
+                entity.Property(e => e.RefId).HasMaxLength(50).IsRequired(false);
+                entity.HasIndex(e => new { e.UserId, e.CreatedAt });
             });
 
             // ✅ KHÔNG seed data ở đây — data đã có sẵn trong DB

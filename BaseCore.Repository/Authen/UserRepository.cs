@@ -30,8 +30,8 @@ namespace BaseCore.Repository.Authen
         public async Task<User> GetByUsernameAsync(string username)
         {
             return await _context.Users
-               .FirstOrDefaultAsync(u => u.UserName == username && u.IsActive);
-                
+               .FirstOrDefaultAsync(u => u.UserName == username);
+
         }
 
         public async Task<User> GetByIdAsync(string id)
@@ -43,7 +43,6 @@ namespace BaseCore.Repository.Authen
         public async Task<List<User>> GetAllAsync()
         {
             return await _context.Users
-                .Where(u => u.IsActive)
                 .ToListAsync();
         }
 
@@ -63,16 +62,15 @@ namespace BaseCore.Repository.Authen
         {
             var user = await GetByIdAsync(id);
             if (user != null)
-            {// X�a m?m: Chuy?n tr?ng th�i IsActive v? false
-                user.IsActive = false; 
-                _context.Users.Update(user);
+            {
+                _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
             }
         }
 
         public async Task<(List<User> Users, int TotalCount)> SearchAsync(string keyword, int page, int pageSize)
         {
-            var query = _context.Users.Where(u => u.IsActive);
+            var query = _context.Users.AsQueryable();
             
 
             if (!string.IsNullOrEmpty(keyword))

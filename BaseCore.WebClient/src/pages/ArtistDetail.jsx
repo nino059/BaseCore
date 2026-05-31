@@ -36,8 +36,10 @@ const PaintingCard = ({ p }) => {
           <span className="paint-overlay-btn">Xem tác phẩm</span>
         </div>
         {/* Status badge */}
-        {p.status && p.status !== 'Available' && (
-          <div className="paint-status-badge">{p.status}</div>
+        {p.status && p.status !== 'ForSale' && (
+          <div className="paint-status-badge">
+            {p.status === 'Ordered' ? 'Đã đặt' : 'Đã bán'}
+          </div>
         )}
       </div>
 
@@ -229,20 +231,12 @@ const ArtistDetail = () => {
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(200,169,122,0.05) 40px), repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(200,169,122,0.05) 40px)', pointerEvents: 'none' }} />
 
         <div className="container" style={{ position: 'relative', padding: '80px 0 72px', animation: 'fadeUp 0.6s ease' }}>
-          {/* Breadcrumb */}
-          <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', marginBottom: 32, display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Link to="/" style={{ color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}>Trang chủ</Link>
-            <span>/</span>
-            <Link to="/artists" style={{ color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}>Họa sĩ</Link>
-            <span>/</span>
-            <span style={{ color: 'rgba(255,255,255,0.7)' }}>{artist.name}</span>
-          </div>
-
+          
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: 40, flexWrap: 'wrap' }}>
             {/* Label */}
             <div style={{ flex: 1, minWidth: 240 }}>
-              <p style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.28em', color: '#c8a97a', textTransform: 'uppercase', margin: '0 0 12px' }}>
-                ✦ &nbsp; Họa Sĩ
+              <p style={{ fontSize: 50, fontWeight: 700, letterSpacing: '0.28em', color: '#c8a97a', textTransform: 'uppercase', margin: '0 0 12px' }}>
+                ✦&nbsp;Họa Sĩ
               </p>
               <h1 style={{ fontWeight: 200, fontSize: 'clamp(2rem, 5vw, 3.8rem)', color: 'white', letterSpacing: '0.06em', margin: '0 0 20px', lineHeight: 1.1 }}>
                 {artist.name}
