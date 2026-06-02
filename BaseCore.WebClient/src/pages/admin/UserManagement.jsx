@@ -4,12 +4,12 @@ import { userApi } from "../../services/api";
 // ─── Constants ───────────────────────────────────────────────────────
 const ROLE_CFG = {
   1: { label: "Quản trị viên", color: "#ef4444", bg: "#fee2e2" },
-  2: { label: "Họa sĩ",        color: "#c8a97a", bg: "#fdf6ec" },
+  2: { label: "Họa sĩ",        color: "var(--brand)", bg: "#fdf6ec" },
   0: { label: "Người dùng",    color: "#3b82f6", bg: "#dbeafe" },
 };
 
 // ─── Avatar helpers ──────────────────────────────────────────────────
-const AVATAR_COLORS = ["#c8a97a","#8b6c4a","#ec4899","#f59e0b","#10b981","#3b82f6","#ef4444","#14b8a6"];
+const AVATAR_COLORS = ["var(--brand)","var(--brand-dark)","#ec4899","#f59e0b","#10b981","#3b82f6","#ef4444","#14b8a6"];
 const avatarColor = (id) => AVATAR_COLORS[(id || 0) % AVATAR_COLORS.length];
 const initials    = (name, uname) =>
   (name || uname || "?").split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
@@ -94,7 +94,7 @@ const labelStyle = {
   fontSize: "0.78rem", fontWeight: 700, color: "#64748b", marginBottom: 6,
   display: "block", textTransform: "uppercase", letterSpacing: "0.05em",
 };
-const focusOn  = e => { e.target.style.borderColor = "#c8a97a"; };
+const focusOn  = e => { e.target.style.borderColor = "var(--brand)"; };
 const focusOff = e => { e.target.style.borderColor = "#e2e8f0"; };
 
 // ════════════════════════════════════════════════════════════════════
@@ -272,9 +272,9 @@ const Users = () => {
       {/* ── KPI Cards ── */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:14, marginBottom:18 }}>
         {[
-          { label:'Tất cả',        value:kpi.total,   color:'#c8a97a', bg:'#f5edd6', icon:'fa-users',        key:''  },
+          { label:'Tất cả',        value:kpi.total,   color:'var(--brand)', bg:'#f5edd6', icon:'fa-users',        key:''  },
           { label:'Quản trị viên', value:kpi.admins,  color:'#ef4444', bg:'#fee2e2', icon:'fa-user-shield',  key:'1' },
-          { label:'Họa sĩ',        value:kpi.artists, color:'#c8a97a', bg:'#fdf6ec', icon:'fa-paint-brush',  key:'2' },
+          { label:'Họa sĩ',        value:kpi.artists, color:'var(--brand)', bg:'#fdf6ec', icon:'fa-paint-brush',  key:'2' },
           { label:'Người dùng',    value:kpi.members, color:'#3b82f6', bg:'#dbeafe', icon:'fa-user',         key:'0' },
         ].map(s => {
           const active = roleFilter === s.key;
@@ -306,7 +306,7 @@ const Users = () => {
               placeholder="Tìm theo tên, email, username..."
               value={keyword}
               onChange={e => { setKeyword(e.target.value); setPage(1); }}
-              onFocus={e => e.target.style.borderColor = "#c8a97a"}
+              onFocus={e => e.target.style.borderColor = "var(--brand)"}
               onBlur={e => e.target.style.borderColor = "#e2e8f0"}
             />
             {keyword && (
@@ -331,10 +331,10 @@ const Users = () => {
         {/* Table header bar */}
         <div style={{ padding: "14px 20px", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <i className="fas fa-table" style={{ color: "#c8a97a", fontSize: "0.85rem" }}></i>
+            <i className="fas fa-table" style={{ color: "var(--brand)", fontSize: "0.85rem" }}></i>
             <span style={{ fontWeight: 700, color: "#1e293b", fontSize: "0.92rem" }}>Danh sách người dùng</span>
             {!loading && (
-              <span style={{ background: "#eef2ff", color: "#c8a97a", borderRadius: 20, padding: "2px 10px", fontSize: "0.73rem", fontWeight: 700 }}>
+              <span style={{ background: "#eef2ff", color: "var(--brand)", borderRadius: 20, padding: "2px 10px", fontSize: "0.73rem", fontWeight: 700 }}>
                 {totalCount}
               </span>
             )}
@@ -352,7 +352,7 @@ const Users = () => {
 
         {loading ? (
           <div style={{ textAlign: "center", padding: "64px 0" }}>
-            <div className="spinner-border" style={{ color: "#c8a97a" }} />
+            <div className="spinner-border" style={{ color: "var(--brand)" }} />
             <p style={{ marginTop: 12, color: "#94a3b8" }}>Đang tải...</p>
           </div>
         ) : users.length === 0 ? (
@@ -411,7 +411,7 @@ const Users = () => {
                       <td style={{ padding: "14px 16px", textAlign: "center" }}>
                         <div style={{ display: "flex", gap: 6, justifyContent: "center" }}>
                           <button onClick={() => openEdit(u)} title="Chỉnh sửa"
-                            style={{ width: 34, height: 34, borderRadius: 8, border: "none", cursor: "pointer", background: "#c8a97a18", color: "#c8a97a" }}>
+                            style={{ width: 34, height: 34, borderRadius: 8, border: "none", cursor: "pointer", background: "var(--brand)18", color: "var(--brand)" }}>
                             <i className="fas fa-pen" style={{ fontSize: "0.78rem" }} />
                           </button>
                           <button onClick={() => setConfirmDel(u)} title="Xóa"
@@ -446,7 +446,7 @@ const Users = () => {
                     <span key={`e${i}`} style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8" }}>…</span>
                   ) : (
                     <button key={n} onClick={() => setPage(n)}
-                      style={{ width: 32, height: 32, borderRadius: 8, border: page === n ? "none" : "1.5px solid #e2e8f0", cursor: "pointer", background: page === n ? "#c8a97a" : "white", color: page === n ? "white" : "#64748b", fontWeight: page === n ? 700 : 400, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      style={{ width: 32, height: 32, borderRadius: 8, border: page === n ? "none" : "1.5px solid #e2e8f0", cursor: "pointer", background: page === n ? "var(--brand)" : "white", color: page === n ? "white" : "#64748b", fontWeight: page === n ? 700 : 400, display: "flex", alignItems: "center", justifyContent: "center" }}>
                       {n}
                     </button>
                   )
@@ -476,7 +476,7 @@ const Users = () => {
             {/* Header */}
             <div style={{
               padding: "20px 28px 18px",
-              background: "linear-gradient(135deg,#c8a97a,#8b6c4a)",
+              background: "linear-gradient(135deg,var(--brand),var(--brand-dark))",
               display: "flex", justifyContent: "space-between", alignItems: "center",
             }}>
               <div>
@@ -564,7 +564,7 @@ const Users = () => {
                 </button>
                 <button type="submit" disabled={saving} style={{
                   padding: "10px 28px", borderRadius: 10, border: "none",
-                  background: "linear-gradient(135deg,#c8a97a,#8b6c4a)",
+                  background: "linear-gradient(135deg,var(--brand),var(--brand-dark))",
                   color: "white", fontWeight: 700, cursor: saving ? "not-allowed" : "pointer",
                   opacity: saving ? 0.7 : 1, display: "flex", alignItems: "center", gap: 8,
                 }}>

@@ -24,10 +24,10 @@ const Cart = () => {
       <div className="container py-5">
 
         <div style={{ marginBottom: 36 }}>
-          <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.18em', color: '#c8a97a', textTransform: 'uppercase', marginBottom: 8 }}>
+          <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.18em', color: 'var(--brand)', textTransform: 'uppercase', marginBottom: 8 }}>
             Mua sắm
           </p>
-          <h1 style={{ fontWeight: 200, fontSize: 'clamp(1.4rem,3vw,2rem)', color: '#1a1a1a', letterSpacing: '0.04em', margin: 0 }}>
+          <h1 style={{ fontWeight: 200, fontSize: 'clamp(1.4rem,3vw,2rem)', color: 'var(--ink)', letterSpacing: '0.04em', margin: 0 }}>
             Giỏ hàng
             {count > 0 && (
               <span style={{ fontSize: '1rem', fontWeight: 400, color: '#aaa', marginLeft: 12 }}>({count} sản phẩm)</span>
@@ -42,7 +42,7 @@ const Cart = () => {
             <p style={{ color: '#aaa', marginBottom: 28, fontSize: '0.9rem' }}>Khám phá các tác phẩm nghệ thuật độc đáo</p>
             <Link to="/shop" style={{
               display: 'inline-block', padding: '13px 32px',
-              background: '#1a1a1a', color: 'white',
+              background: 'var(--ink)', color: 'white',
               fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.14em',
               textTransform: 'uppercase', textDecoration: 'none',
             }}>
@@ -80,7 +80,7 @@ const Cart = () => {
                         </div>
 
                         {item.categoryName && (
-                          <span style={{ background: '#f0ece6', color: '#8b6c4a', padding: '2px 10px', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.06em' }}>
+                          <span style={{ background: '#f0ece6', color: 'var(--brand-dark)', padding: '2px 10px', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.06em' }}>
                             {item.categoryName}
                           </span>
                         )}
@@ -88,17 +88,17 @@ const Cart = () => {
                         <div style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
                           {item.discountPrice ? (
                             <>
-                              <span style={{ color: '#1a1a1a', fontWeight: 700, fontSize: '0.9rem' }}>{fmt(item.discountPrice)}</span>
+                              <span style={{ color: 'var(--ink)', fontWeight: 700, fontSize: '0.9rem' }}>{fmt(item.discountPrice)}</span>
                               <span style={{ textDecoration: 'line-through', color: '#aaa', fontSize: '0.8rem' }}>{fmt(item.price)}</span>
                               <span style={{ background: '#fef3c7', color: '#92400e', padding: '1px 8px', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.06em' }}>SALE</span>
                             </>
                           ) : (
-                            <span style={{ color: '#1a1a1a', fontWeight: 600, fontSize: '0.9rem' }}>{fmt(item.price)}</span>
+                            <span style={{ color: 'var(--ink)', fontWeight: 600, fontSize: '0.9rem' }}>{fmt(item.price)}</span>
                           )}
                         </div>
                       </div>
 
-                      <div style={{ fontWeight: 700, color: '#1a1a1a', minWidth: 90, textAlign: 'right', flexShrink: 0 }}>
+                      <div style={{ fontWeight: 700, color: 'var(--ink)', minWidth: 90, textAlign: 'right', flexShrink: 0 }}>
                         {fmt(lineTotal)}
                       </div>
 
@@ -125,18 +125,18 @@ const Cart = () => {
 
             <div className="col-lg-4">
               <div style={{ background: 'white', padding: 28, boxShadow: '0 2px 16px rgba(0,0,0,0.05)', position: 'sticky', top: 80 }}>
-                <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.18em', color: '#c8a97a', textTransform: 'uppercase', marginBottom: 20 }}>
+                <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.18em', color: 'var(--brand)', textTransform: 'uppercase', marginBottom: 20 }}>
                   Tóm tắt đơn hàng
                 </p>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12, color: '#767676', fontSize: '0.88rem' }}>
                   <span>Tạm tính ({count} sản phẩm)</span>
-                  <span style={{ color: '#1a1a1a' }}>{fmt(subtotal)}</span>
+                  <span style={{ color: 'var(--ink)' }}>{fmt(subtotal)}</span>
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, color: '#767676', fontSize: '0.88rem' }}>
                   <span>Phí vận chuyển</span>
-                  <span style={{ color: shipping === 0 ? '#2d6a4f' : '#1a1a1a', fontWeight: 600 }}>
+                  <span style={{ color: shipping === 0 ? '#2d6a4f' : 'var(--ink)', fontWeight: 600 }}>
                     {shipping === 0 ? 'Miễn phí' : fmt(shipping)}
                   </span>
                 </div>
@@ -147,13 +147,13 @@ const Cart = () => {
                 )}
 
                 <div style={{ borderTop: '1.5px solid #e8e4df', paddingTop: 18, marginBottom: 24, display: 'flex', justifyContent: 'space-between', fontWeight: 600, fontSize: '1rem' }}>
-                  <span style={{ color: '#1a1a1a' }}>Tổng cộng</span>
-                  <span style={{ color: '#1a1a1a', fontWeight: 700 }}>{fmt(grandTotal)}</span>
+                  <span style={{ color: 'var(--ink)' }}>Tổng cộng</span>
+                  <span style={{ color: 'var(--ink)', fontWeight: 700 }}>{fmt(grandTotal)}</span>
                 </div>
 
                 <button
                   onClick={() => isAuthenticated ? navigate('/checkout') : openLogin()}
-                  style={{ width: '100%', padding: '13px 0', background: '#1a1a1a', color: 'white', border: 'none', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', cursor: 'pointer' }}
+                  style={{ width: '100%', padding: '13px 0', background: 'var(--ink)', color: 'white', border: 'none', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', cursor: 'pointer' }}
                 >
                   {isAuthenticated ? 'Thanh toán' : 'Đăng nhập để thanh toán'}
                 </button>
@@ -162,7 +162,7 @@ const Cart = () => {
                   <p style={{ textAlign: 'center', marginTop: 14, fontSize: '0.82rem', color: '#aaa' }}>
                     Hoặc{' '}
                     <button type="button" onClick={openRegister}
-                      style={{ background: 'none', border: 'none', padding: 0, color: '#1a1a1a', fontWeight: 700, borderBottom: '1px solid #1a1a1a', cursor: 'pointer', fontSize: '0.82rem' }}>
+                      style={{ background: 'none', border: 'none', padding: 0, color: 'var(--ink)', fontWeight: 700, borderBottom: '1px solid var(--ink)', cursor: 'pointer', fontSize: '0.82rem' }}>
                       tạo tài khoản mới
                     </button>
                   </p>

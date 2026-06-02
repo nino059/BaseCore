@@ -10,7 +10,7 @@ const fmt = (p) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency:
 const inp = {
   width: '100%', padding: '12px 14px',
   border: '1.5px solid #e8e4df', background: 'white',
-  fontSize: '0.95rem', color: '#1a1a1a', outline: 'none',
+  fontSize: '0.95rem', color: 'var(--ink)', outline: 'none',
   boxSizing: 'border-box', transition: 'border-color 0.2s',
 };
 
@@ -80,7 +80,7 @@ const Checkout = () => {
           <h5 style={{ fontWeight: 300, color: '#767676', marginBottom: 8 }}>Giỏ hàng trống, không thể thanh toán</h5>
           <Link to="/shop" style={{
             display: 'inline-block', marginTop: 20, padding: '13px 32px',
-            background: '#1a1a1a', color: 'white',
+            background: 'var(--ink)', color: 'white',
             fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.14em',
             textTransform: 'uppercase', textDecoration: 'none',
           }}>
@@ -92,7 +92,7 @@ const Checkout = () => {
   );
 
   const Label = ({ children }) => (
-    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 8 }}>
+    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 8 }}>
       {children}
     </label>
   );
@@ -104,10 +104,10 @@ const Checkout = () => {
 
           {/* Header */}
           <div style={{ marginBottom: 36 }}>
-            <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.18em', color: '#c8a97a', textTransform: 'uppercase', marginBottom: 8 }}>
+            <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.18em', color: 'var(--brand)', textTransform: 'uppercase', marginBottom: 8 }}>
               Đặt hàng
             </p>
-            <h1 style={{ fontWeight: 200, fontSize: 'clamp(1.4rem,3vw,2rem)', color: '#1a1a1a', letterSpacing: '0.04em', margin: 0 }}>
+            <h1 style={{ fontWeight: 200, fontSize: 'clamp(1.4rem,3vw,2rem)', color: 'var(--ink)', letterSpacing: '0.04em', margin: 0 }}>
               Thanh toán
             </h1>
           </div>
@@ -126,7 +126,7 @@ const Checkout = () => {
               {/* Form địa chỉ */}
               <div className="col-lg-7 mb-4">
                 <div style={{ background: 'white', padding: '28px 32px', boxShadow: '0 2px 16px rgba(0,0,0,0.04)' }}>
-                  <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.16em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 24 }}>
+                  <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.16em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 24 }}>
                     Thông tin giao hàng
                   </p>
 
@@ -135,14 +135,14 @@ const Checkout = () => {
                       <Label>Họ và tên *</Label>
                       <input name="fullName" value={form.fullName} onChange={handleChange} required
                         style={inp} placeholder="Nguyễn Văn A"
-                        onFocus={e => e.target.style.borderColor = '#1a1a1a'}
+                        onFocus={e => e.target.style.borderColor = 'var(--ink)'}
                         onBlur={e => e.target.style.borderColor = '#e8e4df'} />
                     </div>
                     <div className="col-md-6 mb-4">
                       <Label>Số điện thoại *</Label>
                       <input name="phone" value={form.phone} onChange={handleChange} required type="tel"
                         style={inp} placeholder="0901 234 567"
-                        onFocus={e => e.target.style.borderColor = '#1a1a1a'}
+                        onFocus={e => e.target.style.borderColor = 'var(--ink)'}
                         onBlur={e => e.target.style.borderColor = '#e8e4df'} />
                     </div>
                   </div>
@@ -151,7 +151,7 @@ const Checkout = () => {
                     <Label>Địa chỉ *</Label>
                     <input name="address" value={form.address} onChange={handleChange} required
                       style={inp} placeholder="Số nhà, tên đường, phường/xã"
-                      onFocus={e => e.target.style.borderColor = '#1a1a1a'}
+                      onFocus={e => e.target.style.borderColor = 'var(--ink)'}
                       onBlur={e => e.target.style.borderColor = '#e8e4df'} />
                   </div>
 
@@ -160,7 +160,7 @@ const Checkout = () => {
                       <Label>Xã / Phường</Label>
                       <input name="ward" value={form.ward} onChange={handleChange}
                         style={inp} placeholder="Phường Bến Nghé"
-                        onFocus={e => e.target.style.borderColor = '#1a1a1a'}
+                        onFocus={e => e.target.style.borderColor = 'var(--ink)'}
                         onBlur={e => e.target.style.borderColor = '#e8e4df'} />
                     </div>
                     <div className="col-md-6 mb-4">
@@ -178,7 +178,7 @@ const Checkout = () => {
                   <div style={{ marginBottom: 20 }}>
                     <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', userSelect: 'none' }}>
                       <input type="checkbox" checked={saveAddress} onChange={e => setSaveAddress(e.target.checked)}
-                        style={{ width: 16, height: 16, accentColor: '#1a1a1a', cursor: 'pointer' }} />
+                        style={{ width: 16, height: 16, accentColor: 'var(--ink)', cursor: 'pointer' }} />
                       <span style={{ fontSize: '0.85rem', color: '#767676' }}>Lưu địa chỉ giao hàng này vào hồ sơ cá nhân</span>
                     </label>
                   </div>
@@ -188,14 +188,14 @@ const Checkout = () => {
                     <textarea name="note" value={form.note} onChange={handleChange} rows={3}
                       style={{ ...inp, resize: 'vertical' }}
                       placeholder="Ghi chú cho người giao hàng (tùy chọn)"
-                      onFocus={e => e.target.style.borderColor = '#1a1a1a'}
+                      onFocus={e => e.target.style.borderColor = 'var(--ink)'}
                       onBlur={e => e.target.style.borderColor = '#e8e4df'} />
                   </div>
                 </div>
 
                 {/* Phương thức thanh toán */}
                 <div style={{ background: 'white', padding: '28px 32px', boxShadow: '0 2px 16px rgba(0,0,0,0.04)', marginTop: 16 }}>
-                  <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.16em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 20 }}>
+                  <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.16em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 20 }}>
                     Phương thức thanh toán
                   </p>
 
@@ -206,16 +206,16 @@ const Checkout = () => {
                     <label key={opt.value} style={{
                       display: 'flex', alignItems: 'flex-start', gap: 14,
                       padding: '14px 18px', cursor: 'pointer',
-                      border: `1.5px solid ${form.paymentMethod === opt.value ? '#1a1a1a' : '#e8e4df'}`,
+                      border: `1.5px solid ${form.paymentMethod === opt.value ? 'var(--ink)' : '#e8e4df'}`,
                       background: form.paymentMethod === opt.value ? '#f9f6f2' : 'white',
                       marginBottom: 10, transition: 'all 0.18s',
                     }}>
                       <input type="radio" name="paymentMethod" value={opt.value}
                         checked={form.paymentMethod === opt.value}
                         onChange={handleChange}
-                        style={{ marginTop: 3, accentColor: '#1a1a1a' }} />
+                        style={{ marginTop: 3, accentColor: 'var(--ink)' }} />
                       <div>
-                        <div style={{ fontWeight: 600, fontSize: '0.9rem', color: '#1a1a1a' }}>{opt.label}</div>
+                        <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--ink)' }}>{opt.label}</div>
                         <div style={{ color: '#aaa', fontSize: '0.8rem', marginTop: 2 }}>{opt.desc}</div>
                       </div>
                     </label>
@@ -226,7 +226,7 @@ const Checkout = () => {
               {/* Tóm tắt đơn hàng */}
               <div className="col-lg-5">
                 <div style={{ background: 'white', padding: '28px 32px', boxShadow: '0 2px 16px rgba(0,0,0,0.04)', position: 'sticky', top: 80 }}>
-                  <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.16em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 20 }}>
+                  <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.16em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 20 }}>
                     Đơn hàng ({count} sản phẩm)
                   </p>
 
@@ -246,24 +246,24 @@ const Checkout = () => {
                           }
                         </div>
                         <div>
-                          <div style={{ fontWeight: 500, fontSize: '0.85rem', color: '#1a1a1a' }}>{item.name}</div>
+                          <div style={{ fontWeight: 500, fontSize: '0.85rem', color: 'var(--ink)' }}>{item.name}</div>
                           <div style={{ color: '#aaa', fontSize: '0.78rem' }}>×{item.qty}</div>
                         </div>
                       </div>
-                      <span style={{ fontWeight: 600, fontSize: '0.88rem', color: '#1a1a1a' }}>
+                      <span style={{ fontWeight: 600, fontSize: '0.88rem', color: 'var(--ink)' }}>
                         {fmt(item.price * item.qty)}
                       </span>
                     </div>
                   ))}
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', color: '#767676', marginBottom: 8, fontSize: '0.88rem' }}>
-                    <span>Tạm tính</span><span style={{ color: '#1a1a1a' }}>{fmt(total)}</span>
+                    <span>Tạm tính</span><span style={{ color: 'var(--ink)' }}>{fmt(total)}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', color: '#767676', marginBottom: 16, fontSize: '0.88rem' }}>
                     <span>Phí vận chuyển</span>
                     {shipping === 0
                       ? <span style={{ color: '#2d6a4f', fontWeight: 600 }}>Miễn phí</span>
-                      : <span style={{ fontWeight: 600, color: '#1a1a1a' }}>{fmt(shipping)}</span>
+                      : <span style={{ fontWeight: 600, color: 'var(--ink)' }}>{fmt(shipping)}</span>
                     }
                   </div>
                   {shipping > 0 && (
@@ -274,7 +274,7 @@ const Checkout = () => {
                   <div style={{
                     borderTop: '1.5px solid #e8e4df', paddingTop: 16,
                     display: 'flex', justifyContent: 'space-between',
-                    fontWeight: 700, fontSize: '1.05rem', marginBottom: 24, color: '#1a1a1a',
+                    fontWeight: 700, fontSize: '1.05rem', marginBottom: 24, color: 'var(--ink)',
                   }}>
                     <span>Tổng cộng</span>
                     <span>{fmt(grandTotal)}</span>
@@ -282,7 +282,7 @@ const Checkout = () => {
 
                   <button type="submit" disabled={loading} style={{
                     width: '100%', padding: '14px 0',
-                    background: loading ? '#ccc' : '#1a1a1a',
+                    background: loading ? '#ccc' : 'var(--ink)',
                     color: 'white', border: 'none',
                     fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.14em',
                     textTransform: 'uppercase', cursor: loading ? 'not-allowed' : 'pointer',

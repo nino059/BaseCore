@@ -5,12 +5,13 @@ import { productApi } from '../services/api';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useAuthModal } from '../contexts/AuthModalContext';
+import { toImg } from '../utils/image';
 
 const fmt = (p) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p);
 
 const sqBtn = (active = true) => ({
   padding: '13px 28px',
-  background: active ? '#1a1a1a' : '#e5e7eb',
+  background: active ? 'var(--ink)' : '#e5e7eb',
   color: active ? 'white' : '#9ca3af',
   border: 'none',
   fontSize: '0.78rem', fontWeight: 700,
@@ -26,7 +27,7 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [addedMsg, setAddedMsg] = useState('');
-  const { addToCart } = useCart();
+  const { addToCart, items } = useCart();
   const { user, isArtist } = useAuth();
   const { openLogin } = useAuthModal();
 
@@ -45,6 +46,14 @@ const ProductDetail = () => {
 
   const handleAddToCart = () => {
     if (!user) { openLogin(); return; }
+
+    const alreadyInCart = items.some(i => i.id === product.id);
+    if (alreadyInCart) {
+      setAddedMsg(`Tranh "${product.name}" đã có trong giỏ hàng.`);
+      setTimeout(() => setAddedMsg(''), 2500);
+      return;
+    }
+
     addToCart(product, 1);
     setAddedMsg('Đã thêm vào giỏ hàng');
     setTimeout(() => setAddedMsg(''), 3000);
@@ -54,7 +63,7 @@ const ProductDetail = () => {
     <PublicLayout>
       <div style={{ background: '#faf8f5', minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 40, height: 40, border: '2px solid #c8a97a', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }}></div>
+          <div style={{ width: 40, height: 40, border: '2px solid var(--brand)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }}></div>
           <p style={{ color: '#767676', fontSize: '0.9rem', letterSpacing: '0.08em' }}>Đang tải tác phẩm...</p>
         </div>
       </div>
@@ -75,9 +84,7 @@ const ProductDetail = () => {
     </PublicLayout>
   );
 
-  const imgSrc = product.imageUrl
-    ? (product.imageUrl.startsWith('http') ? product.imageUrl : `http://localhost:5000${product.imageUrl}`)
-    : null;
+  const imgSrc = toImg(product.imageUrl);
 
   const inStock = product.status === 'ForSale';
 
@@ -92,7 +99,7 @@ const ProductDetail = () => {
               <li style={{ color: '#ddd' }}>/</li>
               <li><Link to="/shop" style={{ color: '#767676', textDecoration: 'none' }}>Cửa hàng</Link></li>
               <li style={{ color: '#ddd' }}>/</li>
-              <li style={{ color: '#1a1a1a' }}>{product.name}</li>
+              <li style={{ color: 'var(--ink)' }}>{product.name}</li>
             </ol>
           </nav>
 
@@ -113,7 +120,7 @@ const ProductDetail = () => {
 
               <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
                 {product.categoryName && (
-                  <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em', color: '#c8a97a', textTransform: 'uppercase' }}>
+                  <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--brand)', textTransform: 'uppercase' }}>
                     {product.categoryName}
                   </span>
                 )}
@@ -130,7 +137,7 @@ const ProductDetail = () => {
                 )}
               </div>
 
-              <h1 style={{ fontWeight: 300, fontSize: 'clamp(1.4rem, 3vw, 2rem)', color: '#1a1a1a', letterSpacing: '0.02em', lineHeight: 1.3, marginBottom: 24 }}>
+              <h1 style={{ fontWeight: 300, fontSize: 'clamp(1.4rem, 3vw, 2rem)', color: 'var(--ink)', letterSpacing: '0.02em', lineHeight: 1.3, marginBottom: 24 }}>
                 {product.name}
               </h1>
 
@@ -140,19 +147,19 @@ const ProductDetail = () => {
                   {product.material && (
                     <div>
                       <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.14em', color: '#aaa', textTransform: 'uppercase', marginBottom: 4 }}>Chất liệu</div>
-                      <div style={{ fontSize: '0.9rem', fontWeight: 500, color: '#1a1a1a' }}>{product.material}</div>
+                      <div style={{ fontSize: '0.9rem', fontWeight: 500, color: 'var(--ink)' }}>{product.material}</div>
                     </div>
                   )}
                   {product.theme && (
                     <div>
                       <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.14em', color: '#aaa', textTransform: 'uppercase', marginBottom: 4 }}>Chủ đề</div>
-                      <div style={{ fontSize: '0.9rem', fontWeight: 500, color: '#1a1a1a' }}>{product.theme}</div>
+                      <div style={{ fontSize: '0.9rem', fontWeight: 500, color: 'var(--ink)' }}>{product.theme}</div>
                     </div>
                   )}
                   {(product.width || product.height) && (
                     <div>
                       <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.14em', color: '#aaa', textTransform: 'uppercase', marginBottom: 4 }}>Kích thước</div>
-                      <div style={{ fontSize: '0.9rem', fontWeight: 500, color: '#1a1a1a' }}>
+                      <div style={{ fontSize: '0.9rem', fontWeight: 500, color: 'var(--ink)' }}>
                         {product.width && product.height
                           ? `${product.width} × ${product.height} cm`
                           : product.width ? `${product.width} cm (rộng)` : `${product.height} cm (cao)`
@@ -164,7 +171,7 @@ const ProductDetail = () => {
               )}
 
               <div style={{ marginBottom: 24, paddingBottom: 24, borderBottom: '1px solid #e8e4df' }}>
-                <span style={{ fontSize: '1.7rem', fontWeight: 300, color: '#1a1a1a', letterSpacing: '0.02em' }}>
+                <span style={{ fontSize: '1.7rem', fontWeight: 300, color: 'var(--ink)', letterSpacing: '0.02em' }}>
                   {fmt(product.price)}
                 </span>
               </div>
@@ -195,8 +202,16 @@ const ProductDetail = () => {
               </div>
 
               {addedMsg && (
-                <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', color: '#166534', padding: '11px 16px', fontSize: '0.85rem', marginBottom: 20, letterSpacing: '0.01em' }}>
-                  <i className="fas fa-check mr-2"></i>{addedMsg}
+                <div style={{
+                  background: addedMsg.includes('đã có') ? '#fef3c7' : '#f0fdf4',
+                  border: addedMsg.includes('đã có') ? '1px solid #fcd34d' : '1px solid #bbf7d0',
+                  color: addedMsg.includes('đã có') ? '#92400e' : '#166534',
+                  padding: '11px 16px',
+                  fontSize: '0.85rem',
+                  marginBottom: 20,
+                  letterSpacing: '0.01em'
+                }}>
+                  <i className={`fas ${addedMsg.includes('đã có') ? 'fa-exclamation-circle' : 'fa-check'} mr-2`}></i>{addedMsg}
                 </div>
               )}
 
@@ -208,7 +223,7 @@ const ProductDetail = () => {
                 <button
                   onClick={() => { if (inStock) { handleAddToCart(); navigate('/checkout'); } }}
                   disabled={!inStock}
-                  style={{ ...sqBtn(inStock), flex: 1, minWidth: 160, padding: '14px 0', background: inStock ? 'transparent' : '#e5e7eb', border: inStock ? '1.5px solid #1a1a1a' : 'none', color: inStock ? '#1a1a1a' : '#9ca3af' }}>
+                  style={{ ...sqBtn(inStock), flex: 1, minWidth: 160, padding: '14px 0', background: inStock ? 'transparent' : '#e5e7eb', border: inStock ? '1.5px solid var(--ink)' : 'none', color: inStock ? 'var(--ink)' : '#9ca3af' }}>
                   Mua ngay
                 </button>
               </div>

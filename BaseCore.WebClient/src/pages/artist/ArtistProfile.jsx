@@ -6,7 +6,7 @@ import { userApi } from '../../services/api';
 const inp = {
   width: '100%', padding: '11px 14px',
   border: '1.5px solid #e8e4df', background: 'white',
-  fontSize: '0.92rem', color: '#1a1a1a', outline: 'none',
+  fontSize: '0.92rem', color: 'var(--ink)', outline: 'none',
   boxSizing: 'border-box', borderRadius: 6, transition: 'border-color 0.2s',
 };
 
@@ -138,10 +138,10 @@ const ArtistProfile = () => {
           <div style={{ position: 'relative', flexShrink: 0 }}>
             <div style={{
               width: 110, height: 110, borderRadius: '50%',
-              border: '3px solid #c8a97a',
+              border: '3px solid var(--brand)',
               overflow: 'hidden',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: showImg ? '#f0ece8' : 'linear-gradient(135deg,#c8a97a,#8b6c4a)',
+              background: showImg ? '#f0ece8' : 'linear-gradient(135deg,var(--brand),var(--brand-dark))',
             }}>
               {showImg ? (
                 <img
@@ -163,7 +163,7 @@ const ArtistProfile = () => {
                 position: 'absolute', bottom: 2, right: 2,
                 width: 32, height: 32, borderRadius: '50%',
                 border: '2.5px solid white',
-                background: avatarLoading ? '#aaa' : '#c8a97a',
+                background: avatarLoading ? '#aaa' : 'var(--brand)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 cursor: avatarLoading ? 'not-allowed' : 'pointer', padding: 0,
                 boxShadow: '0 2px 8px rgba(0,0,0,0.18)',
@@ -179,13 +179,13 @@ const ArtistProfile = () => {
 
           {/* Info */}
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontWeight: 700, fontSize: '1.15rem', color: '#1a1a1a', marginBottom: 4 }}>
+            <div style={{ fontWeight: 700, fontSize: '1.15rem', color: 'var(--ink)', marginBottom: 4 }}>
               {user?.name || user?.username}
             </div>
             <div style={{ fontSize: '0.85rem', color: '#767676', marginBottom: 10 }}>{user?.email}</div>
             <span style={{
               display: 'inline-block', padding: '3px 12px',
-              background: 'rgba(200,169,122,0.15)', color: '#8b6c4a',
+              background: 'rgba(200,169,122,0.15)', color: 'var(--brand-dark)',
               fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.1em',
               borderRadius: 20, border: '1px solid rgba(200,169,122,0.4)',
             }}>
@@ -224,8 +224,8 @@ const ArtistProfile = () => {
               background: 'transparent',
               fontWeight: tab === t.key ? 700 : 400,
               fontSize: '0.85rem', letterSpacing: '0.03em',
-              color: tab === t.key ? '#c8a97a' : '#767676',
-              borderBottom: tab === t.key ? '2px solid #c8a97a' : '2px solid transparent',
+              color: tab === t.key ? 'var(--brand)' : '#767676',
+              borderBottom: tab === t.key ? '2px solid var(--brand)' : '2px solid transparent',
               marginBottom: -2, transition: 'all 0.18s',
               display: 'flex', alignItems: 'center', gap: 7,
             }}>
@@ -242,7 +242,7 @@ const ArtistProfile = () => {
           {tab === 'info' && (
             <form onSubmit={handleInfoSubmit}>
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 8 }}>
+                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 8 }}>
                   Tên hiển thị <span style={{ color: '#ef4444' }}>*</span>
                 </label>
                 <input
@@ -252,13 +252,13 @@ const ArtistProfile = () => {
                   placeholder="Tên họa sĩ của bạn"
                   required
                   style={inp}
-                  onFocus={e => e.target.style.borderColor = '#c8a97a'}
+                  onFocus={e => e.target.style.borderColor = 'var(--brand)'}
                   onBlur={e => e.target.style.borderColor = '#e8e4df'}
                 />
               </div>
 
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 8 }}>
+                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 8 }}>
                   Email
                 </label>
                 <input
@@ -271,7 +271,7 @@ const ArtistProfile = () => {
               </div>
 
               <div style={{ marginBottom: 28 }}>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 8 }}>
+                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 8 }}>
                   Số điện thoại
                 </label>
                 <input
@@ -280,14 +280,14 @@ const ArtistProfile = () => {
                   onChange={e => setForm({ ...form, phone: e.target.value })}
                   placeholder="0901 234 567"
                   style={inp}
-                  onFocus={e => e.target.style.borderColor = '#c8a97a'}
+                  onFocus={e => e.target.style.borderColor = 'var(--brand)'}
                   onBlur={e => e.target.style.borderColor = '#e8e4df'}
                 />
               </div>
 
               <button type="submit" disabled={loading} style={{
                 padding: '12px 32px', borderRadius: 8,
-                background: loading ? '#e0d6c8' : 'linear-gradient(135deg,#c8a97a,#8b6c4a)',
+                background: loading ? '#e0d6c8' : 'linear-gradient(135deg,var(--brand),var(--brand-dark))',
                 color: 'white', border: 'none',
                 fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.1em',
                 textTransform: 'uppercase', cursor: loading ? 'not-allowed' : 'pointer',
@@ -302,7 +302,7 @@ const ArtistProfile = () => {
           {tab === 'bio' && (
             <form onSubmit={handleBioSubmit}>
               <div style={{ marginBottom: 8 }}>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 8 }}>
+                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 8 }}>
                   Giới thiệu về bạn
                 </label>
                 <textarea
@@ -316,7 +316,7 @@ const ArtistProfile = () => {
                     lineHeight: 1.7,
                     minHeight: 200,
                   }}
-                  onFocus={e => e.target.style.borderColor = '#c8a97a'}
+                  onFocus={e => e.target.style.borderColor = 'var(--brand)'}
                   onBlur={e => e.target.style.borderColor = '#e8e4df'}
                 />
                 <p style={{ fontSize: '0.73rem', color: '#bbb', marginTop: 6 }}>
@@ -326,7 +326,7 @@ const ArtistProfile = () => {
 
               <button type="submit" disabled={loading || bio.length > 2000} style={{
                 padding: '12px 32px', borderRadius: 8,
-                background: (loading || bio.length > 2000) ? '#e0d6c8' : 'linear-gradient(135deg,#c8a97a,#8b6c4a)',
+                background: (loading || bio.length > 2000) ? '#e0d6c8' : 'linear-gradient(135deg,var(--brand),var(--brand-dark))',
                 color: 'white', border: 'none',
                 fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.1em',
                 textTransform: 'uppercase', cursor: (loading || bio.length > 2000) ? 'not-allowed' : 'pointer',
@@ -346,7 +346,7 @@ const ArtistProfile = () => {
                 { name: 'confirmPassword', label: 'Xác nhận mật khẩu mới', placeholder: '••••••••' },
               ].map(f => (
                 <div key={f.name} style={{ marginBottom: 20 }}>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 8 }}>
+                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 8 }}>
                     {f.label}
                   </label>
                   <input
@@ -356,14 +356,14 @@ const ArtistProfile = () => {
                     placeholder={f.placeholder}
                     required
                     style={inp}
-                    onFocus={e => e.target.style.borderColor = '#c8a97a'}
+                    onFocus={e => e.target.style.borderColor = 'var(--brand)'}
                     onBlur={e => e.target.style.borderColor = '#e8e4df'}
                   />
                 </div>
               ))}
               <button type="submit" disabled={loading} style={{
                 padding: '12px 32px', borderRadius: 8,
-                background: loading ? '#e0d6c8' : 'linear-gradient(135deg,#c8a97a,#8b6c4a)',
+                background: loading ? '#e0d6c8' : 'linear-gradient(135deg,var(--brand),var(--brand-dark))',
                 color: 'white', border: 'none',
                 fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.1em',
                 textTransform: 'uppercase', cursor: loading ? 'not-allowed' : 'pointer',

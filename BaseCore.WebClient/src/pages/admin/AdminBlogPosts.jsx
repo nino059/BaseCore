@@ -52,7 +52,7 @@ const miniBtn = (bg, color) => ({
 });
 
 const insertBtn = () => ({
-  padding: '4px 12px', background: 'white', color: '#8b6c4a',
+  padding: '4px 12px', background: 'white', color: 'var(--brand-dark)',
   border: '1px solid #d4c5af', fontSize: '0.72rem', fontWeight: 600,
   letterSpacing: '0.06em', cursor: 'pointer', borderRadius: 20,
   display: 'inline-flex', alignItems: 'center',
@@ -108,11 +108,11 @@ const BlockEditor = ({ blocks, onChange }) => {
         <div key={block.id} style={{ position: 'relative' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end', marginBottom: 4 }}>
             <button type="button" onClick={() => moveUp(idx)} disabled={idx === 0}
-              style={miniBtn(idx === 0 ? '#e5e7eb' : '#f0ede8', idx === 0 ? '#ccc' : '#8b6c4a')} title="Di chuyển lên">
+              style={miniBtn(idx === 0 ? '#e5e7eb' : '#f0ede8', idx === 0 ? '#ccc' : 'var(--brand-dark)')} title="Di chuyển lên">
               <i className="fas fa-arrow-up" style={{ fontSize: '0.65rem' }} />
             </button>
             <button type="button" onClick={() => moveDown(idx)} disabled={idx === blocks.length - 1}
-              style={miniBtn(idx === blocks.length - 1 ? '#e5e7eb' : '#f0ede8', idx === blocks.length - 1 ? '#ccc' : '#8b6c4a')} title="Di chuyển xuống">
+              style={miniBtn(idx === blocks.length - 1 ? '#e5e7eb' : '#f0ede8', idx === blocks.length - 1 ? '#ccc' : 'var(--brand-dark)')} title="Di chuyển xuống">
               <i className="fas fa-arrow-down" style={{ fontSize: '0.65rem' }} />
             </button>
             <button type="button" onClick={() => remove(idx)}
@@ -131,7 +131,7 @@ const BlockEditor = ({ blocks, onChange }) => {
                 border: '1.5px solid #e8e4df', fontSize: '0.92rem',
                 lineHeight: 1.7, resize: 'vertical', minHeight: 100,
                 outline: 'none', background: 'white', boxSizing: 'border-box',
-                color: '#1a1a1a', fontFamily: 'inherit',
+                color: 'var(--ink)', fontFamily: 'inherit',
               }}
             />
           ) : (
@@ -154,7 +154,7 @@ const BlockEditor = ({ blocks, onChange }) => {
                     onChange={e => handleImageFile(idx, e.target.files[0])}
                   />
                   {block.uploading ? (
-                    <div style={{ color: '#c8a97a', fontSize: '0.88rem' }}>
+                    <div style={{ color: 'var(--brand)', fontSize: '0.88rem' }}>
                       <i className="fas fa-spinner fa-spin" style={{ marginRight: 8 }} />Đang tải ảnh...
                     </div>
                   ) : (
@@ -240,12 +240,12 @@ const BlogEditor = ({ post, onSave, onClose }) => {
 
   const lbl = {
     display: 'block', fontSize: '0.7rem', fontWeight: 700,
-    letterSpacing: '0.1em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 5,
+    letterSpacing: '0.1em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 5,
   };
   const inp = {
     width: '100%', padding: '9px 12px',
     border: '1.5px solid #e8e4df', fontSize: '0.88rem',
-    outline: 'none', background: 'white', boxSizing: 'border-box', color: '#1a1a1a',
+    outline: 'none', background: 'white', boxSizing: 'border-box', color: 'var(--ink)',
     fontFamily: 'inherit',
   };
 
@@ -255,18 +255,18 @@ const BlogEditor = ({ post, onSave, onClose }) => {
         {/* Header */}
         <div style={{ padding: '16px 28px', borderBottom: '1px solid #e8e4df', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: 'white', zIndex: 10, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
           <div>
-            <p style={{ margin: 0, fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.16em', color: '#c8a97a', textTransform: 'uppercase' }}>Quản trị viên</p>
-            <h2 style={{ margin: 0, fontWeight: 500, fontSize: '1.1rem', color: '#1a1a1a' }}>
+            <p style={{ margin: 0, fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.16em', color: 'var(--brand)', textTransform: 'uppercase' }}>Quản trị viên</p>
+            <h2 style={{ margin: 0, fontWeight: 500, fontSize: '1.1rem', color: 'var(--ink)' }}>
               {post ? 'Chỉnh sửa bài viết' : 'Đăng bài viết mới'}
             </h2>
           </div>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
             <button type="button" onClick={onClose}
-              style={{ padding: '8px 20px', background: '#f0ede8', color: '#1a1a1a', border: 'none', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}>
+              style={{ padding: '8px 20px', background: '#f0ede8', color: 'var(--ink)', border: 'none', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}>
               Hủy
             </button>
             <button type="button" onClick={handleSubmit} disabled={saving}
-              style={{ padding: '8px 24px', background: 'linear-gradient(135deg,#c8a97a,#8b6c4a)', color: 'white', border: 'none', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1 }}>
+              style={{ padding: '8px 24px', background: 'linear-gradient(135deg,var(--brand),var(--brand-dark))', color: 'white', border: 'none', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1 }}>
               {saving ? 'Đang lưu...' : (post ? 'Lưu thay đổi' : 'Đăng ngay')}
             </button>
           </div>
@@ -325,7 +325,7 @@ const BlogEditor = ({ post, onSave, onClose }) => {
                 <input ref={coverRef} type="file" accept="image/*" style={{ display: 'none' }}
                   onChange={e => handleCoverFile(e.target.files[0])} />
                 {coverUploading ? (
-                  <div style={{ color: '#c8a97a', fontSize: '0.9rem' }}>
+                  <div style={{ color: 'var(--brand)', fontSize: '0.9rem' }}>
                     <i className="fas fa-spinner fa-spin" style={{ marginRight: 8 }} />Đang tải...
                   </div>
                 ) : (
@@ -341,7 +341,7 @@ const BlogEditor = ({ post, onSave, onClose }) => {
 
           {/* Divider */}
           <div style={{ borderTop: '1px solid #e8e4df', marginBottom: 20 }}>
-            <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.14em', color: '#c8a97a', textTransform: 'uppercase', marginTop: 16, marginBottom: 12 }}>
+            <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--brand)', textTransform: 'uppercase', marginTop: 16, marginBottom: 12 }}>
               Nội dung bài viết
             </p>
           </div>
@@ -430,7 +430,7 @@ const AdminBlogPosts = () => {
       {/* KPI Cards */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12, marginBottom:18 }}>
         {[
-          { key:'all',       label:'Tổng bài viết', color:'#c8a97a', bg:'#f5edd6', icon:'fa-newspaper'    },
+          { key:'all',       label:'Tổng bài viết', color:'var(--brand)', bg:'#f5edd6', icon:'fa-newspaper'    },
           { key:'Pending',   label:'Chờ duyệt',     color:'#92400e', bg:'#fef3c7', icon:'fa-clock'        },
           { key:'Published', label:'Đã đăng',        color:'#065f46', bg:'#d1fae5', icon:'fa-check-circle' },
           { key:'Rejected',  label:'Từ chối',        color:'#991b1b', bg:'#fee2e2', icon:'fa-times-circle' },
@@ -466,9 +466,9 @@ const AdminBlogPosts = () => {
         <div style={{ background:'white', borderRadius:16, overflow:'hidden', boxShadow:'0 2px 12px rgba(0,0,0,.06)' }}>
           <div style={{ padding:'14px 20px', borderBottom:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
             <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-              <i className="fas fa-newspaper" style={{ color:'#c8a97a', fontSize:'0.85rem' }} />
+              <i className="fas fa-newspaper" style={{ color:'var(--brand)', fontSize:'0.85rem' }} />
               <span style={{ fontWeight:700, color:'#1e293b', fontSize:'0.92rem' }}>Danh sách bài viết</span>
-              <span style={{ background:'#f5edd6', color:'#c8a97a', borderRadius:20, padding:'2px 10px', fontSize:'0.73rem', fontWeight:700 }}>{filtered.length}</span>
+              <span style={{ background:'#f5edd6', color:'var(--brand)', borderRadius:20, padding:'2px 10px', fontSize:'0.73rem', fontWeight:700 }}>{filtered.length}</span>
             </div>
           </div>
           <table style={{ width:'100%', borderCollapse:'collapse' }}>
@@ -491,7 +491,7 @@ const AdminBlogPosts = () => {
                       textOverflow:'ellipsis', whiteSpace:'nowrap', maxWidth:280 }}>{p.excerpt}</div>}
                   </td>
                   <td style={{ padding:'14px 16px', fontSize:'0.85rem', color:'#475569', whiteSpace:'nowrap' }}>{p.authorName || '—'}</td>
-                  <td style={{ padding:'14px 16px', fontSize:'0.82rem', color:'#8b6c4a', whiteSpace:'nowrap' }}>{p.category || '—'}</td>
+                  <td style={{ padding:'14px 16px', fontSize:'0.82rem', color:'var(--brand-dark)', whiteSpace:'nowrap' }}>{p.category || '—'}</td>
                   <td style={{ padding:'14px 16px', fontSize:'0.82rem', color:'#94a3b8', whiteSpace:'nowrap' }}>
                     {new Date(p.createdAt).toLocaleDateString('vi-VN')}
                   </td>
@@ -503,7 +503,7 @@ const AdminBlogPosts = () => {
                         <i className="fas fa-eye" style={{ fontSize:'0.78rem' }} />
                       </button>
                       <button onClick={() => openEdit(p)} title="Chỉnh sửa"
-                        style={{ width:32, height:32, borderRadius:8, border:'none', cursor:'pointer', background:'#f5edd6', color:'#c8a97a' }}>
+                        style={{ width:32, height:32, borderRadius:8, border:'none', cursor:'pointer', background:'#f5edd6', color:'var(--brand)' }}>
                         <i className="fas fa-pen" style={{ fontSize:'0.78rem' }} />
                       </button>
                       {p.status === 'Pending' && (
@@ -584,7 +584,7 @@ const AdminBlogPosts = () => {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                 <div>
-                  <p style={{ margin: 0, fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.14em', color: '#c8a97a', textTransform: 'uppercase' }}>
+                  <p style={{ margin: 0, fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--brand)', textTransform: 'uppercase' }}>
                     XEM TRƯỚC KHI DUYỆT
                   </p>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 2 }}>

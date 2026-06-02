@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 const inp = {
   width: '100%', padding: '13px 16px',
   border: '1.5px solid #e8e4df', background: 'white',
-  fontSize: '0.95rem', color: '#1a1a1a', outline: 'none',
+  fontSize: '0.95rem', color: 'var(--ink)', outline: 'none',
   boxSizing: 'border-box', transition: 'border-color 0.2s',
 };
 
@@ -41,8 +41,8 @@ const Login = () => {
       {/* Logo góc trên */}
       <div style={{ position: 'fixed', top: 24, left: 32 }}>
         <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: '1.4rem', color: '#c8a97a' }}>✦</span>
-          <span style={{ fontWeight: 300, fontSize: '1.2rem', color: '#1a1a1a', letterSpacing: '0.08em' }}>ARTHENTIC</span>
+          <span style={{ fontSize: '1.4rem', color: 'var(--brand)' }}>✦</span>
+          <span style={{ fontWeight: 300, fontSize: '1.2rem', color: 'var(--ink)', letterSpacing: '0.08em' }}>ARTHENTIC</span>
         </Link>
       </div>
 
@@ -50,10 +50,10 @@ const Login = () => {
 
         {/* Tiêu đề */}
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.18em', color: '#c8a97a', textTransform: 'uppercase', marginBottom: 12 }}>
+          <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.18em', color: 'var(--brand)', textTransform: 'uppercase', marginBottom: 12 }}>
             Chào mừng trở lại
           </p>
-          <h1 style={{ fontWeight: 200, fontSize: '2rem', color: '#1a1a1a', letterSpacing: '0.04em', margin: 0 }}>
+          <h1 style={{ fontWeight: 200, fontSize: '2rem', color: 'var(--ink)', letterSpacing: '0.04em', margin: 0 }}>
             Đăng nhập
           </h1>
         </div>
@@ -73,7 +73,7 @@ const Login = () => {
 
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: 20 }}>
-              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 8 }}>
+              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 8 }}>
                 Tên đăng nhập
               </label>
               <input
@@ -83,13 +83,13 @@ const Login = () => {
                 placeholder="Nhập tên đăng nhập"
                 required autoFocus
                 style={inp}
-                onFocus={e => e.target.style.borderColor = '#1a1a1a'}
+                onFocus={e => e.target.style.borderColor = 'var(--ink)'}
                 onBlur={e => e.target.style.borderColor = '#e8e4df'}
               />
             </div>
 
             <div style={{ marginBottom: 28 }}>
-              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 8 }}>
+              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 8 }}>
                 Mật khẩu
               </label>
               <div style={{ position: 'relative' }}>
@@ -100,7 +100,7 @@ const Login = () => {
                   placeholder="Nhập mật khẩu"
                   required
                   style={{ ...inp, paddingRight: 44 }}
-                  onFocus={e => e.target.style.borderColor = '#1a1a1a'}
+                  onFocus={e => e.target.style.borderColor = 'var(--ink)'}
                   onBlur={e => e.target.style.borderColor = '#e8e4df'}
                 />
                 <button
@@ -118,7 +118,7 @@ const Login = () => {
                   type="checkbox"
                   checked={remember}
                   onChange={e => setRemember(e.target.checked)}
-                  style={{ accentColor: '#1a1a1a', width: 15, height: 15 }}
+                  style={{ accentColor: 'var(--ink)', width: 15, height: 15 }}
                 />
                 Ghi nhớ đăng nhập
               </label>
@@ -129,7 +129,7 @@ const Login = () => {
               disabled={loading}
               style={{
                 width: '100%', padding: '14px 0',
-                background: loading ? '#ccc' : '#1a1a1a',
+                background: loading ? '#ccc' : 'var(--ink)',
                 color: 'white', border: 'none',
                 fontSize: '0.8rem', fontWeight: 700,
                 letterSpacing: '0.15em', textTransform: 'uppercase',
@@ -147,7 +147,7 @@ const Login = () => {
           <div style={{ marginTop: 28, textAlign: 'center', borderTop: '1px solid #f0ece6', paddingTop: 24 }}>
             <p style={{ fontSize: '0.88rem', color: '#767676', margin: 0 }}>
               Chưa có tài khoản?{' '}
-              <Link to="/register" style={{ color: '#1a1a1a', fontWeight: 700, textDecoration: 'none', borderBottom: '1px solid #1a1a1a' }}>
+              <Link to="/register" style={{ color: 'var(--ink)', fontWeight: 700, textDecoration: 'none', borderBottom: '1px solid var(--ink)' }}>
                 Đăng ký ngay
               </Link>
             </p>

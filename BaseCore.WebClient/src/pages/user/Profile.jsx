@@ -6,7 +6,7 @@ import PublicLayout from '../../components/PublicLayout';
 const inp = {
   width: '100%', padding: '12px 16px',
   border: '1.5px solid #e8e4df', background: 'white',
-  fontSize: '0.95rem', color: '#1a1a1a', outline: 'none',
+  fontSize: '0.95rem', color: 'var(--ink)', outline: 'none',
   boxSizing: 'border-box', transition: 'border-color 0.2s',
 };
 
@@ -103,10 +103,10 @@ const Profile = () => {
 
           {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.18em', color: '#c8a97a', textTransform: 'uppercase', marginBottom: 10 }}>
+            <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.18em', color: 'var(--brand)', textTransform: 'uppercase', marginBottom: 10 }}>
               Tài khoản
             </p>
-            <h1 style={{ fontWeight: 200, fontSize: 'clamp(1.4rem, 3vw, 2rem)', color: '#1a1a1a', letterSpacing: '0.04em', margin: 0 }}>
+            <h1 style={{ fontWeight: 200, fontSize: 'clamp(1.4rem, 3vw, 2rem)', color: 'var(--ink)', letterSpacing: '0.04em', margin: 0 }}>
               Hồ sơ cá nhân
             </h1>
           </div>
@@ -119,8 +119,8 @@ const Profile = () => {
           }}>
             <div style={{ position: 'relative', flexShrink: 0 }}>
               <div style={{
-                width: 72, height: 72, background: '#1a1a1a', overflow: 'hidden',
-                borderRadius: '50%', border: '2px solid #c8a97a',
+                width: 72, height: 72, background: 'var(--ink)', overflow: 'hidden',
+                borderRadius: '50%', border: '2px solid var(--brand)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 color: 'white', fontSize: '1.8rem', fontWeight: 300,
               }}>
@@ -136,7 +136,7 @@ const Profile = () => {
                 style={{
                   position: 'absolute', bottom: -6, right: -6,
                   width: 26, height: 26, border: '2px solid white',
-                  borderRadius: '50%', background: '#1a1a1a',
+                  borderRadius: '50%', background: 'var(--ink)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   cursor: avatarLoading ? 'not-allowed' : 'pointer', padding: 0,
                 }}
@@ -149,7 +149,7 @@ const Profile = () => {
               <input ref={avatarInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleAvatarChange} />
             </div>
             <div>
-              <div style={{ fontWeight: 600, fontSize: '1.05rem', color: '#1a1a1a', marginBottom: 4 }}>
+              <div style={{ fontWeight: 600, fontSize: '1.05rem', color: 'var(--ink)', marginBottom: 4 }}>
                 {user?.fullName || user?.username}
               </div>
               <div style={{ fontSize: '0.85rem', color: '#767676', marginBottom: 8 }}>{user?.email}</div>
@@ -172,8 +172,8 @@ const Profile = () => {
                 background: 'transparent',
                 fontWeight: tab === t.key ? 700 : 400,
                 fontSize: '0.85rem', letterSpacing: '0.04em',
-                color: tab === t.key ? '#1a1a1a' : '#767676',
-                borderBottom: tab === t.key ? '2px solid #1a1a1a' : '2px solid transparent',
+                color: tab === t.key ? 'var(--ink)' : '#767676',
+                borderBottom: tab === t.key ? '2px solid var(--ink)' : '2px solid transparent',
                 marginBottom: -1.5, transition: 'all 0.18s',
               }}>
                 {t.label}
@@ -206,7 +206,7 @@ const Profile = () => {
                   { key: 'phone',    label: 'Số điện thoại', type: 'tel',   placeholder: '0901 234 567',  disabled: false },
                 ].map(f => (
                   <div key={f.key} style={{ marginBottom: 22 }}>
-                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 8 }}>
+                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 8 }}>
                       {f.label}
                     </label>
                     <input
@@ -218,10 +218,10 @@ const Profile = () => {
                       style={{
                         ...inp,
                         background: f.disabled ? '#faf8f5' : 'white',
-                        color: f.disabled ? '#aaa' : '#1a1a1a',
+                        color: f.disabled ? '#aaa' : 'var(--ink)',
                         cursor: f.disabled ? 'not-allowed' : 'text',
                       }}
-                      onFocus={e => !f.disabled && (e.target.style.borderColor = '#1a1a1a')}
+                      onFocus={e => !f.disabled && (e.target.style.borderColor = 'var(--ink)')}
                       onBlur={e => (e.target.style.borderColor = '#e8e4df')}
                     />
                     {f.disabled && (
@@ -231,7 +231,7 @@ const Profile = () => {
                 ))}
                 <div style={{ marginTop: 32 }}>
                   <button type="submit" disabled={loading} style={{
-                    padding: '13px 32px', background: loading ? '#ccc' : '#1a1a1a',
+                    padding: '13px 32px', background: loading ? '#ccc' : 'var(--ink)',
                     color: 'white', border: 'none',
                     fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.14em',
                     textTransform: 'uppercase', cursor: loading ? 'not-allowed' : 'pointer',
@@ -251,7 +251,7 @@ const Profile = () => {
                   { name: 'confirmPassword', label: 'Xác nhận mật khẩu mới', placeholder: '••••••••' },
                 ].map(f => (
                   <div key={f.name} style={{ marginBottom: 22 }}>
-                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 8 }}>
+                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 8 }}>
                       {f.label}
                     </label>
                     <input
@@ -261,14 +261,14 @@ const Profile = () => {
                       placeholder={f.placeholder}
                       required
                       style={inp}
-                      onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
+                      onFocus={e => (e.target.style.borderColor = 'var(--ink)')}
                       onBlur={e => (e.target.style.borderColor = '#e8e4df')}
                     />
                   </div>
                 ))}
                 <div style={{ marginTop: 32 }}>
                   <button type="submit" disabled={loading} style={{
-                    padding: '13px 32px', background: loading ? '#ccc' : '#1a1a1a',
+                    padding: '13px 32px', background: loading ? '#ccc' : 'var(--ink)',
                     color: 'white', border: 'none',
                     fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.14em',
                     textTransform: 'uppercase', cursor: loading ? 'not-allowed' : 'pointer',

@@ -135,7 +135,7 @@ const Artists = () => {
         }
         .artist-portrait-fallback {
           width: 100%; height: 100%;
-          background: linear-gradient(160deg, #c8a97a 0%, #8b6c4a 100%);
+          background: linear-gradient(160deg, var(--brand) 0%, var(--brand-dark) 100%);
           display: flex; align-items: center; justify-content: center;
         }
         .artist-portrait-initial {
@@ -170,11 +170,11 @@ const Artists = () => {
         .artist-info { padding: 0 2px; }
         .artist-cats {
           font-size: 0.6rem; font-weight: 700; letter-spacing: 0.16em;
-          color: #c8a97a; text-transform: uppercase;
+          color: var(--brand); text-transform: uppercase;
           margin: 0 0 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .artist-name {
-          font-weight: 500; font-size: 1rem; color: #1a1a1a;
+          font-weight: 500; font-size: 1rem; color: var(--ink);
           margin: 0 0 6px; letter-spacing: 0.02em;
           transition: color 0.2s;
         }
@@ -184,14 +184,14 @@ const Artists = () => {
         }
         .artist-readmore {
           font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em;
-          color: #c8a97a; text-transform: uppercase;
+          color: var(--brand); text-transform: uppercase;
           opacity: 0; transition: opacity 0.2s;
         }
 
         /* Hover effects */
         .artist-card-link:hover .artist-portrait-img { transform: scale(1.05); }
         .artist-card-link:hover .artist-overlay { opacity: 1; }
-        .artist-card-link:hover .artist-name { color: #8b6c4a !important; }
+        .artist-card-link:hover .artist-name { color: var(--brand-dark) !important; }
         .artist-card-link:hover .artist-readmore { opacity: 1; }
 
         /* Skeleton */
@@ -202,7 +202,7 @@ const Artists = () => {
       <div style={{ background: 'white', borderBottom: '1px solid #e8e4df', padding: '28px 0 24px' }}>
         <div className="container">
           <h1 style={{ 
-            color: '#1a1a1a', 
+            color: 'var(--ink)', 
             fontWeight: 500, 
             fontSize: 'clamp(1.9rem, 4.2vw, 2.7rem)', 
             letterSpacing: '0.01em', 
@@ -216,17 +216,17 @@ const Artists = () => {
       </div>
 
       {/* Search bar */}
-      <div style={{ background: '#faf8f5', borderBottom: '1px solid #e8e4df', padding: '16px 0' }}>
+      <div style={{ background: '#faf8f5', padding: '16px 0' }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <div style={{ position: 'relative', width: 280 }}>
             <i className="fas fa-search" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#aaa', fontSize: '0.78rem' }} />
             <input
               type="text"
-              placeholder="Tìm họa sĩ..."
+              placeholder="Tìm tên họa sĩ..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              style={{ width: '100%', padding: '8px 32px 8px 34px', border: '1px solid #e8e4df', fontSize: '0.82rem', outline: 'none', boxSizing: 'border-box', color: '#1a1a1a', background: 'white' }}
-              onFocus={e => e.target.style.borderColor = '#1a1a1a'}
+              style={{ width: '100%', padding: '8px 32px 8px 34px', border: '1px solid #e8e4df', fontSize: '0.82rem', outline: 'none', boxSizing: 'border-box', color: 'var(--ink)', background: 'white' }}
+              onFocus={e => e.target.style.borderColor = 'var(--ink)'}
               onBlur={e => e.target.style.borderColor = '#e8e4df'}
             />
             {search && (
@@ -237,7 +237,7 @@ const Artists = () => {
       </div>
 
       {/* ── Artist grid ── */}
-      <div style={{ background: '#faf8f5', padding: '52px 0 80px' }}>
+      <div style={{ background: '#faf8f5', padding: '0 0 80px' }}>
         <div className="container">
 
           {/* Loading skeleton */}
@@ -259,7 +259,7 @@ const Artists = () => {
             <div style={{ textAlign: 'center', padding: '80px 0' }}>
               <p style={{ color: '#aaa', fontSize: '2rem', marginBottom: 12 }}>✦</p>
               <p style={{ color: '#991b1b', marginBottom: 20 }}>{error}</p>
-              <button onClick={() => window.location.reload()} style={{ padding: '12px 28px', background: '#1a1a1a', color: 'white', border: 'none', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', cursor: 'pointer' }}>
+              <button onClick={() => window.location.reload()} style={{ padding: '12px 28px', background: 'var(--ink)', color: 'white', border: 'none', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', cursor: 'pointer' }}>
                 Thử lại
               </button>
             </div>

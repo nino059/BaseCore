@@ -16,10 +16,9 @@ const ProtectedRoute = ({ children, adminOnly = false, artistOnly = false }) => 
     const location = useLocation();
 
     if (loading) return (
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', flexDirection:'column', gap:16 }}>
-            <div style={{ width:40, height:40, borderRadius:'50%', border:'4px solid #ede9fe', borderTopColor:'#7c3aed', animation:'spin 0.8s linear infinite' }} />
-            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-            <span style={{ color:'#9ca3af', fontSize:'0.9rem' }}>Đang tải...</span>
+        <div className="flex flex-col items-center justify-center h-screen gap-4">
+            <div className="w-10 h-10 rounded-full border-4 border-[#ede9fe] border-t-[#7c3aed] animate-spin [animation-duration:0.8s]" />
+            <span className="text-gray-400 text-[0.9rem]">Đang tải...</span>
         </div>
     );
 

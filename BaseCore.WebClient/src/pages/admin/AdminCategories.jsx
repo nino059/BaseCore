@@ -24,7 +24,7 @@ const ICON_OPTIONS = [
 ];
 
 const COLOR_OPTIONS = [
-  '#c8a97a','#8b6c4a','#ec4899','#f59e0b','#10b981',
+  'var(--brand)','var(--brand-dark)','#ec4899','#f59e0b','#10b981',
   '#3b82f6','#ef4444','#14b8a6','#f97316','#84cc16',
 ];
 
@@ -60,7 +60,7 @@ const S = {
   kpiLabel: { fontSize: '0.82rem', fontWeight: 700, color: '#374151', marginTop: 5 },
 
   btnPrimary: {
-    background: 'linear-gradient(135deg,#c8a97a,#8b6c4a)', color: 'white',
+    background: 'linear-gradient(135deg,var(--brand),var(--brand-dark))', color: 'white',
     border: 'none', borderRadius: 10, padding: '10px 20px',
     fontWeight: 700, fontSize: '0.88rem', cursor: 'pointer',
     display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap',
@@ -71,7 +71,7 @@ const S = {
     fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer',
     display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
   },
-  btnIcon: (color = '#c8a97a') => ({
+  btnIcon: (color = 'var(--brand)') => ({
     width: 34, height: 34, borderRadius: 8, border: 'none', cursor: 'pointer',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     background: `${color}18`, color, fontSize: '0.9rem', transition: 'all 0.18s',
@@ -116,7 +116,7 @@ const S = {
     padding: '12px 16px', borderBottom: '2px solid #e2e8f0', textAlign: 'left',
   },
   thSortable: (active) => ({
-    background: '#f8fafc', color: active ? '#c8a97a' : '#64748b',
+    background: '#f8fafc', color: active ? 'var(--brand)' : '#64748b',
     fontWeight: 700, fontSize: '0.78rem',
     textTransform: 'uppercase', letterSpacing: '0.06em',
     padding: '12px 16px', borderBottom: '2px solid #e2e8f0', textAlign: 'left',
@@ -190,7 +190,7 @@ const ConfirmDialog = ({ msg, onOk, onCancel }) => (
 /* ── Category Card ──────────────────────────────────────── */
 const CatCard = ({ cat, onEdit, onDelete, onDuplicate, onViewProducts }) => {
   const [hovered, setHovered] = useState(false);
-  const color = cat.color || '#c8a97a';
+  const color = cat.color || 'var(--brand)';
   const icon  = ICON_EMOJI[cat.icon] || '🎨';
   const forSale = cat.productCount || 0;
   const total   = cat.totalProductCount != null ? cat.totalProductCount : forSale;
@@ -228,10 +228,10 @@ const CatCard = ({ cat, onEdit, onDelete, onDuplicate, onViewProducts }) => {
               onMouseLeave={e => e.currentTarget.style.background='#6366f118'}>
               <i className="fas fa-copy" style={{ fontSize: '0.78rem' }}></i>
             </button>
-            <button style={S.btnIcon('#c8a97a')} title="Chỉnh sửa"
+            <button style={S.btnIcon('var(--brand)')} title="Chỉnh sửa"
               onClick={() => onEdit(cat)}
-              onMouseEnter={e => e.currentTarget.style.background='#c8a97a30'}
-              onMouseLeave={e => e.currentTarget.style.background='#c8a97a18'}>
+              onMouseEnter={e => e.currentTarget.style.background='var(--brand)30'}
+              onMouseLeave={e => e.currentTarget.style.background='var(--brand)18'}>
               <i className="fas fa-pen" style={{ fontSize: '0.78rem' }}></i>
             </button>
             <button style={S.btnDanger} title="Xóa"
@@ -251,8 +251,8 @@ const CatCard = ({ cat, onEdit, onDelete, onDuplicate, onViewProducts }) => {
 const SortIcon = ({ field, sortField, sortDir }) => {
   if (sortField !== field) return <i className="fas fa-sort" style={{ marginLeft: 4, opacity: 0.3, fontSize: '0.7rem' }}></i>;
   return sortDir === 'asc'
-    ? <i className="fas fa-sort-up"   style={{ marginLeft: 4, color: '#c8a97a', fontSize: '0.7rem' }}></i>
-    : <i className="fas fa-sort-down" style={{ marginLeft: 4, color: '#c8a97a', fontSize: '0.7rem' }}></i>;
+    ? <i className="fas fa-sort-up"   style={{ marginLeft: 4, color: 'var(--brand)', fontSize: '0.7rem' }}></i>
+    : <i className="fas fa-sort-down" style={{ marginLeft: 4, color: 'var(--brand)', fontSize: '0.7rem' }}></i>;
 };
 
 /* ══════════════════════════════════════════════════════════
@@ -275,7 +275,7 @@ const Categories = () => {
   const [saving,     setSaving]     = useState(false);
   const [toast,      setToast]      = useState(null);
   const [formData,   setFormData]   = useState({
-    name: '', description: '', slug: '', icon: 'palette', color: '#c8a97a',
+    name: '', description: '', slug: '', icon: 'palette', color: 'var(--brand)',
   });
 
   // Products modal state
@@ -313,12 +313,12 @@ const Categories = () => {
         description: cat.description || '',
         slug:        cat.slug        || '',
         icon:        cat.icon        || 'palette',
-        color:       cat.color       || '#c8a97a',
+        color:       cat.color       || 'var(--brand)',
       });
       slugManual.current = true;
     } else {
       setEditingCat(null);
-      setFormData({ name: '', description: '', slug: '', icon: 'palette', color: '#c8a97a' });
+      setFormData({ name: '', description: '', slug: '', icon: 'palette', color: 'var(--brand)' });
       slugManual.current = false;
     }
     setError('');
@@ -334,7 +334,7 @@ const Categories = () => {
       description: cat.description || '',
       slug:        `${cat.slug || toSlug(cat.name)}-copy`,
       icon:        cat.icon  || 'palette',
-      color:       cat.color || '#c8a97a',
+      color:       cat.color || 'var(--brand)',
     });
     slugManual.current = true;
     setError('');
@@ -465,7 +465,7 @@ const Categories = () => {
       {/* KPI cards — clickable filter */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 18 }}>
         {[
-          { id: 'all',         label: 'Tổng danh mục', value: kpi.total,    color: '#c8a97a', icon: 'fa-layer-group',        bg: '#f5edd6' },
+          { id: 'all',         label: 'Tổng danh mục', value: kpi.total,    color: 'var(--brand)', icon: 'fa-layer-group',        bg: '#f5edd6' },
           { id: 'hasProducts', label: 'Có tranh',       value: kpi.hasProds, color: '#10b981', icon: 'fa-image',              bg: '#d1fae5' },
           { id: 'noProducts',  label: 'Chưa có tranh',  value: kpi.noProds,  color: '#f59e0b', icon: 'fa-exclamation-circle', bg: '#fef3c7' },
         ].map((k) => {
@@ -547,7 +547,7 @@ const Categories = () => {
               <button key={mode} onClick={() => setViewMode(mode)} style={{
                 border: 'none', cursor: 'pointer', borderRadius: 8,
                 width: 36, height: 36, fontSize: '0.88rem',
-                background: viewMode === mode ? '#c8a97a' : 'transparent',
+                background: viewMode === mode ? 'var(--brand)' : 'transparent',
                 color: viewMode === mode ? 'white' : '#94a3b8',
                 transition: 'all 0.18s',
               }}>
@@ -567,14 +567,14 @@ const Categories = () => {
             <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600 }}>Đang lọc:</span>
             {filterMode !== 'all' && (
               <span style={{
-                background: '#c8a97a18', color: '#8b6c4a', borderRadius: 999,
+                background: 'var(--brand)18', color: 'var(--brand-dark)', borderRadius: 999,
                 padding: '3px 10px', fontSize: '0.75rem', fontWeight: 700,
                 display: 'flex', alignItems: 'center', gap: 5,
               }}>
                 {filterMode === 'hasProducts' ? 'Có tranh' : 'Chưa có tranh'}
                 <button onClick={() => setFilterMode('all')} style={{
                   border: 'none', background: 'transparent', cursor: 'pointer',
-                  color: '#8b6c4a', fontWeight: 900, padding: 0, lineHeight: 1,
+                  color: 'var(--brand-dark)', fontWeight: 900, padding: 0, lineHeight: 1,
                 }}>×</button>
               </span>
             )}
@@ -663,7 +663,7 @@ const Categories = () => {
             <span style={{ fontWeight: 700, color: '#1e293b', fontSize: '0.9rem' }}>
               Danh sách danh mục{' '}
               <span style={{
-                background: '#f5edd6', color: '#c8a97a',
+                background: '#f5edd6', color: 'var(--brand)',
                 borderRadius: 999, padding: '2px 10px',
                 fontSize: '0.78rem', fontWeight: 700, marginLeft: 6,
               }}>
@@ -696,7 +696,7 @@ const Categories = () => {
             </thead>
             <tbody>
               {paginated.map((cat, idx) => {
-                const color = cat.color || '#c8a97a';
+                const color = cat.color || 'var(--brand)';
                 const rowIdx = (page - 1) * pageSize + idx;
                 return (
                   <tr key={cat.id} style={{ background: idx % 2 === 1 ? '#fafbff' : 'white' }}
@@ -755,10 +755,10 @@ const Categories = () => {
                           onMouseLeave={e => e.currentTarget.style.background='#6366f118'}>
                           <i className="fas fa-copy" style={{ fontSize: '0.78rem' }}></i>
                         </button>
-                        <button style={S.btnIcon('#c8a97a')} title="Chỉnh sửa"
+                        <button style={S.btnIcon('var(--brand)')} title="Chỉnh sửa"
                           onClick={() => openModal(cat)}
-                          onMouseEnter={e => e.currentTarget.style.background='#c8a97a30'}
-                          onMouseLeave={e => e.currentTarget.style.background='#c8a97a18'}>
+                          onMouseEnter={e => e.currentTarget.style.background='var(--brand)30'}
+                          onMouseLeave={e => e.currentTarget.style.background='var(--brand)18'}>
                           <i className="fas fa-pen" style={{ fontSize: '0.78rem' }}></i>
                         </button>
                         <button style={S.btnDanger} title="Xóa" onClick={() => setConfirmDel(cat)}
@@ -819,7 +819,7 @@ const Categories = () => {
                         slug: slugManual.current ? prev.slug : toSlug(name),
                       }));
                     }}
-                    onFocus={e => e.target.style.borderColor = '#c8a97a'}
+                    onFocus={e => e.target.style.borderColor = 'var(--brand)'}
                     onBlur={e => e.target.style.borderColor = '#e2e8f0'}
                     required />
                 </div>
@@ -836,7 +836,7 @@ const Categories = () => {
                       slugManual.current = true;
                       setFormData(prev => ({ ...prev, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') }));
                     }}
-                    onFocus={e => e.target.style.borderColor = '#c8a97a'}
+                    onFocus={e => e.target.style.borderColor = 'var(--brand)'}
                     onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
                 </div>
 
@@ -847,7 +847,7 @@ const Categories = () => {
                     placeholder="Mô tả ngắn về danh mục này..."
                     value={formData.description}
                     onChange={e => setFormData({ ...formData, description: e.target.value })}
-                    onFocus={e => e.target.style.borderColor = '#c8a97a'}
+                    onFocus={e => e.target.style.borderColor = 'var(--brand)'}
                     onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
                 </div>
 
@@ -973,7 +973,7 @@ const Categories = () => {
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{
                   width: 40, height: 40, borderRadius: 10, flexShrink: 0,
-                  background: prodModal.cat.color || '#c8a97a',
+                  background: prodModal.cat.color || 'var(--brand)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '1.3rem',
                 }}>
@@ -1070,7 +1070,7 @@ const Categories = () => {
                               </div>
                             </td>
                             <td style={{ ...S.td, color: '#64748b' }}>{p.artistName || '—'}</td>
-                            <td style={{ ...S.td, fontWeight: 700, color: '#c8a97a', whiteSpace: 'nowrap' }}>
+                            <td style={{ ...S.td, fontWeight: 700, color: 'var(--brand)', whiteSpace: 'nowrap' }}>
                               {p.price != null ? p.price.toLocaleString('vi-VN') + ' ₫' : '—'}
                             </td>
                             <td style={S.td}>
@@ -1164,7 +1164,7 @@ const Pagination = ({ page, totalPages, onPageChange, total, pageSize }) => {
           ) : (
             <button key={p} onClick={() => onPageChange(p)}
               style={{ ...btnBase,
-                background: p === page ? '#c8a97a' : 'white',
+                background: p === page ? 'var(--brand)' : 'white',
                 color:      p === page ? 'white'   : '#374151',
                 border: p === page ? 'none' : '1.5px solid #e2e8f0',
                 boxShadow: p === page ? '0 2px 8px rgba(200,169,122,.4)' : 'none',

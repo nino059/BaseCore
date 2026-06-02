@@ -117,12 +117,12 @@ const BlockEditor = ({ blocks, onChange }) => {
             justifyContent: 'flex-end', marginBottom: 4,
           }}>
             <button type="button" onClick={() => moveUp(idx)} disabled={idx === 0}
-              style={miniBtn(idx === 0 ? '#e5e7eb' : '#f0ede8', idx === 0 ? '#ccc' : '#8b6c4a')}
+              style={miniBtn(idx === 0 ? '#e5e7eb' : '#f0ede8', idx === 0 ? '#ccc' : 'var(--brand-dark)')}
               title="Di chuyển lên">
               <i className="fas fa-arrow-up" style={{ fontSize: '0.65rem' }} />
             </button>
             <button type="button" onClick={() => moveDown(idx)} disabled={idx === blocks.length - 1}
-              style={miniBtn(idx === blocks.length - 1 ? '#e5e7eb' : '#f0ede8', idx === blocks.length - 1 ? '#ccc' : '#8b6c4a')}
+              style={miniBtn(idx === blocks.length - 1 ? '#e5e7eb' : '#f0ede8', idx === blocks.length - 1 ? '#ccc' : 'var(--brand-dark)')}
               title="Di chuyển xuống">
               <i className="fas fa-arrow-down" style={{ fontSize: '0.65rem' }} />
             </button>
@@ -143,7 +143,7 @@ const BlockEditor = ({ blocks, onChange }) => {
                 border: '1.5px solid #e8e4df', fontSize: '0.92rem',
                 lineHeight: 1.7, resize: 'vertical', minHeight: 100,
                 outline: 'none', background: 'white', boxSizing: 'border-box',
-                color: '#1a1a1a', fontFamily: 'inherit',
+                color: 'var(--ink)', fontFamily: 'inherit',
               }}
             />
           ) : (
@@ -180,7 +180,7 @@ const BlockEditor = ({ blocks, onChange }) => {
                     onChange={e => handleImageFile(idx, e.target.files[0])}
                   />
                   {block.uploading ? (
-                    <div style={{ color: '#c8a97a', fontSize: '0.88rem' }}>
+                    <div style={{ color: 'var(--brand)', fontSize: '0.88rem' }}>
                       <i className="fas fa-spinner fa-spin" style={{ marginRight: 8 }} />
                       Đang tải ảnh...
                     </div>
@@ -236,7 +236,7 @@ const miniBtn = (bg, color) => ({
 });
 
 const insertBtn = () => ({
-  padding: '4px 12px', background: 'white', color: '#8b6c4a',
+  padding: '4px 12px', background: 'white', color: 'var(--brand-dark)',
   border: '1px solid #d4c5af', fontSize: '0.72rem', fontWeight: 600,
   letterSpacing: '0.06em', cursor: 'pointer', borderRadius: 20,
   display: 'inline-flex', alignItems: 'center',
@@ -291,12 +291,12 @@ const BlogEditor = ({ post, authorName, onSave, onClose }) => {
 
   const lbl = {
     display: 'block', fontSize: '0.7rem', fontWeight: 700,
-    letterSpacing: '0.1em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 5,
+    letterSpacing: '0.1em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 5,
   };
   const inp = {
     width: '100%', padding: '9px 12px',
     border: '1.5px solid #e8e4df', fontSize: '0.88rem',
-    outline: 'none', background: 'white', boxSizing: 'border-box', color: '#1a1a1a',
+    outline: 'none', background: 'white', boxSizing: 'border-box', color: 'var(--ink)',
     fontFamily: 'inherit',
   };
 
@@ -319,18 +319,18 @@ const BlogEditor = ({ post, authorName, onSave, onClose }) => {
           boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
         }}>
           <div>
-            <p style={{ margin: 0, fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.16em', color: '#c8a97a', textTransform: 'uppercase' }}>Soạn thảo bài viết</p>
-            <h2 style={{ margin: 0, fontWeight: 500, fontSize: '1.1rem', color: '#1a1a1a' }}>
+            <p style={{ margin: 0, fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.16em', color: 'var(--brand)', textTransform: 'uppercase' }}>Soạn thảo bài viết</p>
+            <h2 style={{ margin: 0, fontWeight: 500, fontSize: '1.1rem', color: 'var(--ink)' }}>
               {post ? 'Chỉnh sửa bài viết' : 'Viết bài mới'}
             </h2>
           </div>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
             <button type="button" onClick={onClose}
-              style={{ padding: '8px 20px', background: '#f0ede8', color: '#1a1a1a', border: 'none', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}>
+              style={{ padding: '8px 20px', background: '#f0ede8', color: 'var(--ink)', border: 'none', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}>
               Hủy
             </button>
             <button type="button" onClick={handleSubmit} disabled={saving}
-              style={{ padding: '8px 24px', background: '#1a1a1a', color: 'white', border: 'none', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1 }}>
+              style={{ padding: '8px 24px', background: 'var(--ink)', color: 'white', border: 'none', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1 }}>
               {saving ? 'Đang lưu...' : (post ? 'Lưu thay đổi' : 'Gửi bài')}
             </button>
           </div>
@@ -398,7 +398,7 @@ const BlogEditor = ({ post, authorName, onSave, onClose }) => {
                 <input ref={coverRef} type="file" accept="image/*" style={{ display: 'none' }}
                   onChange={e => handleCoverFile(e.target.files[0])} />
                 {coverUploading ? (
-                  <div style={{ color: '#c8a97a', fontSize: '0.9rem' }}>
+                  <div style={{ color: 'var(--brand)', fontSize: '0.9rem' }}>
                     <i className="fas fa-spinner fa-spin" style={{ marginRight: 8 }} />Đang tải...
                   </div>
                 ) : (
@@ -414,7 +414,7 @@ const BlogEditor = ({ post, authorName, onSave, onClose }) => {
 
           {/* ── Divider ── */}
           <div style={{ borderTop: '1px solid #e8e4df', marginBottom: 20 }}>
-            <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.14em', color: '#c8a97a', textTransform: 'uppercase', marginTop: 16, marginBottom: 12 }}>
+            <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--brand)', textTransform: 'uppercase', marginTop: 16, marginBottom: 12 }}>
               Nội dung bài viết
             </p>
           </div>
@@ -469,7 +469,7 @@ const ArtistBlog = () => {
   const openNew = () => { setEditing(null); setShowEditor(true); };
   const openEdit = (p) => { setEditing(p); setShowEditor(true); };
 
-  const sqBtn = (bg = '#1a1a1a', color = 'white') => ({
+  const sqBtn = (bg = 'var(--ink)', color = 'white') => ({
     padding: '8px 18px', background: bg, color, border: 'none',
     fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em',
     textTransform: 'uppercase', cursor: 'pointer',
@@ -505,20 +505,20 @@ const ArtistBlog = () => {
               {posts.map(p => (
                 <tr key={p.id} style={{ borderBottom: '1px solid #f0ede8' }}>
                   <td style={{ padding: '12px 16px' }}>
-                    <div style={{ fontWeight: 600, fontSize: '0.88rem', color: '#1a1a1a', marginBottom: 2 }}>{p.title}</div>
+                    <div style={{ fontWeight: 600, fontSize: '0.88rem', color: 'var(--ink)', marginBottom: 2 }}>{p.title}</div>
                     {p.excerpt && (
                       <div style={{ fontSize: '0.75rem', color: '#aaa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 280 }}>
                         {p.excerpt}
                       </div>
                     )}
                   </td>
-                  <td style={{ padding: '12px 16px', fontSize: '0.82rem', color: '#8b6c4a' }}>{p.category || '—'}</td>
+                  <td style={{ padding: '12px 16px', fontSize: '0.82rem', color: 'var(--brand-dark)' }}>{p.category || '—'}</td>
                   <td style={{ padding: '12px 16px', fontSize: '0.82rem', color: '#767676' }}>{new Date(p.createdAt).toLocaleDateString('vi-VN')}</td>
                   <td style={{ padding: '12px 16px' }}><StatusBadge status={p.status} /></td>
                   <td style={{ padding: '12px 16px' }}>
                     <div style={{ display: 'flex', gap: 8 }}>
                       <button onClick={() => openEdit(p)}
-                        style={{ padding: '6px 14px', background: '#f0ede8', color: '#1a1a1a', border: 'none', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}>
+                        style={{ padding: '6px 14px', background: '#f0ede8', color: 'var(--ink)', border: 'none', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}>
                         Sửa
                       </button>
                       <button onClick={() => handleDelete(p.id)}

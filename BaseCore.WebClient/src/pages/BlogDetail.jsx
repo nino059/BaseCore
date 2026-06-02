@@ -29,7 +29,7 @@ const BlogDetail = () => {
       <PublicLayout>
         <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ width: 42, height: 42, border: '3px solid #e8e4df', borderTopColor: '#c8a97a', borderRadius: '50%', animation: 'spin 0.85s linear infinite', margin: '0 auto 18px' }} />
+            <div style={{ width: 42, height: 42, border: '3px solid #e8e4df', borderTopColor: 'var(--brand)', borderRadius: '50%', animation: 'spin 0.85s linear infinite', margin: '0 auto 18px' }} />
             <p style={{ color: '#888', fontSize: '0.9rem' }}>Đang tải bài viết...</p>
           </div>
         </div>
@@ -45,7 +45,7 @@ const BlogDetail = () => {
             <div style={{ fontSize: '3.2rem', color: '#e8e4df', marginBottom: 12 }}>✦</div>
             <h2 style={{ fontWeight: 400, color: '#333', marginBottom: 10 }}>Bài viết không tồn tại</h2>
             <p style={{ color: '#777', marginBottom: 28 }}>{error}</p>
-            <Link to="/blog" style={{ color: '#8b6c4a', fontWeight: 600, textDecoration: 'none' }}>
+            <Link to="/blog" style={{ color: 'var(--brand-dark)', fontWeight: 600, textDecoration: 'none' }}>
               ← Quay lại trang Bài viết
             </Link>
           </div>
@@ -67,7 +67,7 @@ const BlogDetail = () => {
                 fontSize: '0.83rem', color: '#5c4630', textDecoration: 'none',
                 fontWeight: 500, padding: '4px 0',
               }}
-              onMouseEnter={e => e.currentTarget.style.color = '#1a1a1a'}
+              onMouseEnter={e => e.currentTarget.style.color = 'var(--ink)'}
               onMouseLeave={e => e.currentTarget.style.color = '#5c4630'}
             >
               <i className="fas fa-arrow-left" style={{ fontSize: '0.78rem' }} />
@@ -95,7 +95,7 @@ const BlogDetail = () => {
             <Link
               to="/blog"
               style={{
-                color: '#8b6c4a', fontWeight: 600, fontSize: '0.93rem',
+                color: 'var(--brand-dark)', fontWeight: 600, fontSize: '0.93rem',
                 textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 7,
               }}
             >
@@ -106,12 +106,12 @@ const BlogDetail = () => {
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               style={{
                 background: 'transparent', border: '1px solid #d4c5af',
-                color: '#8b6c4a', padding: '8px 18px', borderRadius: 999,
+                color: 'var(--brand-dark)', padding: '8px 18px', borderRadius: 999,
                 fontSize: '0.81rem', fontWeight: 600, cursor: 'pointer',
               }}
               onMouseEnter={e => {
                 e.currentTarget.style.background = '#f9f6f1';
-                e.currentTarget.style.borderColor = '#c8a97a';
+                e.currentTarget.style.borderColor = 'var(--brand)';
               }}
               onMouseLeave={e => {
                 e.currentTarget.style.background = 'transparent';

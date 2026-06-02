@@ -7,7 +7,7 @@ import { useAuth } from "../../contexts/AuthContext";
 const STATUS_CFG = {
   Pending:    { label: "Chờ xác nhận", color: "#f59e0b" },
   Processing: { label: "Đang xử lý",   color: "#3b82f6" },
-  Shipped:    { label: "Đang giao",    color: "#8b6c4a" },
+  Shipped:    { label: "Đang giao",    color: "var(--brand-dark)" },
   Completed:  { label: "Hoàn thành",   color: "#10b981" },
   Cancelled:  { label: "Đã hủy",       color: "#ef4444" },
 };
@@ -15,7 +15,7 @@ const STATUS_CFG = {
 const fmt = (v) => Number(v || 0).toLocaleString("vi-VN") + "₫";
 
 // ─── Bar Chart ────────────────────────────────────────────────
-const BarChart = ({ data, color = "#c8a97a" }) => {
+const BarChart = ({ data, color = "var(--brand)" }) => {
   if (!data || data.length === 0) return null;
   const W = 480, H = 130, PX = 24, PY = 18, PB = 22;
   const maxVal = Math.max(...data.map(d => d.value), 1);
@@ -100,7 +100,7 @@ const AreaChart = ({ data, color = "#10b981", showValues = false }) => {
               textAnchor="middle" 
               fontSize="9" 
               fontWeight="600" 
-              fill="#1a1a1a"
+              fill="var(--ink)"
             >
               {Number(d.value).toLocaleString("vi-VN")}
             </text>
@@ -239,7 +239,7 @@ const Dashboard = () => {
 
       {loading ? (
         <div style={{ textAlign: "center", padding: "100px 0" }}>
-          <div className="spinner-border" style={{ color: "#c8a97a", width: 44, height: 44 }} />
+          <div className="spinner-border" style={{ color: "var(--brand)", width: 44, height: 44 }} />
           <p style={{ marginTop: 14, color: "#94a3b8", fontSize: "0.9rem" }}>Đang tải dữ liệu...</p>
         </div>
       ) : (
@@ -251,8 +251,8 @@ const Dashboard = () => {
             gap: 16, marginBottom: 24,
           }}>
             {[
-              { label: "Tác phẩm",   value: stats.activeProducts, color: "#c8a97a", icon: "fa-palette",      href: "/products",   sub: stats.hiddenProducts > 0 ? `${stats.hiddenProducts} ẩn/hết` : null },
-              { label: "Thể loại",   value: stats.categories,     color: "#8b6c4a", icon: "fa-layer-group",   href: "/categories", sub: null },
+              { label: "Tác phẩm",   value: stats.activeProducts, color: "var(--brand)", icon: "fa-palette",      href: "/products",   sub: stats.hiddenProducts > 0 ? `${stats.hiddenProducts} ẩn/hết` : null },
+              { label: "Thể loại",   value: stats.categories,     color: "var(--brand-dark)", icon: "fa-layer-group",   href: "/categories", sub: null },
               { label: "Đơn hàng",   value: stats.orders,         color: "#f59e0b", icon: "fa-shopping-bag",  href: "/orders",     sub: null },
               { label: "Bài viết",   value: stats.blogs,          color: "#7c3aed", icon: "fa-pen-fancy",     href: "/admin/blog", sub: null },
               { label: "Người dùng", value: stats.users,          color: "#10b981", icon: "fa-users",         href: "/users",      sub: null },
@@ -312,11 +312,11 @@ const Dashboard = () => {
                     6 tháng gần nhất
                   </p>
                 </div>
-                <div style={{ width: 34, height: 34, borderRadius: 9, background: "#c8a97a18", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <i className="fas fa-chart-bar" style={{ color: "#c8a97a", fontSize: "0.9rem" }} />
+                <div style={{ width: 34, height: 34, borderRadius: 9, background: "var(--brand)18", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <i className="fas fa-chart-bar" style={{ color: "var(--brand)", fontSize: "0.9rem" }} />
                 </div>
               </div>
-              <BarChart data={monthlyOrders} color="#c8a97a" />
+              <BarChart data={monthlyOrders} color="var(--brand)" />
             </div>
 
             {/* Biểu đồ area: doanh thu / tháng */}
@@ -350,7 +350,7 @@ const Dashboard = () => {
                 <h6 style={{ fontWeight: 800, color: "#1e293b", margin: 0, fontSize: "0.95rem" }}>
                   Đơn hàng gần nhất
                 </h6>
-                <Link to="/orders" style={{ fontSize: "0.8rem", color: "#c8a97a", fontWeight: 700, textDecoration: "none" }}>
+                <Link to="/orders" style={{ fontSize: "0.8rem", color: "var(--brand)", fontWeight: 700, textDecoration: "none" }}>
                   Xem tất cả →
                 </Link>
               </div>
@@ -382,7 +382,7 @@ const Dashboard = () => {
                           <tr key={o.id}
                             onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"}
                             onMouseLeave={e => e.currentTarget.style.background = "white"}>
-                            <td style={{ padding: "10px 10px", borderBottom: "1px solid #f8fafc", fontSize: "0.85rem", fontWeight: 700, color: "#c8a97a" }}>
+                            <td style={{ padding: "10px 10px", borderBottom: "1px solid #f8fafc", fontSize: "0.85rem", fontWeight: 700, color: "var(--brand)" }}>
                               #{o.id}
                             </td>
                             <td style={{ padding: "10px 10px", borderBottom: "1px solid #f8fafc", fontSize: "0.79rem", color: "#94a3b8", whiteSpace: "nowrap" }}>
@@ -439,7 +439,7 @@ const Dashboard = () => {
 
               {/* Revenue summary */}
               <div style={{
-                marginTop: 22, background: "linear-gradient(135deg,#c8a97a,#8b6c4a)",
+                marginTop: 22, background: "linear-gradient(135deg,var(--brand),var(--brand-dark))",
                 borderRadius: 12, padding: "16px 18px", color: "white",
               }}>
                 <div style={{ fontSize: "0.72rem", opacity: 0.8, marginBottom: 3, textTransform: "uppercase", letterSpacing: "0.06em" }}>

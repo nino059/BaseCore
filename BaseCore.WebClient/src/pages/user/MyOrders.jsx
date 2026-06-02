@@ -75,20 +75,20 @@ const MyOrders = () => {
           {/* Header */}
           <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 40, flexWrap: 'wrap', gap: 16 }}>
             <div>
-              <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.18em', color: '#c8a97a', textTransform: 'uppercase', marginBottom: 8 }}>
+              <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.18em', color: 'var(--brand)', textTransform: 'uppercase', marginBottom: 8 }}>
                 Tài khoản
               </p>
-              <h1 style={{ fontWeight: 200, fontSize: 'clamp(1.4rem, 3vw, 2rem)', color: '#1a1a1a', letterSpacing: '0.04em', margin: 0 }}>
+              <h1 style={{ fontWeight: 200, fontSize: 'clamp(1.4rem, 3vw, 2rem)', color: 'var(--ink)', letterSpacing: '0.04em', margin: 0 }}>
                 Đơn hàng của tôi
               </h1>
               <p style={{ fontSize: '0.72rem', color: '#aaa', marginTop: 6, margin: '6px 0 0' }}>
-                <i className="fas fa-sync-alt" style={{ marginRight: 5, color: '#c8a97a' }} />
+                <i className="fas fa-sync-alt" style={{ marginRight: 5, color: 'var(--brand)' }} />
                 Tự động cập nhật mỗi 30 giây
               </p>
             </div>
             <Link to="/shop" style={{
               padding: '11px 24px', background: 'transparent',
-              border: '1.5px solid #1a1a1a', color: '#1a1a1a',
+              border: '1.5px solid var(--ink)', color: 'var(--ink)',
               fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.12em',
               textTransform: 'uppercase', textDecoration: 'none',
               display: 'inline-block',
@@ -105,13 +105,13 @@ const MyOrders = () => {
                 fontWeight: activeTab === t.key ? 700 : 400,
                 fontSize: '0.82rem', letterSpacing: '0.06em',
                 background: 'transparent', whiteSpace: 'nowrap',
-                color: activeTab === t.key ? '#1a1a1a' : '#767676',
-                borderBottom: activeTab === t.key ? '2px solid #1a1a1a' : '2px solid transparent',
+                color: activeTab === t.key ? 'var(--ink)' : '#767676',
+                borderBottom: activeTab === t.key ? '2px solid var(--ink)' : '2px solid transparent',
                 marginBottom: -1.5, transition: 'all 0.18s',
               }}>
                 {t.label}
                 {t.key !== 'all' && orders.filter(o => o.status === t.key).length > 0 && (
-                  <span style={{ marginLeft: 6, fontSize: '0.7rem', color: '#c8a97a' }}>
+                  <span style={{ marginLeft: 6, fontSize: '0.7rem', color: 'var(--brand)' }}>
                     ({orders.filter(o => o.status === t.key).length})
                   </span>
                 )}
@@ -136,7 +136,7 @@ const MyOrders = () => {
               <p style={{ fontSize: '0.85rem', color: '#aaa', marginBottom: 28 }}>Khám phá bộ sưu tập nghệ thuật của chúng tôi</p>
               <Link to="/shop" style={{
                 display: 'inline-block', padding: '13px 32px',
-                background: '#1a1a1a', color: 'white',
+                background: 'var(--ink)', color: 'white',
                 fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.14em',
                 textTransform: 'uppercase', textDecoration: 'none',
               }}>
@@ -166,12 +166,12 @@ const MyOrders = () => {
                     boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
                     transition: 'all 0.2s',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)'; e.currentTarget.style.borderLeftColor = '#c8a97a'; }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)'; e.currentTarget.style.borderLeftColor = 'var(--brand)'; }}
                   onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'; e.currentTarget.style.borderLeftColor = 'transparent'; }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                     <div>
-                      <span style={{ fontWeight: 600, fontSize: '0.92rem', color: '#1a1a1a' }}>Đơn #{order.id}</span>
+                      <span style={{ fontWeight: 600, fontSize: '0.92rem', color: 'var(--ink)' }}>Đơn #{order.id}</span>
                       <div style={{ color: '#aaa', fontSize: '0.78rem', marginTop: 3 }}>
                         {fmtDate(order.createdAt || order.orderDate)}
                       </div>
@@ -185,10 +185,10 @@ const MyOrders = () => {
                       </span>
                     )}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                      <span style={{ fontWeight: 600, color: '#1a1a1a', fontSize: '0.95rem' }}>
+                      <span style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.95rem' }}>
                         {fmt(order.totalAmount || order.total || 0)}
                       </span>
-                      <span style={{ fontSize: '0.75rem', color: '#c8a97a', fontWeight: 700 }}>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--brand)', fontWeight: 700 }}>
                         Xem chi tiết <i className="fas fa-arrow-right" style={{ fontSize: '0.65rem' }} />
                       </span>
                     </div>

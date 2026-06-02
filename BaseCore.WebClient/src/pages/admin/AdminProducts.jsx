@@ -138,7 +138,7 @@ const ProductReviewModal = ({ product, onApprove, onReject, onClose, fmt }) => {
         {/* Header */}
         <div style={{ padding:'18px 24px', borderBottom:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center', position:'sticky', top:0, background:'white', zIndex:10, borderRadius:'18px 18px 0 0' }}>
           <div>
-            <p style={{ margin:0, fontSize:'0.68rem', fontWeight:700, letterSpacing:'0.14em', color:'#c8a97a', textTransform:'uppercase' }}>Xét duyệt tác phẩm</p>
+            <p style={{ margin:0, fontSize:'0.68rem', fontWeight:700, letterSpacing:'0.14em', color:'var(--brand)', textTransform:'uppercase' }}>Xét duyệt tác phẩm</p>
             <h2 style={{ margin:0, fontWeight:700, fontSize:'1.1rem', color:'#1e293b' }}>{product.name}</h2>
           </div>
           <button onClick={onClose} style={{ background:'none', border:'none', cursor:'pointer', fontSize:'1.5rem', color:'#94a3b8', lineHeight:1 }}>×</button>
@@ -162,7 +162,7 @@ const ProductReviewModal = ({ product, onApprove, onReject, onClose, fmt }) => {
           <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
             {/* Họa sĩ */}
             <div style={{ display:'flex', alignItems:'center', gap:10, padding:'12px 14px', background:'#f8fafc', borderRadius:10 }}>
-              <div style={{ width:38, height:38, borderRadius:'50%', background:'linear-gradient(135deg,#c8a97a,#8b6c4a)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+              <div style={{ width:38, height:38, borderRadius:'50%', background:'linear-gradient(135deg,var(--brand),var(--brand-dark))', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                 <span style={{ color:'white', fontWeight:800, fontSize:'0.82rem' }}>{(product.artistName||'?')[0].toUpperCase()}</span>
               </div>
               <div>
@@ -436,7 +436,7 @@ export default function AdminProducts() {
       {/* KPI Cards */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(5,1fr)", gap:12, marginBottom:18 }}>
         {[
-          { label:"Tổng",        value:statsData.total,   icon:"fa-images",       color:"#c8a97a", bg:"#fdf6e3", key:"" },
+          { label:"Tổng",        value:statsData.total,   icon:"fa-images",       color:"var(--brand)", bg:"#fdf6e3", key:"" },
           { label:"Đang bán",    value:statsData.forSale, icon:"fa-check-circle", color:"#10b981", bg:"#d1fae5", key:"ForSale" },
           { label:"Chờ duyệt",   value:statsData.pending, icon:"fa-clock",        color:"#92400e", bg:"#fef3c7", key:"Pending" },
           { label:"Đã đặt",      value:statsData.ordered, icon:"fa-shopping-cart",color:"#1e40af", bg:"#dbeafe", key:"Ordered" },
@@ -493,10 +493,10 @@ export default function AdminProducts() {
       <div style={{ background:"white", borderRadius:14, boxShadow:"0 2px 16px rgba(0,0,0,.07)", overflow:"hidden" }}>
         <div style={{ padding:"14px 20px", borderBottom:"1px solid #f1f5f9", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
           <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-            <i className="fas fa-table" style={{ color:"#c8a97a", fontSize:"0.85rem" }}></i>
+            <i className="fas fa-table" style={{ color:"var(--brand)", fontSize:"0.85rem" }}></i>
             <span style={{ fontWeight:700, color:"#1e293b", fontSize:"0.92rem" }}>Danh sách tác phẩm</span>
             {!loading && (
-              <span style={{ background:"#f5edd6", color:"#c8a97a", borderRadius:20, padding:"2px 10px", fontSize:"0.73rem", fontWeight:700 }}>
+              <span style={{ background:"#f5edd6", color:"var(--brand)", borderRadius:20, padding:"2px 10px", fontSize:"0.73rem", fontWeight:700 }}>
                 {totalCount}
               </span>
             )}
@@ -510,7 +510,7 @@ export default function AdminProducts() {
 
         {loading ? (
           <div style={{ textAlign:"center", padding:"70px 0" }}>
-            <div className="spinner-border" style={{ color:"#c8a97a", width:40, height:40 }}></div>
+            <div className="spinner-border" style={{ color:"var(--brand)", width:40, height:40 }}></div>
             <p style={{ marginTop:14, color:"#94a3b8", fontSize:"0.88rem" }}>Đang tải...</p>
           </div>
         ) : displayList.length === 0 ? (
@@ -520,7 +520,7 @@ export default function AdminProducts() {
               {hasFilter ? "Không tìm thấy tác phẩm phù hợp" : "Chưa có tác phẩm nào"}
             </div>
             {hasFilter && (
-              <button onClick={clearFilters} style={{ padding:"8px 20px", borderRadius:9, border:"none", background:"#f5edd6", color:"#c8a97a", fontWeight:700, cursor:"pointer" }}>
+              <button onClick={clearFilters} style={{ padding:"8px 20px", borderRadius:9, border:"none", background:"#f5edd6", color:"var(--brand)", fontWeight:700, cursor:"pointer" }}>
                 Xóa bộ lọc
               </button>
             )}
@@ -570,7 +570,7 @@ export default function AdminProducts() {
                     <td style={{ padding:"12px 14px" }}>
                       <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                         <div style={{ width:30, height:30, borderRadius:"50%", flexShrink:0,
-                          background:"linear-gradient(135deg,#c8a97a,#8b6c4a)", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                          background:"linear-gradient(135deg,var(--brand),var(--brand-dark))", display:"flex", alignItems:"center", justifyContent:"center" }}>
                           <span style={{ color:"white", fontSize:"0.65rem", fontWeight:800 }}>{(p.artistName||"?")[0].toUpperCase()}</span>
                         </div>
                         <span style={{ fontSize:"0.85rem", color:"#475569", fontWeight:500, whiteSpace:"nowrap" }}>{p.artistName || "—"}</span>
@@ -646,7 +646,7 @@ export default function AdminProducts() {
                 n==="…"
                   ? <span key={`e${i}`} style={{ width:32, height:32, display:"flex", alignItems:"center", justifyContent:"center", color:"#94a3b8" }}>…</span>
                   : <button key={n} onClick={() => setPage(n)} style={{ width:32, height:32, borderRadius:8,
-                      border:page===n?"none":"1.5px solid #e2e8f0", background:page===n?"#c8a97a":"white",
+                      border:page===n?"none":"1.5px solid #e2e8f0", background:page===n?"var(--brand)":"white",
                       color:page===n?"white":"#475569", fontWeight:page===n?800:500, cursor:"pointer" }}>{n}</button>
               )}
               <button onClick={() => setPage(p=>p+1)} disabled={page===totalPages}

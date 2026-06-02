@@ -5,6 +5,7 @@ import { orderApi } from '../services/api';
 import PublicLayout from '../components/PublicLayout';
 import ArtistLayout from '../components/ArtistLayout';
 import MainLayout from '../components/MainLayout';
+import { toImg } from '../utils/image';
 
 const fmt = (n) =>
   new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n);
@@ -190,10 +191,10 @@ const OrderDetail = () => {
           {/* Header */}
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 28 }}>
             <div>
-              <p style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.18em', color: '#c8a97a', textTransform: 'uppercase', margin: '0 0 6px' }}>
+              <p style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.18em', color: 'var(--brand)', textTransform: 'uppercase', margin: '0 0 6px' }}>
                 Chi tiết đơn hàng
               </p>
-              <h1 style={{ fontWeight: 300, fontSize: 'clamp(1.3rem, 3vw, 1.8rem)', color: '#1a1a1a', margin: 0 }}>
+              <h1 style={{ fontWeight: 300, fontSize: 'clamp(1.3rem, 3vw, 1.8rem)', color: 'var(--ink)', margin: 0 }}>
                 Đơn #{order.id}
               </h1>
               <p style={{ fontSize: '0.78rem', color: '#aaa', margin: '6px 0 0' }}>
@@ -210,7 +211,7 @@ const OrderDetail = () => {
               >
                 <i
                   className={`fas fa-sync-alt${refreshing ? ' fa-spin' : ''}`}
-                  style={{ color: '#c8a97a', fontSize: '0.85rem' }}
+                  style={{ color: 'var(--brand)', fontSize: '0.85rem' }}
                 />
               </button>
             </div>
@@ -219,7 +220,7 @@ const OrderDetail = () => {
           {/* Thanh tiến trình */}
           {order.status !== 'Cancelled' && (
             <div style={{ background: 'white', padding: '24px 28px', marginBottom: 16, border: '1px solid #e8e4df', borderRadius: 8 }}>
-              <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 20, margin: '0 0 20px' }}>
+              <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 20, margin: '0 0 20px' }}>
                 Tiến trình đơn hàng
               </p>
               <div style={{ display: 'flex', alignItems: 'flex-start', position: 'relative' }}>
@@ -227,7 +228,7 @@ const OrderDetail = () => {
                 <div style={{
                   position: 'absolute', top: 14, left: '12.5%',
                   width: `${Math.max(0, currentStep) / (STEPS.length - 1) * 75}%`,
-                  height: 2, background: '#c8a97a', zIndex: 1, transition: 'width 0.5s',
+                  height: 2, background: 'var(--brand)', zIndex: 1, transition: 'width 0.5s',
                 }} />
                 {STEPS.map((s, i) => {
                   const done   = i < currentStep;
@@ -237,8 +238,8 @@ const OrderDetail = () => {
                       <div style={{
                         width: 28, height: 28, borderRadius: '50%', marginBottom: 8,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        background: done || active ? '#c8a97a' : 'white',
-                        border: `2px solid ${done || active ? '#c8a97a' : '#e8e4df'}`,
+                        background: done || active ? 'var(--brand)' : 'white',
+                        border: `2px solid ${done || active ? 'var(--brand)' : '#e8e4df'}`,
                         transition: 'all 0.3s',
                       }}>
                         {done
@@ -246,7 +247,7 @@ const OrderDetail = () => {
                           : <div style={{ width: 8, height: 8, borderRadius: '50%', background: active ? 'white' : '#e8e4df' }} />
                         }
                       </div>
-                      <span style={{ fontSize: '0.68rem', fontWeight: active ? 700 : 400, color: active ? '#1a1a1a' : done ? '#c8a97a' : '#aaa', textAlign: 'center', lineHeight: 1.3 }}>
+                      <span style={{ fontSize: '0.68rem', fontWeight: active ? 700 : 400, color: active ? 'var(--ink)' : done ? 'var(--brand)' : '#aaa', textAlign: 'center', lineHeight: 1.3 }}>
                         {STATUS_MAP[s]?.label || s}
                       </span>
                     </div>
@@ -274,7 +275,7 @@ const OrderDetail = () => {
                   onClick={() => handleUpdateStatus(ns)}
                   style={{
                     padding: '8px 20px', border: 'none', borderRadius: 7,
-                    background: '#1a1a1a', color: 'white', cursor: updating ? 'not-allowed' : 'pointer',
+                    background: 'var(--ink)', color: 'white', cursor: updating ? 'not-allowed' : 'pointer',
                     fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.06em',
                     opacity: updating === ns ? 0.6 : 1,
                     display: 'flex', alignItems: 'center', gap: 6,
@@ -306,7 +307,7 @@ const OrderDetail = () => {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16, marginBottom: 16 }}>
             {/* Thông tin đơn */}
             <div style={{ background: 'white', padding: '20px 24px', border: '1px solid #e8e4df', borderRadius: 8 }}>
-              <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 14, margin: '0 0 14px' }}>
+              <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 14, margin: '0 0 14px' }}>
                 Thông tin đơn hàng
               </p>
               {[
@@ -317,7 +318,7 @@ const OrderDetail = () => {
               ].map(([label, val]) => (
                 <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: '1px solid #f5f3f0' }}>
                   <span style={{ fontSize: '0.8rem', color: '#767676' }}>{label}</span>
-                  <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#1a1a1a', textAlign: 'right', maxWidth: '55%' }}>{val}</span>
+                  <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--ink)', textAlign: 'right', maxWidth: '55%' }}>{val}</span>
                 </div>
               ))}
             </div>
@@ -325,16 +326,16 @@ const OrderDetail = () => {
             {/* Địa chỉ giao hàng */}
             {order.shippingAddress && (
               <div style={{ background: 'white', padding: '20px 24px', border: '1px solid #e8e4df', borderRadius: 8 }}>
-                <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 14, margin: '0 0 14px' }}>
+                <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 14, margin: '0 0 14px' }}>
                   Địa chỉ giao hàng
                 </p>
-                <p style={{ fontSize: '0.88rem', color: '#1a1a1a', fontWeight: 300, lineHeight: 1.7, margin: 0 }}>
-                  <i className="fas fa-map-marker-alt" style={{ color: '#c8a97a', marginRight: 8 }} />
+                <p style={{ fontSize: '0.88rem', color: 'var(--ink)', fontWeight: 300, lineHeight: 1.7, margin: 0 }}>
+                  <i className="fas fa-map-marker-alt" style={{ color: 'var(--brand)', marginRight: 8 }} />
                   {order.shippingAddress}
                 </p>
                 {order.phone && (
                   <p style={{ fontSize: '0.85rem', color: '#555', margin: '8px 0 0' }}>
-                    <i className="fas fa-phone" style={{ color: '#c8a97a', marginRight: 8 }} />
+                    <i className="fas fa-phone" style={{ color: 'var(--brand)', marginRight: 8 }} />
                     {order.phone}
                   </p>
                 )}
@@ -353,15 +354,13 @@ const OrderDetail = () => {
           {/* Danh sách tác phẩm */}
           <div style={{ background: 'white', border: '1px solid #e8e4df', borderRadius: 8, marginBottom: 20, overflow: 'hidden' }}>
             <div style={{ padding: '16px 24px', borderBottom: '1px solid #f0ece6' }}>
-              <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: '#8b6c4a', textTransform: 'uppercase', margin: 0 }}>
+              <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--brand-dark)', textTransform: 'uppercase', margin: 0 }}>
                 Tác phẩm đặt mua
               </p>
             </div>
 
             {order.items?.map((item, idx) => {
-              const imgUrl = item.imageUrl
-                ? (item.imageUrl.startsWith('http') ? item.imageUrl : `http://localhost:5000${item.imageUrl}`)
-                : null;
+              const imgUrl = toImg(item.imageUrl);
               const price = item.unitPrice ?? item.price ?? 0;
 
               const itemContent = (
@@ -387,21 +386,21 @@ const OrderDetail = () => {
 
                   {/* Info */}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 600, fontSize: '0.95rem', color: '#1a1a1a', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--ink)', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {item.productName || item.name}
                       {!isArtist && (
-                        <i className="fas fa-external-link-alt" style={{ fontSize: '0.65rem', color: '#c8a97a', marginLeft: 6 }} />
+                        <i className="fas fa-external-link-alt" style={{ fontSize: '0.65rem', color: 'var(--brand)', marginLeft: 6 }} />
                       )}
                     </div>
                     {item.artistName && (
-                      <div style={{ fontSize: '0.78rem', color: '#8b6c4a', marginBottom: 6 }}>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--brand-dark)', marginBottom: 6 }}>
                         <i className="fas fa-palette" style={{ marginRight: 5, fontSize: '0.7rem' }} />
                         {item.artistName}
                       </div>
                     )}
                   </div>
 
-                  <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1a1a1a', flexShrink: 0 }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--ink)', flexShrink: 0 }}>
                     {fmt(price)}
                   </div>
                 </div>
@@ -422,8 +421,8 @@ const OrderDetail = () => {
 
             {/* Tổng cộng */}
             <div style={{ padding: '16px 24px', borderTop: '2px solid #e8e4df', background: '#faf8f5', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontWeight: 600, fontSize: '0.92rem', color: '#1a1a1a' }}>Tổng cộng</span>
-              <span style={{ fontWeight: 800, fontSize: '1.1rem', color: '#1a1a1a' }}>
+              <span style={{ fontWeight: 600, fontSize: '0.92rem', color: 'var(--ink)' }}>Tổng cộng</span>
+              <span style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--ink)' }}>
                 {fmt(order.totalAmount || order.total || 0)}
               </span>
             </div>

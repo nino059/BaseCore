@@ -79,7 +79,7 @@ const PublicLayout = ({ children }) => {
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
             <div>
               <div style={{ fontWeight: 800, fontSize: '1.08rem', color: 'white', letterSpacing: '0.18em', lineHeight: 1.1 }}>
-                ARTH<span style={{ color: '#c8a97a' }}>ENTIC</span>
+                ARTH<span style={{ color: 'var(--brand)' }}>ENTIC</span>
               </div>
               <div style={{ fontSize: '0.5rem', color: 'rgba(255,255,255,0.38)', letterSpacing: '0.24em', textTransform: 'uppercase', marginTop: 3 }}>
                 Nghệ thuật dân gian
@@ -102,11 +102,11 @@ const PublicLayout = ({ children }) => {
                     style={{
                       display: 'flex', alignItems: 'center',
                       padding: '0 20px', whiteSpace: 'nowrap',
-                      color: active ? '#c8a97a' : 'rgba(255,255,255,0.72)',
+                      color: active ? 'var(--brand)' : 'rgba(255,255,255,0.72)',
                       fontWeight: active ? 700 : 400,
                       fontSize: '0.76rem', letterSpacing: '0.12em', textTransform: 'uppercase',
                       textDecoration: 'none',
-                      borderBottom: `2px solid ${active ? '#c8a97a' : 'transparent'}`,
+                      borderBottom: `2px solid ${active ? 'var(--brand)' : 'transparent'}`,
                       transition: 'color 0.2s, border-color 0.2s',
                       boxSizing: 'border-box',
                     }}
@@ -133,7 +133,7 @@ const PublicLayout = ({ children }) => {
                     {cartCount > 0 && (
                       <span style={{
                         position: 'absolute', top: 2, right: 2,
-                        background: '#c8a97a', color: 'white',
+                        background: 'var(--brand)', color: 'white',
                         borderRadius: '50%', width: 17, height: 17,
                         fontSize: 10, fontWeight: 700,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -152,7 +152,7 @@ const PublicLayout = ({ children }) => {
                   style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0' }}>
                   <div style={{
                     width: 33, height: 33, borderRadius: '50%', flexShrink: 0,
-                    background: user.avatarUrl ? '#f0ece8' : '#c8a97a',
+                    background: user.avatarUrl ? '#f0ece8' : 'var(--brand)',
                     display: 'flex', alignItems: 'center',
                     justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '0.85rem',
                     border: '2px solid rgba(255,255,255,0.2)',
@@ -174,17 +174,17 @@ const PublicLayout = ({ children }) => {
                     zIndex: 9999, border: '1px solid #e8e4df', overflow: 'hidden',
                   }}>
                     <div style={{ padding: '14px 18px 12px', borderBottom: '1px solid #f0ece8', background: '#faf8f5' }}>
-                      <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#1a1a1a' }}>
+                      <div style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--ink)' }}>
                         {user.fullName || user.username}
                       </div>
                       <div style={{ color: '#aaa', fontSize: '0.78rem', marginTop: 2 }}>{user.email}</div>
                       {isAdmin && (
-                        <span style={{ display: 'inline-block', marginTop: 5, fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', background: '#c8a97a', color: 'white', padding: '2px 8px' }}>
+                        <span style={{ display: 'inline-block', marginTop: 5, fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', background: 'var(--brand)', color: 'white', padding: '2px 8px' }}>
                           Quản trị
                         </span>
                       )}
                       {isArtist && (
-                        <span style={{ display: 'inline-block', marginTop: 5, fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', background: '#8b6c4a', color: 'white', padding: '2px 8px' }}>
+                        <span style={{ display: 'inline-block', marginTop: 5, fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', background: 'var(--brand-dark)', color: 'white', padding: '2px 8px' }}>
                           Họa sĩ
                         </span>
                       )}
@@ -192,22 +192,22 @@ const PublicLayout = ({ children }) => {
 
                     {isAdmin ? (
                       <Link to="/dashboard" onClick={() => setDropOpen(false)} style={{ ...dropItem }}>
-                        <i className="fas fa-tachometer-alt" style={{ color: '#c8a97a', width: 16, textAlign: 'center' }}></i>
+                        <i className="fas fa-tachometer-alt" style={{ color: 'var(--brand)', width: 16, textAlign: 'center' }}></i>
                         Quản lý hệ thống
                       </Link>
                     ) : isArtist ? (
                       <Link to="/artist/dashboard" onClick={() => setDropOpen(false)} style={{ ...dropItem }}>
-                        <i className="fas fa-palette" style={{ color: '#c8a97a', width: 16, textAlign: 'center' }}></i>
+                        <i className="fas fa-palette" style={{ color: 'var(--brand)', width: 16, textAlign: 'center' }}></i>
                         Trang họa sĩ
                       </Link>
                     ) : (
                       <>
                         <Link to="/my-orders" onClick={() => setDropOpen(false)} style={{ ...dropItem }}>
-                          <i className="fas fa-box-open" style={{ color: '#c8a97a', width: 16, textAlign: 'center' }}></i>
+                          <i className="fas fa-box-open" style={{ color: 'var(--brand)', width: 16, textAlign: 'center' }}></i>
                           Đơn hàng của tôi
                         </Link>
                         <Link to="/profile" onClick={() => setDropOpen(false)} style={{ ...dropItem }}>
-                          <i className="fas fa-user" style={{ color: '#c8a97a', width: 16, textAlign: 'center' }}></i>
+                          <i className="fas fa-user" style={{ color: 'var(--brand)', width: 16, textAlign: 'center' }}></i>
                           Hồ sơ cá nhân
                         </Link>
                       </>
@@ -238,15 +238,15 @@ const PublicLayout = ({ children }) => {
                   Đăng nhập
                 </button>
                 <button onClick={openRegister} style={{
-                  width: 110, padding: '7px 0', background: '#c8a97a', color: 'white',
-                  border: '1px solid #c8a97a',
+                  width: 110, padding: '7px 0', background: 'var(--brand)', color: 'white',
+                  border: '1px solid var(--brand)',
                   fontSize: '0.74rem', fontWeight: 700, cursor: 'pointer',
                   letterSpacing: '0.1em', textTransform: 'uppercase',
                   whiteSpace: 'nowrap', textAlign: 'center',
                   transition: 'background 0.2s',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.background = '#8b6c4a'; e.currentTarget.style.borderColor = '#8b6c4a'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = '#c8a97a'; e.currentTarget.style.borderColor = '#c8a97a'; }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'var(--brand-dark)'; e.currentTarget.style.borderColor = 'var(--brand-dark)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'var(--brand)'; e.currentTarget.style.borderColor = 'var(--brand)'; }}
                 >
                   Đăng ký
                 </button>
@@ -268,7 +268,7 @@ const PublicLayout = ({ children }) => {
               {NAV_ITEMS.map(({ to, label }) => (
                 <Link key={to} to={to} style={{
                   display: 'block', padding: '11px 0',
-                  color: isActive(to) ? '#c8a97a' : 'rgba(255,255,255,0.7)',
+                  color: isActive(to) ? 'var(--brand)' : 'rgba(255,255,255,0.7)',
                   fontWeight: isActive(to) ? 700 : 400,
                   textDecoration: 'none', fontSize: '0.88rem',
                   letterSpacing: '0.1em', textTransform: 'uppercase',
@@ -283,7 +283,7 @@ const PublicLayout = ({ children }) => {
                   {!isAdmin && !isArtist && (
                     <Link to="/cart" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 0', color: 'rgba(255,255,255,0.7)', textDecoration: 'none', fontSize: '0.88rem', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
                       <span>Giỏ hàng</span>
-                      {cartCount > 0 && <span style={{ background: '#c8a97a', color: 'white', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.72rem', fontWeight: 700 }}>{cartCount}</span>}
+                      {cartCount > 0 && <span style={{ background: 'var(--brand)', color: 'white', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.72rem', fontWeight: 700 }}>{cartCount}</span>}
                     </Link>
                   )}
                   <Link to={isAdmin ? '/dashboard' : isArtist ? '/artist/dashboard' : '/my-orders'} style={{ display: 'block', padding: '11px 0', color: 'rgba(255,255,255,0.7)', textDecoration: 'none', fontSize: '0.88rem', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
@@ -298,7 +298,7 @@ const PublicLayout = ({ children }) => {
                   <button onClick={openLogin} style={{ flex: 1, padding: '10px', textAlign: 'center', color: 'white', border: '1px solid rgba(255,255,255,0.35)', background: 'none', fontSize: '0.82rem', fontWeight: 500, cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                     Đăng nhập
                   </button>
-                  <button onClick={openRegister} style={{ flex: 1, padding: '10px', textAlign: 'center', color: 'white', background: '#c8a97a', border: '1px solid #c8a97a', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                  <button onClick={openRegister} style={{ flex: 1, padding: '10px', textAlign: 'center', color: 'white', background: 'var(--brand)', border: '1px solid var(--brand)', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                     Đăng ký
                   </button>
                 </div>
@@ -312,7 +312,7 @@ const PublicLayout = ({ children }) => {
       <div style={{ flex: 1, paddingTop: 64 }}>{children}</div>
 
       {/* ── FOOTER ─────────────────────────────────────────── */}
-      <footer style={{ background: '#1a1a1a' }}>
+      <footer style={{ background: 'var(--ink)' }}>
         <div className="container py-5">
           <div className="row">
 
@@ -320,7 +320,7 @@ const PublicLayout = ({ children }) => {
             <div className="col-md-4 mb-4">
               <div style={{ marginBottom: 18 }}>
                 <div style={{ fontWeight: 800, fontSize: '1rem', color: 'white', letterSpacing: '0.16em' }}>
-                  ARTH<span style={{ color: '#c8a97a' }}>ENTIC</span>
+                  ARTH<span style={{ color: 'var(--brand)' }}>ENTIC</span>
                 </div>
                 <div style={{ fontSize: '0.58rem', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.22em', textTransform: 'uppercase', marginTop: 5 }}>
                   Nghệ thuật dân gian Việt Nam
@@ -354,7 +354,7 @@ const PublicLayout = ({ children }) => {
                   <li key={to} style={{ marginBottom: 10 }}>
                     <Link to={to} className="foot-link"
                       style={{ color: 'rgba(255,255,255,0.45)', textDecoration: 'none', fontSize: '0.87rem', transition: 'color 0.15s' }}
-                      onMouseEnter={e => e.currentTarget.style.color = '#c8a97a'}
+                      onMouseEnter={e => e.currentTarget.style.color = 'var(--brand)'}
                       onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.45)'}
                     >{label}</Link>
                   </li>
@@ -377,7 +377,7 @@ const PublicLayout = ({ children }) => {
                   <li key={to} style={{ marginBottom: 10 }}>
                     <Link to={to}
                       style={{ color: 'rgba(255,255,255,0.45)', textDecoration: 'none', fontSize: '0.87rem' }}
-                      onMouseEnter={e => e.currentTarget.style.color = '#c8a97a'}
+                      onMouseEnter={e => e.currentTarget.style.color = 'var(--brand)'}
                       onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.45)'}
                     >{label}</Link>
                   </li>
@@ -397,7 +397,7 @@ const PublicLayout = ({ children }) => {
                   { icon: 'fa-map-marker-alt', text: 'Phường Nghĩa Đô, Thủ đô Hà Nội' },
                 ].map(({ icon, text }) => (
                   <div key={icon} style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'rgba(255,255,255,0.45)', fontSize: '0.87rem' }}>
-                    <i className={`fas ${icon}`} style={{ color: '#c8a97a', width: 14, textAlign: 'center', flexShrink: 0 }}></i>
+                    <i className={`fas ${icon}`} style={{ color: 'var(--brand)', width: 14, textAlign: 'center', flexShrink: 0 }}></i>
                     {text}
                   </div>
                 ))}

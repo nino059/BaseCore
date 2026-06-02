@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import ArtistLayout from '../../components/ArtistLayout';
 import { productApi, categoryApi } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
+import { toImg } from '../../utils/image';
 
 // ─── Constants ──────────────────────────────────────────────
 const THEMES    = ['Phong cảnh','Chân dung','Tĩnh vật','Trừu tượng','Động vật','Đô thị','Lịch sử','Tâm linh','Khác'];
@@ -269,8 +270,8 @@ const ArtistProducts = () => {
         .kpi-card-artist:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(0,0,0,.10); }
         .tab-btn { padding:7px 16px; border-radius:20px; border:1.5px solid #e2e8f0; background:white;
           font-size:0.78rem; font-weight:600; color:#64748b; cursor:pointer; transition:all .15s; white-space:nowrap; }
-        .tab-btn.active { border-color:#c8a97a; background:#fdf6ec; color:#8b6c4a; }
-        .tab-btn:hover:not(.active) { border-color:#c8a97a; color:#8b6c4a; }
+        .tab-btn.active { border-color:var(--brand); background:#fdf6ec; color:var(--brand-dark); }
+        .tab-btn:hover:not(.active) { border-color:var(--brand); color:var(--brand-dark); }
       `}</style>
 
       <Toast toasts={toasts} />
@@ -281,7 +282,7 @@ const ArtistProducts = () => {
         <button onClick={openAdd} style={{
           display:'flex', alignItems:'center', gap:8,
           padding:'10px 22px', borderRadius:11, border:'none',
-          background:'linear-gradient(135deg,#c8a97a,#8b6c4a)',
+          background:'linear-gradient(135deg,var(--brand),var(--brand-dark))',
           color:'white', fontWeight:700, fontSize:'0.9rem', cursor:'pointer',
           boxShadow:'0 4px 18px rgba(200,169,122,.4)', transition:'all .18s', whiteSpace:'nowrap',
         }}>
@@ -292,7 +293,7 @@ const ArtistProducts = () => {
       {/* ── KPI Cards — chỉ 1 dòng (4 box chính) ── */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12, marginBottom:18 }}>
         {[
-          { label:'Tổng tác phẩm', value:stats.total,    color:'#c8a97a', bg:'#fdf6ec', icon:'fa-images',       key:'all' },
+          { label:'Tổng tác phẩm', value:stats.total,    color:'var(--brand)', bg:'#fdf6ec', icon:'fa-images',       key:'all' },
           { label:'Đang bán',      value:stats.forSale,  color:'#10b981', bg:'#d1fae5', icon:'fa-check-circle', key:'ForSale' },
           { label:'Chờ duyệt',     value:stats.pending,  color:'#f59e0b', bg:'#fef3c7', icon:'fa-clock',        key:'Pending' },
           { label:'Đã bán',        value:stats.sold,     color:'#6b7280', bg:'#f3f4f6', icon:'fa-box',          key:'Sold' },
@@ -334,7 +335,7 @@ const ArtistProducts = () => {
                 onClick={() => setTabStatus(t.key)}>
                 {t.label}
                 {t.count > 0 && (
-                  <span style={{ marginLeft:5, background: tabStatus===t.key ? '#c8a97a' : '#e2e8f0',
+                  <span style={{ marginLeft:5, background: tabStatus===t.key ? 'var(--brand)' : '#e2e8f0',
                     color: tabStatus===t.key ? 'white' : '#64748b',
                     borderRadius:20, padding:'1px 7px', fontSize:'0.7rem', fontWeight:700 }}>
                     {t.count}
@@ -352,7 +353,7 @@ const ArtistProducts = () => {
 
         {loading ? (
           <div style={{ textAlign:'center', padding:'70px 0' }}>
-            <div className="spinner-border" style={{ color:'#c8a97a', width:40, height:40 }}></div>
+            <div className="spinner-border" style={{ color:'var(--brand)', width:40, height:40 }}></div>
             <p style={{ marginTop:14, color:'#94a3b8', fontSize:'0.88rem' }}>Đang tải...</p>
           </div>
         ) : filtered.length === 0 ? (
@@ -366,7 +367,7 @@ const ArtistProducts = () => {
             </div>
             {tabStatus === 'all' && (
               <button onClick={openAdd}
-                style={{ padding:'9px 22px', borderRadius:9, border:'none', background:'linear-gradient(135deg,#c8a97a,#8b6c4a)', color:'white', fontWeight:700, cursor:'pointer' }}>
+                style={{ padding:'9px 22px', borderRadius:9, border:'none', background:'linear-gradient(135deg,var(--brand),var(--brand-dark))', color:'white', fontWeight:700, cursor:'pointer' }}>
                 <i className="fas fa-plus mr-1"></i> Thêm tác phẩm đầu tiên
               </button>
             )}
@@ -402,7 +403,7 @@ const ArtistProducts = () => {
 
                       <td style={{ padding:'10px 14px' }}>
                         {p.imageUrl
-                          ? <img src={p.imageUrl.startsWith('http') ? p.imageUrl : `http://localhost:5000${p.imageUrl}`}
+                          ? <img src={toImg(p.imageUrl)}
                               alt={p.name} style={{ width:52, height:52, objectFit:'cover', borderRadius:10, boxShadow:'0 2px 8px rgba(0,0,0,.12)', display:'block' }}
                               onError={e => e.target.style.display='none'} />
                           : <div style={{ width:52, height:52, background:'#f1f5f9', borderRadius:10, display:'flex', alignItems:'center', justifyContent:'center' }}>
@@ -433,7 +434,7 @@ const ArtistProducts = () => {
                       </td>
 
                       <td style={{ padding:'12px 14px', whiteSpace:'nowrap' }}>
-                        <span style={{ fontWeight:800, color:'#c8a97a', fontSize:'0.9rem' }}>{fmt(p.price)}</span>
+                        <span style={{ fontWeight:800, color:'var(--brand)', fontSize:'0.9rem' }}>{fmt(p.price)}</span>
                       </td>
 
                       <td style={{ padding:'12px 14px', textAlign:'center' }}>
@@ -492,7 +493,7 @@ const ArtistProducts = () => {
           }}>
             {/* Header */}
             <div style={{
-              background:'linear-gradient(135deg,#c8a97a,#8b6c4a)',
+              background:'linear-gradient(135deg,var(--brand),var(--brand-dark))',
               padding:'20px 28px', display:'flex', justifyContent:'space-between', alignItems:'center',
             }}>
               <div>
@@ -529,10 +530,10 @@ const ArtistProducts = () => {
               <div style={{ width:230, flexShrink:0, display:'flex', flexDirection:'column', gap:16 }}>
 
                 {/* Ảnh */}
-                <div style={{ background:'#fffbf4', borderRadius:12, overflow:'hidden', border:'1.5px solid #e8d5a8' }}>
+                <div style={{ background:'#fffbf4', borderRadius:12, overflow:'hidden', border:'1.5px solid var(--brand-light)' }}>
                   <div style={{ padding:'10px 14px 6px', borderBottom:'1px solid #f5ede0' }}>
                     <span style={{ fontWeight:700, fontSize:'0.8rem', color:'#374151' }}>
-                      <i className="fas fa-camera mr-1" style={{ color:'#c8a97a' }}></i>
+                      <i className="fas fa-camera mr-1" style={{ color:'var(--brand)' }}></i>
                       Ảnh tác phẩm <span style={{ color:'#ef4444' }}>*</span>
                     </span>
                   </div>
@@ -546,7 +547,7 @@ const ArtistProducts = () => {
                       }}>
                       {form.imageUrl
                         ? <img src={form.imageUrl} alt="preview" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
-                        : <div style={{ textAlign:'center', color:'#c8a97a' }}>
+                        : <div style={{ textAlign:'center', color:'var(--brand)' }}>
                             <i className="fas fa-cloud-upload-alt" style={{ fontSize:'1.8rem', display:'block', marginBottom:6 }}></i>
                             <span style={{ fontSize:'0.78rem' }}>Click để chọn ảnh</span>
                           </div>
@@ -556,8 +557,8 @@ const ArtistProducts = () => {
                     <button onClick={() => fileRef.current?.click()} disabled={uploading}
                       style={{
                         width:'100%', padding:'7px 0', borderRadius:8,
-                        border:'1.5px solid #c8a97a', background: uploading ? '#f3f4f6' : 'white',
-                        color:'#8b6c4a', fontWeight:600, cursor: uploading ? 'not-allowed' : 'pointer',
+                        border:'1.5px solid var(--brand)', background: uploading ? '#f3f4f6' : 'white',
+                        color:'var(--brand-dark)', fontWeight:600, cursor: uploading ? 'not-allowed' : 'pointer',
                         fontSize:'0.82rem', display:'flex', alignItems:'center', justifyContent:'center', gap:6,
                       }}>
                       {uploading
@@ -569,8 +570,8 @@ const ArtistProducts = () => {
                 </div>
 
                 {/* Info box */}
-                <div style={{ background:'#fffbf4', borderRadius:12, border:'1.5px solid #e8d5a8', padding:14 }}>
-                  <div style={{ fontSize:'0.8rem', color:'#8b6c4a', lineHeight:1.7 }}>
+                <div style={{ background:'#fffbf4', borderRadius:12, border:'1.5px solid var(--brand-light)', padding:14 }}>
+                  <div style={{ fontSize:'0.8rem', color:'var(--brand-dark)', lineHeight:1.7 }}>
                     <i className="fas fa-info-circle mr-1"></i>
                     Tác phẩm sau khi gửi sẽ ở trạng thái <strong>Chờ duyệt</strong>. Admin sẽ xem xét và duyệt để hiển thị trên cửa hàng.
                   </div>
@@ -581,10 +582,10 @@ const ArtistProducts = () => {
               <div style={{ flex:1, display:'flex', flexDirection:'column', gap:16 }}>
 
                 {/* Thông tin cơ bản */}
-                <div style={{ background:'#fffbf4', borderRadius:12, border:'1.5px solid #e8d5a8' }}>
-                  <div style={{ padding:'10px 14px 6px', borderBottom:'1px solid #f5ede0', borderLeft:'3px solid #c8a97a', borderRadius:'11px 11px 0 0' }}>
+                <div style={{ background:'#fffbf4', borderRadius:12, border:'1.5px solid var(--brand-light)' }}>
+                  <div style={{ padding:'10px 14px 6px', borderBottom:'1px solid #f5ede0', borderLeft:'3px solid var(--brand)', borderRadius:'11px 11px 0 0' }}>
                     <span style={{ fontWeight:700, fontSize:'0.8rem', color:'#374151' }}>
-                      <i className="fas fa-info-circle mr-1" style={{ color:'#c8a97a' }}></i>Thông tin cơ bản
+                      <i className="fas fa-info-circle mr-1" style={{ color:'var(--brand)' }}></i>Thông tin cơ bản
                     </span>
                   </div>
                   <div style={{ padding:'14px', display:'flex', flexDirection:'column', gap:12 }}>
@@ -611,7 +612,7 @@ const ArtistProducts = () => {
                 </div>
 
                 {/* Chi tiết kỹ thuật */}
-                <div style={{ background:'#fffbf4', borderRadius:12, border:'1.5px solid #e8d5a8' }}>
+                <div style={{ background:'#fffbf4', borderRadius:12, border:'1.5px solid var(--brand-light)' }}>
                   <div style={{ padding:'10px 14px 6px', borderBottom:'1px solid #f5ede0', borderLeft:'3px solid #d4a76a', borderRadius:'11px 11px 0 0' }}>
                     <span style={{ fontWeight:700, fontSize:'0.8rem', color:'#374151' }}>
                       <i className="fas fa-palette mr-1" style={{ color:'#d4a76a' }}></i>Thông tin tác phẩm
@@ -621,14 +622,14 @@ const ArtistProducts = () => {
                     <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
                       <F label="Chất liệu" required>
                         <select className="form-control" value={form.material} onChange={ch('material')}
-                          style={{ borderRadius:8, fontSize:'0.88rem', border: form.material ? '1.5px solid #c8a97a' : '1.5px solid #e5e7eb' }}>
+                          style={{ borderRadius:8, fontSize:'0.88rem', border: form.material ? '1.5px solid var(--brand)' : '1.5px solid #e5e7eb' }}>
                           <option value="">-- Chọn chất liệu --</option>
                           {MATERIALS.map(m => <option key={m} value={m}>{m}</option>)}
                         </select>
                       </F>
                       <F label="Chủ đề / Phong cách" required>
                         <select className="form-control" value={form.theme} onChange={ch('theme')}
-                          style={{ borderRadius:8, fontSize:'0.88rem', border: form.theme ? '1.5px solid #c8a97a' : '1.5px solid #e5e7eb' }}>
+                          style={{ borderRadius:8, fontSize:'0.88rem', border: form.theme ? '1.5px solid var(--brand)' : '1.5px solid #e5e7eb' }}>
                           <option value="">-- Chọn chủ đề --</option>
                           {THEMES.map(t => <option key={t} value={t}>{t}</option>)}
                         </select>
@@ -647,7 +648,7 @@ const ArtistProducts = () => {
                               style={{ flexShrink:0, width:28, height:34, borderRadius:7, border:'1.5px solid #e5e7eb', background:'#f8fafc', cursor:'pointer', fontWeight:700, fontSize:'0.78rem', color:'#6b7280' }}>−</button>
                             <input className="form-control" type="number" min={1} placeholder="Rộng"
                               value={form.width} onChange={ch('width')}
-                              style={{ borderRadius:7, fontSize:'0.88rem', border: form.width ? '1.5px solid #c8a97a' : '1.5px solid #e5e7eb', textAlign:'center', padding:'6px 4px' }} />
+                              style={{ borderRadius:7, fontSize:'0.88rem', border: form.width ? '1.5px solid var(--brand)' : '1.5px solid #e5e7eb', textAlign:'center', padding:'6px 4px' }} />
                             <button type="button" onClick={() => adj('width',5)}
                               style={{ flexShrink:0, width:28, height:34, borderRadius:7, border:'1.5px solid #e5e7eb', background:'#f8fafc', cursor:'pointer', fontWeight:700, fontSize:'0.78rem', color:'#6b7280' }}>+</button>
                           </div>
@@ -660,7 +661,7 @@ const ArtistProducts = () => {
                               style={{ flexShrink:0, width:28, height:34, borderRadius:7, border:'1.5px solid #e5e7eb', background:'#f8fafc', cursor:'pointer', fontWeight:700, fontSize:'0.78rem', color:'#6b7280' }}>−</button>
                             <input className="form-control" type="number" min={1} placeholder="Cao"
                               value={form.height} onChange={ch('height')}
-                              style={{ borderRadius:7, fontSize:'0.88rem', border: form.height ? '1.5px solid #c8a97a' : '1.5px solid #e5e7eb', textAlign:'center', padding:'6px 4px' }} />
+                              style={{ borderRadius:7, fontSize:'0.88rem', border: form.height ? '1.5px solid var(--brand)' : '1.5px solid #e5e7eb', textAlign:'center', padding:'6px 4px' }} />
                             <button type="button" onClick={() => adj('height',5)}
                               style={{ flexShrink:0, width:28, height:34, borderRadius:7, border:'1.5px solid #e5e7eb', background:'#f8fafc', cursor:'pointer', fontWeight:700, fontSize:'0.78rem', color:'#6b7280' }}>+</button>
                           </div>
@@ -668,7 +669,7 @@ const ArtistProducts = () => {
                         </div>
                       </div>
                       {form.width && form.height && (
-                        <div style={{ marginTop:6, fontSize:'0.75rem', color:'#c8a97a', fontWeight:600, textAlign:'center' }}>
+                        <div style={{ marginTop:6, fontSize:'0.75rem', color:'var(--brand)', fontWeight:600, textAlign:'center' }}>
                           Kích thước: {form.width} × {form.height} cm
                         </div>
                       )}
@@ -677,7 +678,7 @@ const ArtistProducts = () => {
                 </div>
 
                 {/* Giá bán */}
-                <div style={{ background:'#fffbf4', borderRadius:12, border:'1.5px solid #e8d5a8' }}>
+                <div style={{ background:'#fffbf4', borderRadius:12, border:'1.5px solid var(--brand-light)' }}>
                   <div style={{ padding:'10px 14px 6px', borderBottom:'1px solid #f5ede0', borderLeft:'3px solid #10b981', borderRadius:'11px 11px 0 0' }}>
                     <span style={{ fontWeight:700, fontSize:'0.8rem', color:'#374151' }}>
                       <i className="fas fa-tag mr-1" style={{ color:'#10b981' }}></i>Giá bán
@@ -704,7 +705,7 @@ const ArtistProducts = () => {
                 </div>
 
                 {/* Mô tả */}
-                <div style={{ background:'#fffbf4', borderRadius:12, border:'1.5px solid #e8d5a8' }}>
+                <div style={{ background:'#fffbf4', borderRadius:12, border:'1.5px solid var(--brand-light)' }}>
                   <div style={{ padding:'10px 14px 6px', borderBottom:'1px solid #f5ede0', borderLeft:'3px solid #3b82f6', borderRadius:'11px 11px 0 0' }}>
                     <span style={{ fontWeight:700, fontSize:'0.8rem', color:'#374151' }}>
                       <i className="fas fa-align-left mr-1" style={{ color:'#3b82f6' }}></i>Mô tả tác phẩm <span style={{ color:'#ef4444' }}>*</span>
@@ -733,7 +734,7 @@ const ArtistProducts = () => {
               <button type="button" onClick={handleSave} disabled={saving}
                 style={{
                   padding:'10px 28px', borderRadius:10, border:'none',
-                  background:'linear-gradient(135deg,#c8a97a,#8b6c4a)',
+                  background:'linear-gradient(135deg,var(--brand),var(--brand-dark))',
                   color:'white', fontWeight:700, cursor: saving ? 'not-allowed' : 'pointer',
                   opacity: saving ? 0.7 : 1, display:'flex', alignItems:'center', gap:8,
                 }}>

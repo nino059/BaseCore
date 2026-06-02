@@ -89,7 +89,7 @@ const BlogRenderer = ({ post, compact = false }) => {
 
   const shareBtnStyle = {
     width: 34, height: 34, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-    border: '1px solid #d4c5af', background: '#f9f6f1', color: '#8b6c4a', borderRadius: '50%',
+    border: '1px solid #d4c5af', background: '#f9f6f1', color: 'var(--brand-dark)', borderRadius: '50%',
     cursor: 'pointer', fontSize: '0.92rem', transition: 'all 0.2s ease',
   };
 
@@ -116,7 +116,7 @@ const BlogRenderer = ({ post, compact = false }) => {
           <div style={{
             height: '100%',
             width: `${progress}%`,
-            background: 'linear-gradient(to right, #c8a97a, #8b6c4a)',
+            background: 'linear-gradient(to right, var(--brand), var(--brand-dark))',
             transition: 'width 0.12s cubic-bezier(0.23, 1, 0.32, 1)',
           }} />
         </div>
@@ -149,7 +149,7 @@ const BlogRenderer = ({ post, compact = false }) => {
         {/* Title - more elegant and commanding */}
         <h1 style={{
           fontSize: compact ? '1.72rem' : 'clamp(2.05rem, 4.6vw, 2.85rem)',
-          fontWeight: 300, lineHeight: 1.18, color: '#1a1a1a',
+          fontWeight: 300, lineHeight: 1.18, color: 'var(--ink)',
           letterSpacing: '-0.015em', margin: '0 0 20px',
         }}>
           {title}
@@ -161,7 +161,7 @@ const BlogRenderer = ({ post, compact = false }) => {
             <div style={{
               width: 44, height: 44, borderRadius: '50%', background: '#e8e4df',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '1.05rem', fontWeight: 600, color: '#8b6c4a', flexShrink: 0,
+              fontSize: '1.05rem', fontWeight: 600, color: 'var(--brand-dark)', flexShrink: 0,
             }}>
               {(authorName || 'A')[0].toUpperCase()}
             </div>
@@ -178,7 +178,7 @@ const BlogRenderer = ({ post, compact = false }) => {
             <p style={{
               fontSize: compact ? '0.96rem' : '1.065rem', color: '#4f4a42',
               fontStyle: 'italic', lineHeight: 1.78, maxWidth: '68ch',
-              borderLeft: '3.5px solid #c8a97a', paddingLeft: 20, margin: 0,
+              borderLeft: '3.5px solid var(--brand)', paddingLeft: 20, margin: 0,
               textAlign: 'justify',
             }}>
               {excerpt}
@@ -246,7 +246,7 @@ const BlogRenderer = ({ post, compact = false }) => {
                       {block.caption}
                       <span style={{
                         position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)',
-                        width: 9, height: 1, background: '#c8a97a',
+                        width: 9, height: 1, background: 'var(--brand)',
                       }} />
                     </span>
                   </figcaption>
@@ -283,7 +283,7 @@ const BlogRenderer = ({ post, compact = false }) => {
                 <span style={{
                   float: 'left', fontSize: '3.45rem', lineHeight: 0.78,
                   paddingRight: 8, paddingTop: 3, fontWeight: 500,
-                  color: '#8b6c4a', fontFamily: 'inherit',
+                  color: 'var(--brand-dark)', fontFamily: 'inherit',
                 }}>
                   {text.charAt(0)}
                 </span>
@@ -297,7 +297,7 @@ const BlogRenderer = ({ post, compact = false }) => {
         {!compact && blocks.length > 0 && (
           <div style={{ marginTop: 52, paddingTop: 28, borderTop: '1px solid #e6d9c9' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-              <span style={{ fontSize: '0.85rem', color: '#c8a97a', letterSpacing: '0.4em' }}>✦ ✦ ✦</span>
+              <span style={{ fontSize: '0.85rem', color: 'var(--brand)', letterSpacing: '0.4em' }}>✦ ✦ ✦</span>
             </div>
             <ShareBar />
           </div>
@@ -356,7 +356,7 @@ const BlogRenderer = ({ post, compact = false }) => {
         {category && (
           <span style={{
             fontSize: '0.71rem', fontWeight: 700, letterSpacing: '0.09em',
-            textTransform: 'uppercase', padding: '3px 13px', background: '#f0ece8', color: '#8b6c4a',
+            textTransform: 'uppercase', padding: '3px 13px', background: '#f0ece8', color: 'var(--brand-dark)',
             borderRadius: 2,
           }}>
             {category}

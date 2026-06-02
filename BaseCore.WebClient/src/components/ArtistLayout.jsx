@@ -45,9 +45,9 @@ const ArtistLayout = ({ children }) => {
   const AvatarBubble = ({ size = 36, fontSize = '0.95rem' }) => (
     <div style={{
       width: size, height: size, borderRadius: '50%', flexShrink: 0,
-      background: avatarUrl ? '#f0ece8' : 'linear-gradient(135deg,#c8a97a,#8b6c4a)',
+      background: avatarUrl ? '#f0ece8' : 'linear-gradient(135deg,var(--brand),var(--brand-dark))',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      overflow: 'hidden', border: avatarUrl ? '2px solid #c8a97a' : 'none',
+      overflow: 'hidden', border: avatarUrl ? '2px solid var(--brand)' : 'none',
     }}>
       {avatarUrl
         ? <img src={avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display = 'none'} />
@@ -63,11 +63,11 @@ const ArtistLayout = ({ children }) => {
         .al-link { display:flex; align-items:center; gap:12px; padding:10px; border-radius:10px; margin-bottom:2px;
           text-decoration:none !important; color:rgba(255,255,255,0.6); transition:all .18s; whiteSpace:nowrap; border:1px solid transparent; }
         .al-link:hover { text-decoration:none !important; }
-        .al-link:hover { background:rgba(200,169,122,0.12) !important; color:#e8d5a8 !important; }
-        .al-link:hover i { color:#e8d5a8 !important; }
+        .al-link:hover { background:rgba(200,169,122,0.12) !important; color:var(--brand-light) !important; }
+        .al-link:hover i { color:var(--brand-light) !important; }
         .al-link.active { background:linear-gradient(135deg,rgba(200,169,122,0.28),rgba(139,108,74,0.22)) !important;
-          color:#e8d5a8 !important; border:1px solid rgba(200,169,122,0.35) !important; }
-        .al-link.active i { color:#e8d5a8 !important; }
+          color:var(--brand-light) !important; border:1px solid rgba(200,169,122,0.35) !important; }
+        .al-link.active i { color:var(--brand-light) !important; }
         .al-link-bottom { display:flex; align-items:center; gap:12px; padding:10px; border-radius:10px;
           text-decoration:none; color:rgba(255,255,255,0.45); transition:color .2s; whiteSpace:nowrap; border:none;
           background:transparent; width:100%; cursor:pointer; font-size:0.85rem; }
@@ -101,7 +101,7 @@ const ArtistLayout = ({ children }) => {
           height:64, flexShrink:0,
         }}>
           <div style={{ width:36, height:36, borderRadius:10, flexShrink:0,
-            background:'linear-gradient(135deg,#e8d5a8,#c8a97a)',
+            background:'linear-gradient(135deg,var(--brand-light),var(--brand))',
             display:'flex', alignItems:'center', justifyContent:'center' }}>
             <i className="fas fa-palette" style={{ color:'white', fontSize:'1rem' }}></i>
           </div>
@@ -119,7 +119,7 @@ const ArtistLayout = ({ children }) => {
               style={{
                 background: pinned ? 'rgba(200,169,122,0.25)' : 'rgba(255,255,255,0.08)',
                 border: pinned ? '1px solid rgba(200,169,122,0.4)' : '1px solid transparent',
-                color: pinned ? '#c8a97a' : 'rgba(255,255,255,0.55)',
+                color: pinned ? 'var(--brand)' : 'rgba(255,255,255,0.55)',
                 borderRadius:7, width:28, height:28, cursor:'pointer',
                 display:'flex', alignItems:'center', justifyContent:'center',
                 flexShrink:0, transition:'all 0.2s', marginLeft:6,
@@ -148,7 +148,7 @@ const ArtistLayout = ({ children }) => {
             </div>
             <div style={{
               display:'inline-block', marginTop:2,
-              background:'rgba(200,169,122,0.25)', color:'#c8a97a',
+              background:'rgba(200,169,122,0.25)', color:'var(--brand)',
               borderRadius:20, padding:'1px 8px', fontSize:'0.66rem', fontWeight:700,
             }}>
               Họa sĩ
@@ -168,7 +168,7 @@ const ArtistLayout = ({ children }) => {
               >
                 <i className={`fas ${item.icon}`} style={{
                   fontSize:'1rem', width:20, textAlign:'center', flexShrink:0,
-                  color: active ? '#e8d5a8' : 'rgba(255,255,255,0.5)',
+                  color: active ? 'var(--brand-light)' : 'rgba(255,255,255,0.5)',
                 }}></i>
                 <span style={{
                   fontWeight: active ? 700 : 500, fontSize: '0.88rem',
@@ -182,7 +182,7 @@ const ArtistLayout = ({ children }) => {
                 {isOpen && active && (
                   <span style={{
                     marginLeft:'auto', width:6, height:6,
-                    borderRadius:'50%', background:'#c8a97a', flexShrink:0,
+                    borderRadius:'50%', background:'var(--brand)', flexShrink:0,
                   }}></span>
                 )}
               </Link>
@@ -266,7 +266,7 @@ const ArtistLayout = ({ children }) => {
                   color:'#374151', background:'none', border:'none', cursor:'pointer',
                   textDecoration:'none',
                 }}>
-                  <i className="fas fa-user-edit mr-2" style={{ color:'#c8a97a' }}></i>Chỉnh sửa hồ sơ
+                  <i className="fas fa-user-edit mr-2" style={{ color:'var(--brand)' }}></i>Chỉnh sửa hồ sơ
                 </Link>
                 <button onClick={handleLogout} style={{
                   display:'block', width:'100%', textAlign:'left',
@@ -292,7 +292,7 @@ const ArtistLayout = ({ children }) => {
           fontSize:'0.8rem', color:'#9ca3af',
           display:'flex', justifyContent:'space-between',
         }}>
-          <span>© 2026 <strong style={{ color:'#c8a97a' }}>Arthentic</strong>. Không gian họa sĩ.</span>
+          <span>© 2026 <strong style={{ color:'var(--brand)' }}>Arthentic</strong>. Không gian họa sĩ.</span>
           <span>Version 1.0.0</span>
         </footer>
       </div>

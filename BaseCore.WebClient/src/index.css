@@ -1,6 +1,27 @@
-/* Tùy chỉnh Bootstrap variables */
+/* ─── Tailwind v4 ─── */
+/* Chỉ nạp theme + utilities, KHÔNG nạp preflight (base reset) để không phá CSS Bootstrap đang dùng */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+/* Token màu thương hiệu cho Tailwind → sinh class bg-brand / text-brand-dark ... */
+@theme {
+  --color-brand:       #c8a97a; /* vàng gold chủ đạo */
+  --color-brand-dark:  #8b6c4a; /* nâu/gold đậm (hover, nhấn) */
+  --color-brand-light: #e8d5a8; /* gold nhạt */
+  --color-ink:         #1a1a1a; /* đen/than chữ & nền tối */
+}
+
+/* ─── Theme tokens (nguồn cho inline style var(--brand) đang dùng) ─── */
 :root {
-  --bs-primary: #1a1a1a;
+  /* Tham chiếu token Tailwind ở trên → chỉ 1 nguồn giá trị */
+  --brand:       var(--color-brand);
+  --brand-dark:  var(--color-brand-dark);
+  --brand-light: var(--color-brand-light);
+  --ink:         var(--color-ink);
+
+  /* Bootstrap override */
+  --bs-primary: var(--ink);
   --bs-font-sans-serif: 'Inter', system-ui, -apple-system, sans-serif;
 }
 

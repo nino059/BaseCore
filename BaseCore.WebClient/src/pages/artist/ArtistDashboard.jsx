@@ -6,7 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 
 const fmt = (n) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n);
 
-const StatCard = ({ icon, label, value, color = '#1a1a1a', bg = '#f7f5f2' }) => (
+const StatCard = ({ icon, label, value, color = 'var(--ink)', bg = '#f7f5f2' }) => (
   <div style={{ background: 'white', border: '1px solid #e8e4df', padding: '24px 28px', flex: 1, minWidth: 160 }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
       <div style={{ width: 36, height: 36, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -14,7 +14,7 @@ const StatCard = ({ icon, label, value, color = '#1a1a1a', bg = '#f7f5f2' }) => 
       </div>
       <span style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', color: '#aaa', textTransform: 'uppercase' }}>{label}</span>
     </div>
-    <div style={{ fontSize: '2rem', fontWeight: 300, color: '#1a1a1a' }}>{value}</div>
+    <div style={{ fontSize: '2rem', fontWeight: 300, color: 'var(--ink)' }}>{value}</div>
   </div>
 );
 
@@ -29,13 +29,13 @@ const StatusBadge = ({ status }) => {
 const STATUS_CFG = {
   Pending:    { label: "Chờ xác nhận", color: "#f59e0b" },
   Processing: { label: "Đang xử lý",   color: "#3b82f6" },
-  Shipped:    { label: "Đang giao",    color: "#8b6c4a" },
+  Shipped:    { label: "Đang giao",    color: "var(--brand-dark)" },
   Completed:  { label: "Hoàn thành",   color: "#10b981" },
   Cancelled:  { label: "Đã hủy",       color: "#ef4444" },
 };
 
 // ─── Bar Chart (giống hệt Admin) ─────────────────────────────
-const BarChart = ({ data, color = "#c8a97a" }) => {
+const BarChart = ({ data, color = "var(--brand)" }) => {
   if (!data || data.length === 0) return null;
   const W = 480, H = 130, PX = 24, PY = 18, PB = 22;
   const maxVal = Math.max(...data.map(d => d.value), 1);
@@ -120,7 +120,7 @@ const AreaChart = ({ data, color = "#10b981", showValues = false }) => {
               textAnchor="middle" 
               fontSize="9" 
               fontWeight="600" 
-              fill="#1a1a1a"
+              fill="var(--ink)"
             >
               {Number(d.value).toLocaleString("vi-VN")}
             </text>
@@ -260,7 +260,7 @@ const ArtistDashboard = () => {
       }}>
         {[
           { 
-            label: "Tác phẩm", value: stats.totalArtworks || stats.selling, color: "#c8a97a", icon: "fa-palette",     href: "/artist/products"},
+            label: "Tác phẩm", value: stats.totalArtworks || stats.selling, color: "var(--brand)", icon: "fa-palette",     href: "/artist/products"},
           { label: "Bài viết",   value: stats.blogs,    color: "#7c3aed", icon: "fa-pen-fancy",     href: "/artist/blog"},
           { label: "Đơn hàng",   value: stats.orders,   color: "#f59e0b", icon: "fa-shopping-bag",  href: "/artist/orders"},
         ].map((k, i) => (
@@ -319,11 +319,11 @@ const ArtistDashboard = () => {
                   6 tháng gần nhất
                 </p>
               </div>
-              <div style={{ width: 34, height: 34, borderRadius: 9, background: "#c8a97a18", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <i className="fas fa-chart-bar" style={{ color: "#c8a97a", fontSize: "0.9rem" }} />
+              <div style={{ width: 34, height: 34, borderRadius: 9, background: "var(--brand)18", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <i className="fas fa-chart-bar" style={{ color: "var(--brand)", fontSize: "0.9rem" }} />
               </div>
             </div>
-            <BarChart data={monthlyOrders} color="#c8a97a" />
+            <BarChart data={monthlyOrders} color="var(--brand)" />
           </div>
 
           {/* Biểu đồ area: doanh thu / tháng */}
@@ -358,7 +358,7 @@ const ArtistDashboard = () => {
             <h6 style={{ fontWeight: 800, color: "#1e293b", margin: 0, fontSize: "0.95rem" }}>
               Đơn hàng gần nhất
             </h6>
-            <Link to="/artist/orders" style={{ fontSize: "0.8rem", color: "#c8a97a", fontWeight: 700, textDecoration: "none" }}>
+            <Link to="/artist/orders" style={{ fontSize: "0.8rem", color: "var(--brand)", fontWeight: 700, textDecoration: "none" }}>
               Xem tất cả →
             </Link>
           </div>
@@ -393,7 +393,7 @@ const ArtistDashboard = () => {
                       <tr key={o.id}
                         onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"}
                         onMouseLeave={e => e.currentTarget.style.background = "white"}>
-                        <td style={{ padding: "10px 10px", borderBottom: "1px solid #f8fafc", fontSize: "0.85rem", fontWeight: 700, color: "#c8a97a" }}>
+                        <td style={{ padding: "10px 10px", borderBottom: "1px solid #f8fafc", fontSize: "0.85rem", fontWeight: 700, color: "var(--brand)" }}>
                           #{o.id}
                         </td>
                         <td style={{ padding: "10px 10px", borderBottom: "1px solid #f8fafc", fontSize: "0.79rem", color: "#94a3b8", whiteSpace: "nowrap" }}>
@@ -450,7 +450,7 @@ const ArtistDashboard = () => {
 
           {/* Revenue summary cho Artist */}
           <div style={{
-            marginTop: 22, background: "linear-gradient(135deg,#c8a97a,#8b6c4a)",
+            marginTop: 22, background: "linear-gradient(135deg,var(--brand),var(--brand-dark))",
             borderRadius: 12, padding: "16px 18px", color: "white",
           }}>
             <div style={{ fontSize: "0.72rem", opacity: 0.8, marginBottom: 3, textTransform: "uppercase", letterSpacing: "0.06em" }}>

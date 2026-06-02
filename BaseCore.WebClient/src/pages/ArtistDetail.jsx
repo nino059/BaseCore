@@ -110,7 +110,7 @@ const ArtistDetail = () => {
     <PublicLayout>
       <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 44, height: 44, border: '2px solid #e8e4df', borderTopColor: '#c8a97a', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }} />
+          <div style={{ width: 44, height: 44, border: '2px solid #e8e4df', borderTopColor: 'var(--brand)', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }} />
           <p style={{ color: '#aaa', fontSize: '0.85rem', fontWeight: 300 }}>Đang tải…</p>
         </div>
       </div>
@@ -124,7 +124,7 @@ const ArtistDetail = () => {
         <div style={{ textAlign: 'center' }}>
           <p style={{ fontSize: '2rem', color: '#e8e4df', marginBottom: 12 }}>✦</p>
           <p style={{ color: '#767676', marginBottom: 24, fontWeight: 300 }}>{error || 'Không tìm thấy họa sĩ'}</p>
-          <button onClick={() => navigate('/artists')} style={{ padding: '12px 32px', background: '#1a1a1a', color: 'white', border: 'none', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', cursor: 'pointer' }}>
+          <button onClick={() => navigate('/artists')} style={{ padding: '12px 32px', background: 'var(--ink)', color: 'white', border: 'none', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', cursor: 'pointer' }}>
             Quay lại danh sách
           </button>
         </div>
@@ -170,25 +170,25 @@ const ArtistDetail = () => {
         }
         .paint-status-badge {
           position: absolute; top: 10px; right: 10px;
-          background: #1a1a1a; color: white;
+          background: var(--ink); color: white;
           font-size: 0.58rem; font-weight: 700; letter-spacing: 0.1em;
           text-transform: uppercase; padding: 3px 9px;
         }
         .paint-meta { padding: 0 2px; }
         .paint-cat {
           font-size: 0.6rem; font-weight: 700; letter-spacing: 0.15em;
-          color: #c8a97a; text-transform: uppercase; margin: 0 0 5px;
+          color: var(--brand); text-transform: uppercase; margin: 0 0 5px;
         }
         .paint-name {
-          font-weight: 500; font-size: 0.88rem; color: #1a1a1a;
+          font-weight: 500; font-size: 0.88rem; color: var(--ink);
           margin: 0 0 8px; line-height: 1.35; transition: color 0.2s;
         }
-        .paint-name.hovered { color: #8b6c4a; }
+        .paint-name.hovered { color: var(--brand-dark); }
         .paint-footer {
           display: flex; align-items: center; justify-content: space-between; gap: 8px;
         }
         .paint-price {
-          font-size: 0.82rem; color: #8b6c4a; font-weight: 700;
+          font-size: 0.82rem; color: var(--brand-dark); font-weight: 700;
         }
         .paint-price-contact {
           font-size: 0.78rem; color: #aaa; font-style: italic;
@@ -210,7 +210,7 @@ const ArtistDetail = () => {
       {/* ═══════════════════════════════════════════
           HERO — dark banner with blurred avatar bg
       ═══════════════════════════════════════════ */}
-      <div style={{ position: 'relative', background: '#1a1a1a', overflow: 'hidden', marginTop: -64 }}>
+      <div style={{ position: 'relative', background: 'var(--ink)', overflow: 'hidden', marginTop: -64 }}>
         {/* Blurred background image */}
         {artist.avatarUrl && (
           <img
@@ -235,7 +235,7 @@ const ArtistDetail = () => {
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: 40, flexWrap: 'wrap' }}>
             {/* Label */}
             <div style={{ flex: 1, minWidth: 240 }}>
-              <p style={{ fontSize: 50, fontWeight: 700, letterSpacing: '0.28em', color: '#c8a97a', textTransform: 'uppercase', margin: '0 0 12px' }}>
+              <p style={{ fontSize: 50, fontWeight: 700, letterSpacing: '0.28em', color: 'var(--brand)', textTransform: 'uppercase', margin: '0 0 12px' }}>
                 ✦&nbsp;Họa Sĩ
               </p>
               <h1 style={{ fontWeight: 200, fontSize: 'clamp(2rem, 5vw, 3.8rem)', color: 'white', letterSpacing: '0.06em', margin: '0 0 20px', lineHeight: 1.1 }}>
@@ -244,12 +244,12 @@ const ArtistDetail = () => {
               {/* Stats row */}
               <div style={{ display: 'flex', gap: 36 }}>
                 <div>
-                  <div style={{ fontSize: '1.6rem', fontWeight: 200, color: '#c8a97a', lineHeight: 1 }}>{products.length}</div>
+                  <div style={{ fontSize: '1.6rem', fontWeight: 200, color: 'var(--brand)', lineHeight: 1 }}>{products.length}</div>
                   <div style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.14em', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginTop: 3 }}>Tác phẩm</div>
                 </div>
                 {cats.length > 0 && (
                   <div>
-                    <div style={{ fontSize: '1.6rem', fontWeight: 200, color: '#c8a97a', lineHeight: 1 }}>{cats.length}</div>
+                    <div style={{ fontSize: '1.6rem', fontWeight: 200, color: 'var(--brand)', lineHeight: 1 }}>{cats.length}</div>
                     <div style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.14em', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginTop: 3 }}>Chủ đề</div>
                   </div>
                 )}
@@ -276,7 +276,7 @@ const ArtistDetail = () => {
               <div style={{
                 aspectRatio: '3/4',
                 overflow: 'hidden',
-                background: artist.avatarUrl ? '#f0ece8' : 'linear-gradient(160deg, #c8a97a 0%, #8b6c4a 100%)',
+                background: artist.avatarUrl ? '#f0ece8' : 'linear-gradient(160deg, var(--brand) 0%, var(--brand-dark) 100%)',
                 boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
               }}>
                 {artist.avatarUrl ? (
@@ -298,15 +298,15 @@ const ArtistDetail = () => {
             {/* ── Info ── */}
             <div style={{ paddingTop: 8 }}>
               {/* Sub-label */}
-              <p style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.24em', color: '#c8a97a', textTransform: 'uppercase', margin: '0 0 14px' }}>
+              <p style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.24em', color: 'var(--brand)', textTransform: 'uppercase', margin: '0 0 14px' }}>
                 Tiểu Sử
               </p>
-              <h2 style={{ fontWeight: 300, fontSize: 'clamp(1.4rem, 3vw, 2rem)', color: '#1a1a1a', letterSpacing: '0.04em', margin: '0 0 24px', lineHeight: 1.2 }}>
+              <h2 style={{ fontWeight: 300, fontSize: 'clamp(1.4rem, 3vw, 2rem)', color: 'var(--ink)', letterSpacing: '0.04em', margin: '0 0 24px', lineHeight: 1.2 }}>
                 {artist.name}
               </h2>
 
               {/* Decorative separator */}
-              <div style={{ width: 48, height: 1, background: '#c8a97a', marginBottom: 24 }} />
+              <div style={{ width: 48, height: 1, background: 'var(--brand)', marginBottom: 24 }} />
 
               {/* Category tags */}
               {cats.length > 0 && (
@@ -332,7 +332,7 @@ const ArtistDetail = () => {
                   {longBio && (
                     <button
                       onClick={() => setBioExpanded(v => !v)}
-                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', color: '#c8a97a', textTransform: 'uppercase' }}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', color: 'var(--brand)', textTransform: 'uppercase' }}
                     >
                       {bioExpanded ? '← Thu gọn' : 'Xem đầy đủ →'}
                     </button>
@@ -351,7 +351,7 @@ const ArtistDetail = () => {
                   { value: cats.length || '—', label: 'Chủ đề' },
                 ].map((s, i) => (
                   <div key={i} style={{ flex: 1, padding: '20px 24px', borderRight: '1px solid #e8e4df', borderBottom: '1px solid #e8e4df', textAlign: 'center' }}>
-                    <div style={{ fontSize: '1.8rem', fontWeight: 200, color: '#1a1a1a', lineHeight: 1 }}>{s.value}</div>
+                    <div style={{ fontSize: '1.8rem', fontWeight: 200, color: 'var(--ink)', lineHeight: 1 }}>{s.value}</div>
                     <div style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.14em', color: '#aaa', textTransform: 'uppercase', marginTop: 6 }}>{s.label}</div>
                   </div>
                 ))}
@@ -371,10 +371,10 @@ const ArtistDetail = () => {
           {/* Section header */}
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 40, flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <p style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.22em', color: '#c8a97a', textTransform: 'uppercase', margin: '0 0 8px' }}>
+              <p style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.22em', color: 'var(--brand)', textTransform: 'uppercase', margin: '0 0 8px' }}>
                 Bộ sưu tập
               </p>
-              <h2 style={{ fontWeight: 200, fontSize: 'clamp(1.3rem, 3vw, 1.8rem)', color: '#1a1a1a', letterSpacing: '0.04em', margin: 0 }}>
+              <h2 style={{ fontWeight: 200, fontSize: 'clamp(1.3rem, 3vw, 1.8rem)', color: 'var(--ink)', letterSpacing: '0.04em', margin: 0 }}>
                 Tác Phẩm
               </h2>
             </div>
@@ -406,21 +406,21 @@ const ArtistDetail = () => {
       <div style={{ background: 'white', borderTop: '1px solid #e8e4df', padding: '40px 0' }}>
         <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
           <div>
-            <p style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.2em', color: '#c8a97a', textTransform: 'uppercase', margin: '0 0 6px' }}>Khám phá thêm</p>
-            <p style={{ fontWeight: 300, color: '#1a1a1a', fontSize: '1.05rem', margin: 0 }}>Các họa sĩ khác trong gallery</p>
+            <p style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.2em', color: 'var(--brand)', textTransform: 'uppercase', margin: '0 0 6px' }}>Khám phá thêm</p>
+            <p style={{ fontWeight: 300, color: 'var(--ink)', fontSize: '1.05rem', margin: 0 }}>Các họa sĩ khác trong gallery</p>
           </div>
           <Link
             to="/artists"
             style={{
               display: 'inline-block',
               padding: '13px 32px',
-              background: '#1a1a1a', color: 'white',
+              background: 'var(--ink)', color: 'white',
               textDecoration: 'none',
               fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase',
               transition: 'background 0.2s',
             }}
-            onMouseEnter={e => e.currentTarget.style.background = '#8b6c4a'}
-            onMouseLeave={e => e.currentTarget.style.background = '#1a1a1a'}
+            onMouseEnter={e => e.currentTarget.style.background = 'var(--brand-dark)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'var(--ink)'}
           >
             Tất cả họa sĩ →
           </Link>

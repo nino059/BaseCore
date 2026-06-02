@@ -7,7 +7,7 @@ import { authApi } from '../services/api';
 const inp = {
   width: '100%', padding: '11px 14px',
   border: '1.5px solid #e8e4df', background: 'white',
-  fontSize: '0.93rem', color: '#1a1a1a', outline: 'none',
+  fontSize: '0.93rem', color: 'var(--ink)', outline: 'none',
   boxSizing: 'border-box', transition: 'border-color 0.2s',
 };
 
@@ -112,8 +112,8 @@ const AuthModal = () => {
         {/* Header */}
         <div style={{ padding: '20px 24px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: '1.2rem', color: '#c8a97a' }}>✦</span>
-            <span style={{ fontWeight: 300, fontSize: '1.05rem', color: '#1a1a1a', letterSpacing: '0.08em' }}>ARTHENTIC</span>
+            <span style={{ fontSize: '1.2rem', color: 'var(--brand)' }}>✦</span>
+            <span style={{ fontWeight: 300, fontSize: '1.05rem', color: 'var(--ink)', letterSpacing: '0.08em' }}>ARTHENTIC</span>
           </div>
           <button
             onClick={close}
@@ -122,7 +122,7 @@ const AuthModal = () => {
               color: '#aaa', fontSize: '1.2rem', lineHeight: 1,
               padding: '2px 6px', transition: 'color 0.15s',
             }}
-            onMouseEnter={e => e.currentTarget.style.color = '#1a1a1a'}
+            onMouseEnter={e => e.currentTarget.style.color = 'var(--ink)'}
             onMouseLeave={e => e.currentTarget.style.color = '#aaa'}
           >
             ✕
@@ -138,9 +138,9 @@ const AuthModal = () => {
               style={{
                 flex: 1, padding: '12px 0',
                 background: 'none', border: 'none',
-                borderBottom: tab === key ? '2.5px solid #c8a97a' : '2.5px solid transparent',
+                borderBottom: tab === key ? '2.5px solid var(--brand)' : '2.5px solid transparent',
                 marginBottom: -1,
-                color: tab === key ? '#1a1a1a' : '#aaa',
+                color: tab === key ? 'var(--ink)' : '#aaa',
                 fontWeight: tab === key ? 700 : 400,
                 fontSize: '0.88rem', letterSpacing: '0.06em',
                 cursor: 'pointer', transition: 'all 0.2s',
@@ -180,7 +180,7 @@ const AuthModal = () => {
           {tab === 'login' && (
             <form onSubmit={handleLogin}>
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 6 }}>
                   Tên đăng nhập
                 </label>
                 <input
@@ -189,13 +189,13 @@ const AuthModal = () => {
                   placeholder="Nhập tên đăng nhập"
                   required autoFocus
                   style={inp}
-                  onFocus={e => e.target.style.borderColor = '#1a1a1a'}
+                  onFocus={e => e.target.style.borderColor = 'var(--ink)'}
                   onBlur={e => e.target.style.borderColor = '#e8e4df'}
                 />
               </div>
 
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 6 }}>
                   Mật khẩu
                 </label>
                 <div style={{ position: 'relative' }}>
@@ -206,7 +206,7 @@ const AuthModal = () => {
                     placeholder="Nhập mật khẩu"
                     required
                     style={{ ...inp, paddingRight: 40 }}
-                    onFocus={e => e.target.style.borderColor = '#1a1a1a'}
+                    onFocus={e => e.target.style.borderColor = 'var(--ink)'}
                     onBlur={e => e.target.style.borderColor = '#e8e4df'}
                   />
                   <button type="button" onClick={() => setShowPass(p => !p)}
@@ -221,7 +221,7 @@ const AuthModal = () => {
                   <input
                     type="checkbox" checked={remember}
                     onChange={e => setRemember(e.target.checked)}
-                    style={{ accentColor: '#1a1a1a', width: 14, height: 14 }}
+                    style={{ accentColor: 'var(--ink)', width: 14, height: 14 }}
                   />
                   Ghi nhớ đăng nhập
                 </label>
@@ -229,7 +229,7 @@ const AuthModal = () => {
 
               <button type="submit" disabled={loading} style={{
                 width: '100%', padding: '13px 0',
-                background: loading ? '#ccc' : '#1a1a1a',
+                background: loading ? '#ccc' : 'var(--ink)',
                 color: 'white', border: 'none',
                 fontSize: '0.78rem', fontWeight: 700,
                 letterSpacing: '0.14em', textTransform: 'uppercase',
@@ -246,7 +246,7 @@ const AuthModal = () => {
                 <p style={{ fontSize: '0.85rem', color: '#767676', margin: 0 }}>
                   Chưa có tài khoản?{' '}
                   <button type="button" onClick={() => setTab('register')}
-                    style={{ background: 'none', border: 'none', padding: 0, color: '#1a1a1a', fontWeight: 700, cursor: 'pointer', borderBottom: '1px solid #1a1a1a', fontSize: '0.85rem' }}>
+                    style={{ background: 'none', border: 'none', padding: 0, color: 'var(--ink)', fontWeight: 700, cursor: 'pointer', borderBottom: '1px solid var(--ink)', fontSize: '0.85rem' }}>
                     Đăng ký ngay
                   </button>
                 </p>
@@ -262,7 +262,7 @@ const AuthModal = () => {
                 { name: 'email',    label: 'Địa chỉ Email',  type: 'email', placeholder: 'your@email.com' },
               ].map(f => (
                 <div key={f.name} style={{ marginBottom: 16 }}>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 6 }}>
                     {f.label}
                   </label>
                   <input
@@ -272,14 +272,14 @@ const AuthModal = () => {
                     placeholder={f.placeholder}
                     required
                     style={inp}
-                    onFocus={e => e.target.style.borderColor = '#1a1a1a'}
+                    onFocus={e => e.target.style.borderColor = 'var(--ink)'}
                     onBlur={e => e.target.style.borderColor = '#e8e4df'}
                   />
                 </div>
               ))}
 
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 6 }}>
                   Mật khẩu
                 </label>
                 <div style={{ position: 'relative' }}>
@@ -290,7 +290,7 @@ const AuthModal = () => {
                     placeholder="Ít nhất 6 ký tự"
                     required
                     style={{ ...inp, paddingRight: 40 }}
-                    onFocus={e => e.target.style.borderColor = '#1a1a1a'}
+                    onFocus={e => e.target.style.borderColor = 'var(--ink)'}
                     onBlur={e => e.target.style.borderColor = '#e8e4df'}
                   />
                   <button type="button" onClick={() => setShowRegPass(p => !p)}
@@ -301,7 +301,7 @@ const AuthModal = () => {
               </div>
 
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', color: '#8b6c4a', textTransform: 'uppercase', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 6 }}>
                   Xác nhận mật khẩu
                 </label>
                 <input
@@ -311,14 +311,14 @@ const AuthModal = () => {
                   placeholder="Nhập lại mật khẩu"
                   required
                   style={inp}
-                  onFocus={e => e.target.style.borderColor = '#1a1a1a'}
+                  onFocus={e => e.target.style.borderColor = 'var(--ink)'}
                   onBlur={e => e.target.style.borderColor = '#e8e4df'}
                 />
               </div>
 
               <button type="submit" disabled={loading} style={{
                 width: '100%', padding: '13px 0',
-                background: loading ? '#ccc' : '#1a1a1a',
+                background: loading ? '#ccc' : 'var(--ink)',
                 color: 'white', border: 'none',
                 fontSize: '0.78rem', fontWeight: 700,
                 letterSpacing: '0.14em', textTransform: 'uppercase',
@@ -335,7 +335,7 @@ const AuthModal = () => {
                 <p style={{ fontSize: '0.85rem', color: '#767676', margin: 0 }}>
                   Đã có tài khoản?{' '}
                   <button type="button" onClick={() => setTab('login')}
-                    style={{ background: 'none', border: 'none', padding: 0, color: '#1a1a1a', fontWeight: 700, cursor: 'pointer', borderBottom: '1px solid #1a1a1a', fontSize: '0.85rem' }}>
+                    style={{ background: 'none', border: 'none', padding: 0, color: 'var(--ink)', fontWeight: 700, cursor: 'pointer', borderBottom: '1px solid var(--ink)', fontSize: '0.85rem' }}>
                     Đăng nhập
                   </button>
                 </p>

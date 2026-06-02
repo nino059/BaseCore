@@ -5,7 +5,7 @@ import { orderApi } from '../../services/api';
 const STATUS_CFG = {
   Pending:    { label: 'Chờ xác nhận', color: '#f59e0b', bg: '#fef3c7', icon: 'fa-clock'        },
   Processing: { label: 'Đang xử lý',   color: '#3b82f6', bg: '#dbeafe', icon: 'fa-cog'          },
-  Shipped:    { label: 'Đang giao',    color: '#8b6c4a', bg: '#f5edd6', icon: 'fa-truck'         },
+  Shipped:    { label: 'Đang giao',    color: 'var(--brand-dark)', bg: '#f5edd6', icon: 'fa-truck'         },
   Completed:  { label: 'Hoàn thành',  color: '#10b981', bg: '#d1fae5', icon: 'fa-check-circle'  },
   Cancelled:  { label: 'Đã hủy',      color: '#ef4444', bg: '#fee2e2', icon: 'fa-times-circle'  },
 };
@@ -216,10 +216,10 @@ const Orders = () => {
       {/* ── KPI Cards ── */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(6,1fr)', gap:12, marginBottom:18 }}>
         {[
-          { label:'Tổng đơn',     value:stats.total,      icon:'fa-list',         color:'#c8a97a', bg:'#f5edd6', key:''           },
+          { label:'Tổng đơn',     value:stats.total,      icon:'fa-list',         color:'var(--brand)', bg:'#f5edd6', key:''           },
           { label:'Chờ xác nhận', value:stats.pending,    icon:'fa-clock',        color:'#f59e0b', bg:'#fef3c7', key:'Pending'    },
           { label:'Đang xử lý',   value:stats.processing, icon:'fa-cog',          color:'#3b82f6', bg:'#dbeafe', key:'Processing' },
-          { label:'Đang giao',    value:stats.shipped,    icon:'fa-truck',        color:'#8b6c4a', bg:'#f5edd6', key:'Shipped'    },
+          { label:'Đang giao',    value:stats.shipped,    icon:'fa-truck',        color:'var(--brand-dark)', bg:'#f5edd6', key:'Shipped'    },
           { label:'Hoàn thành',   value:stats.completed,  icon:'fa-check-circle', color:'#10b981', bg:'#d1fae5', key:'Completed'  },
           { label:'Đã hủy',       value:stats.cancelled,  icon:'fa-times-circle', color:'#ef4444', bg:'#fee2e2', key:'Cancelled'  },
         ].map((s, i) => {
@@ -377,7 +377,7 @@ const Orders = () => {
                       <button
                         onClick={() => handleViewDetail(o.id)}
                         style={{
-                          background:'none', border:'1px solid #c8a97a', color:'#c8a97a',
+                          background:'none', border:'1px solid var(--brand)', color:'var(--brand)',
                           borderRadius:6, padding:'4px 10px', cursor:'pointer',
                           fontSize:'0.72rem', fontWeight:700, whiteSpace:'nowrap',
                         }}>
@@ -470,7 +470,7 @@ const Orders = () => {
                     <div style={{ position:'absolute', top:18, left:'6%', right:'6%', height:3, background:'#e5e7eb', zIndex:0 }}></div>
                     <div style={{
                       position:'absolute', top:18, left:'6%', height:3, zIndex:1,
-                      background:'linear-gradient(90deg,#c8a97a,#8b6c4a)',
+                      background:'linear-gradient(90deg,var(--brand),var(--brand-dark))',
                       width:`${(STATUS_STEPS.indexOf(selectedOrder.status) / (STATUS_STEPS.length - 1)) * 88}%`,
                       transition:'width .5s',
                     }}></div>
@@ -481,14 +481,14 @@ const Orders = () => {
                         <div key={s} style={{ textAlign:'center', zIndex:2, flex:1 }}>
                           <div style={{
                             width:36, height:36, borderRadius:'50%', margin:'0 auto',
-                            background: done ? '#c8a97a' : '#e5e7eb',
+                            background: done ? 'var(--brand)' : '#e5e7eb',
                             display:'flex', alignItems:'center', justifyContent:'center',
                             boxShadow: done ? '0 0 0 4px rgba(124,58,237,0.18)' : 'none',
                             transition:'all .3s',
                           }}>
                             <i className={`fas ${cfg.icon}`} style={{ color: done ? 'white' : '#9ca3af', fontSize:'0.85rem' }}></i>
                           </div>
-                          <div style={{ fontSize:'0.7rem', marginTop:5, color: done ? '#c8a97a' : '#9ca3af', fontWeight: done ? 700 : 400 }}>
+                          <div style={{ fontSize:'0.7rem', marginTop:5, color: done ? 'var(--brand)' : '#9ca3af', fontWeight: done ? 700 : 400 }}>
                             {cfg.label}
                           </div>
                         </div>
@@ -502,7 +502,7 @@ const Orders = () => {
               <div style={{ marginBottom:20 }}>
                 <div style={{ background:'#f8fafc', borderRadius:12, padding:'14px 16px' }}>
                   <h6 style={{ fontWeight:700, marginBottom:12, fontSize:'0.88rem', color:'#374151' }}>
-                    <i className="fas fa-info-circle mr-1" style={{ color:'#c8a97a' }}></i> Thông tin đơn
+                    <i className="fas fa-info-circle mr-1" style={{ color:'var(--brand)' }}></i> Thông tin đơn
                   </h6>
                   <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px 16px' }}>
                     <div style={{ fontSize:'0.85rem' }}>
@@ -545,7 +545,7 @@ const Orders = () => {
 
               {/* Danh sách sản phẩm */}
               <h6 style={{ fontWeight:700, marginBottom:10, fontSize:'0.88rem', color:'#374151' }}>
-                <i className="fas fa-shopping-cart mr-1" style={{ color:'#c8a97a' }}></i> Sản phẩm trong đơn
+                <i className="fas fa-shopping-cart mr-1" style={{ color:'var(--brand)' }}></i> Sản phẩm trong đơn
               </h6>
               <div style={{ borderRadius:10, overflow:'hidden', border:'1.5px solid #e5e7eb' }}>
                 <table style={{ width:'100%', borderCollapse:'collapse' }}>
@@ -583,7 +583,7 @@ const Orders = () => {
                         <td style={{ padding:'10px 12px', textAlign:'center', fontSize:'0.85rem', color:'#64748b' }}>
                           {fmt(item.unitPrice)}
                         </td>
-                        <td style={{ padding:'10px 12px', textAlign:'center', fontWeight:800, color:'#c8a97a' }}>
+                        <td style={{ padding:'10px 12px', textAlign:'center', fontWeight:800, color:'var(--brand)' }}>
                           {fmt(item.unitPrice)}
                         </td>
                       </tr>
@@ -594,7 +594,7 @@ const Orders = () => {
                       <td colSpan={2} style={{ padding:'10px 12px', textAlign:'right', fontWeight:700, fontSize:'0.88rem' }}>
                         Tổng cộng:
                       </td>
-                      <td style={{ padding:'10px 12px', textAlign:'center', fontWeight:900, fontSize:'1rem', color:'#c8a97a' }}>
+                      <td style={{ padding:'10px 12px', textAlign:'center', fontWeight:900, fontSize:'1rem', color:'var(--brand)' }}>
                         {fmt(selectedOrder.totalAmount)}
                       </td>
                     </tr>

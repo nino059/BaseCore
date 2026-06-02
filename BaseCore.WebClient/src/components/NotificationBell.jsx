@@ -5,7 +5,7 @@ import { notificationApi } from '../services/api';
 
 const TYPE_META = {
   order:   { icon: 'fa-shopping-bag', color: '#3b82f6' },
-  product: { icon: 'fa-palette',      color: '#c8a97a' },
+  product: { icon: 'fa-palette',      color: 'var(--brand)' },
   blog:    { icon: 'fa-pen-fancy',    color: '#8b5cf6' },
 };
 
@@ -152,7 +152,7 @@ const NotificationBell = ({ theme = 'dark' }) => {
             {hasUnread && (
               <button onClick={handleMarkAll} style={{
                 background: 'none', border: 'none', cursor: 'pointer',
-                fontSize: '0.75rem', color: '#c8a97a', fontWeight: 700, padding: 0,
+                fontSize: '0.75rem', color: 'var(--brand)', fontWeight: 700, padding: 0,
               }}>
                 Đọc tất cả
               </button>
@@ -196,7 +196,7 @@ const NotificationBell = ({ theme = 'dark' }) => {
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{
                         fontWeight: item.isRead ? 500 : 700,
-                        fontSize: '0.83rem', color: '#1a1a1a',
+                        fontSize: '0.83rem', color: 'var(--ink)',
                         marginBottom: 3, lineHeight: 1.4,
                       }}>
                         {item.title}

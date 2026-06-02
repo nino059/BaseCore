@@ -6,33 +6,27 @@ const NotFound = () => {
     const navigate = useNavigate();
     return (
         <PublicLayout>
-            <div style={{ textAlign: 'center', padding: '80px 20px' }}>
-                <div style={{
-                    fontSize: '7rem', fontWeight: 900, lineHeight: 1,
-                    background: 'linear-gradient(135deg, #a78bfa, #7c3aed)',
-                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                    marginBottom: 8,
-                }}>404</div>
-                <h4 style={{ fontWeight: 700, color: '#1f2937', marginBottom: 8 }}>
+            <div className="text-center px-5 py-20">
+                <div className="text-[7rem] font-black leading-none mb-2 bg-gradient-to-br from-[#a78bfa] to-[#7c3aed] bg-clip-text text-transparent">
+                    404
+                </div>
+                <h4 className="font-bold text-gray-800 mb-2">
                     Trang không tồn tại
                 </h4>
-                <p style={{ color: '#9ca3af', marginBottom: 32, maxWidth: 400, margin: '0 auto 32px' }}>
+                <p className="text-gray-400 max-w-[400px] mx-auto mb-8">
                     Trang bạn đang tìm không tồn tại hoặc đã bị xóa. Hãy quay về trang chủ nhé!
                 </p>
-                <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-                    <button onClick={() => navigate(-1)} style={{
-                        padding: '12px 28px', border: '2px solid #a78bfa',
-                        color: '#7c3aed', background: 'white',
-                        borderRadius: 12, fontWeight: 700, cursor: 'pointer', fontSize: '0.95rem'
-                    }}>
+                <div className="flex flex-wrap justify-center gap-3">
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="px-7 py-3 rounded-xl font-bold text-[0.95rem] cursor-pointer bg-white border-2 border-[#a78bfa] text-[#7c3aed]"
+                    >
                         <i className="fas fa-arrow-left mr-2"></i>Quay lại
                     </button>
-                    <Link to="/" style={{
-                        padding: '12px 28px',
-                        background: 'linear-gradient(135deg, #a78bfa, #7c3aed)',
-                        color: 'white', textDecoration: 'none',
-                        borderRadius: 12, fontWeight: 700, fontSize: '0.95rem'
-                    }}>
+                    <Link
+                        to="/"
+                        className="px-7 py-3 rounded-xl font-bold text-[0.95rem] no-underline text-white bg-gradient-to-br from-[#a78bfa] to-[#7c3aed]"
+                    >
                         <i className="fas fa-home mr-2"></i>Trang chủ
                     </Link>
                 </div>

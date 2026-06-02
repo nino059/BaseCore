@@ -142,10 +142,10 @@ const ArtistOrders = () => {
       {/* ── KPI Boxes giống Admin ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12, marginBottom: 18 }}>
         {[
-          { label: 'Tổng đơn',     value: orders.length,                 icon: 'fa-list',         color: '#c8a97a', bg: '#f5edd6', key: 'all'       },
+          { label: 'Tổng đơn',     value: orders.length,                 icon: 'fa-list',         color: 'var(--brand)', bg: '#f5edd6', key: 'all'       },
           { label: 'Chờ xác nhận', value: countByStatus['Pending'] || 0, icon: 'fa-clock',        color: '#f59e0b', bg: '#fef3c7', key: 'Pending'   },
           { label: 'Đang xử lý',   value: countByStatus['Processing'] || 0, icon: 'fa-cog',       color: '#3b82f6', bg: '#dbeafe', key: 'Processing'},
-          { label: 'Đang giao',    value: countByStatus['Shipping'] || 0, icon: 'fa-truck',       color: '#8b6c4a', bg: '#f5edd6', key: 'Shipping'  },
+          { label: 'Đang giao',    value: countByStatus['Shipping'] || 0, icon: 'fa-truck',       color: 'var(--brand-dark)', bg: '#f5edd6', key: 'Shipping'  },
           { label: 'Đã giao',      value: countByStatus['Completed'] || 0, icon: 'fa-check-circle', color: '#10b981', bg: '#d1fae5', key: 'Completed' },
           { label: 'Đã hủy',       value: countByStatus['Cancelled'] || 0, icon: 'fa-times-circle', color: '#ef4444', bg: '#fee2e2', key: 'Cancelled' },
         ].map((s, i) => {
@@ -188,7 +188,7 @@ const ArtistOrders = () => {
 
       {/* Status guide */}
       <div style={{ background: '#faf8f5', border: '1px solid #e8e4df', padding: '12px 18px', marginBottom: 20, fontSize: '0.8rem', color: '#767676', borderRadius: 8 }}>
-        <i className="fas fa-info-circle mr-2" style={{ color: '#c8a97a' }}></i>
+        <i className="fas fa-info-circle mr-2" style={{ color: 'var(--brand)' }}></i>
         Quy trình: <strong>Chờ xác nhận</strong> → <strong>Đang xử lý</strong> → <strong>Đang giao</strong> → <strong>Đã giao</strong>
         &nbsp;·&nbsp; Khi đã giao, tranh sẽ chuyển sang trạng thái <strong>Đã bán</strong>.
       </div>
@@ -219,24 +219,24 @@ const ArtistOrders = () => {
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                      <span style={{ fontWeight: 700, fontSize: '0.88rem', color: '#1a1a1a' }}>Đơn #{o.id}</span>
+                      <span style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--ink)' }}>Đơn #{o.id}</span>
                       <OrderStatusBadge status={o.status} />
                     </div>
                     {o.customerName && (
                       <div style={{ fontSize: '0.78rem', color: '#555', marginTop: 3 }}>
-                        <i className="fas fa-user" style={{ color: '#c8a97a', marginRight: 5, fontSize: '0.7rem' }} />
+                        <i className="fas fa-user" style={{ color: 'var(--brand)', marginRight: 5, fontSize: '0.7rem' }} />
                         {o.customerName}
                       </div>
                     )}
                   </div>
                   <div style={{ fontSize: '0.82rem', color: '#767676', minWidth: 120 }}>{new Date(o.orderDate).toLocaleDateString('vi-VN')}</div>
-                  <div style={{ fontSize: '0.82rem', color: '#8b6c4a', fontWeight: 600, minWidth: 100 }}>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--brand-dark)', fontWeight: 600, minWidth: 100 }}>
                     {fmt(totalAmount)}
                   </div>
                   <button
                     onClick={(e) => { e.stopPropagation(); navigate(`/artist/orders/${o.id}`); }}
                     style={{
-                      background: 'none', border: '1px solid #c8a97a', color: '#c8a97a',
+                      background: 'none', border: '1px solid var(--brand)', color: 'var(--brand)',
                       borderRadius: 6, padding: '4px 10px', cursor: 'pointer',
                       fontSize: '0.72rem', fontWeight: 700, whiteSpace: 'nowrap',
                     }}
@@ -266,7 +266,7 @@ const ArtistOrders = () => {
                       <tbody>
                         {o.items?.map((it, j) => (
                           <tr key={j} style={{ borderBottom: '1px solid #f0ede8' }}>
-                            <td style={{ padding: '10px 12px', fontSize: '0.88rem', color: '#1a1a1a', fontWeight: 500 }}>{it.productName}</td>
+                            <td style={{ padding: '10px 12px', fontSize: '0.88rem', color: 'var(--ink)', fontWeight: 500 }}>{it.productName}</td>
                             <td style={{ padding: '10px 12px', fontSize: '0.88rem', color: '#767676' }}>{fmt(it.unitPrice)}</td>
                             <td style={{ padding: '10px 12px' }}>
                               <ProductStatusBadge status={it.productStatus} />
@@ -286,7 +286,7 @@ const ArtistOrders = () => {
                             onClick={() => handleUpdateStatus(o.id, ns)}
                             style={{
                               padding: '7px 18px', border: 'none', cursor: updating ? 'not-allowed' : 'pointer',
-                              background: '#1a1a1a', color: 'white', borderRadius: 7,
+                              background: 'var(--ink)', color: 'white', borderRadius: 7,
                               fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.06em',
                               opacity: updating === o.id + ns ? 0.6 : 1,
                             }}>

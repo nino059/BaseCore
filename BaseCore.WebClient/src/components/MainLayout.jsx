@@ -48,8 +48,8 @@ const MainLayout = ({ children }) => {
         <div style={{ display: 'flex', minHeight: '100vh', background: '#f5f6fa', fontFamily: "'Segoe UI', sans-serif" }}>
 
             <style>{`
-                .sidebar-link:hover { background: rgba(200,169,122,0.12) !important; color: #e8d5a8 !important; }
-                .sidebar-link:hover i { color: #e8d5a8 !important; }
+                .sidebar-link:hover { background: rgba(200,169,122,0.12) !important; color: var(--brand-light) !important; }
+                .sidebar-link:hover i { color: var(--brand-light) !important; }
             `}</style>
 
             {/* ===== SIDEBAR ===== */}
@@ -83,7 +83,7 @@ const MainLayout = ({ children }) => {
                     {/* Logo icon (luôn hiển thị) */}
                     <div style={{
                         width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                        background: 'linear-gradient(135deg, #e8d5a8, #c8a97a)',
+                        background: 'linear-gradient(135deg, var(--brand-light), var(--brand))',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
                         <i className="fas fa-palette" style={{ color: 'white', fontSize: '1rem' }}></i>
@@ -108,7 +108,7 @@ const MainLayout = ({ children }) => {
                             style={{
                                 background: pinned ? 'rgba(200,169,122,0.25)' : 'rgba(255,255,255,0.08)',
                                 border: pinned ? '1px solid rgba(200,169,122,0.4)' : '1px solid transparent',
-                                color: pinned ? '#c8a97a' : 'rgba(255,255,255,0.55)',
+                                color: pinned ? 'var(--brand)' : 'rgba(255,255,255,0.55)',
                                 borderRadius: 7, width: 28, height: 28, cursor: 'pointer',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 flexShrink: 0, transition: 'all 0.2s', marginLeft: 6,
@@ -131,7 +131,7 @@ const MainLayout = ({ children }) => {
                 }}>
                     <div style={{
                         width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
-                        background: user?.avatarUrl ? '#f0ece8' : 'linear-gradient(135deg, #e8d5a8, #c8a97a)',
+                        background: user?.avatarUrl ? '#f0ece8' : 'linear-gradient(135deg, var(--brand-light), var(--brand))',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         overflow: 'hidden', border: user?.avatarUrl ? '2px solid rgba(200,169,122,0.5)' : 'none',
                     }}>
@@ -153,7 +153,7 @@ const MainLayout = ({ children }) => {
                         </div>
                         <div style={{
                             display: 'inline-block', marginTop: 2,
-                            background: 'rgba(200,169,122,0.25)', color: '#c8a97a',
+                            background: 'rgba(200,169,122,0.25)', color: 'var(--brand)',
                             borderRadius: 20, padding: '1px 8px', fontSize: '0.66rem', fontWeight: 700,
                         }}>
                             {isAdmin ? 'Admin' : 'Staff'}
@@ -185,14 +185,14 @@ const MainLayout = ({ children }) => {
                                             : 'transparent',
                                         border: active ? '1px solid rgba(200,169,122,0.35)' : '1px solid transparent',
                                         transition: 'all 0.18s',
-                                        color: active ? '#e8d5a8' : 'rgba(255,255,255,0.6)',
+                                        color: active ? 'var(--brand-light)' : 'rgba(255,255,255,0.6)',
                                         position: 'relative',
                                         whiteSpace: 'nowrap',
                                     }}
                                 >
                                     <i className={`fas ${item.icon}`} style={{
                                         fontSize: '1rem', width: 20, textAlign: 'center', flexShrink: 0,
-                                        color: active ? '#e8d5a8' : 'rgba(255,255,255,0.5)',
+                                        color: active ? 'var(--brand-light)' : 'rgba(255,255,255,0.5)',
                                     }}></i>
                                     <span style={{
                                         fontWeight: active ? 700 : 500, fontSize: '0.88rem',
@@ -205,7 +205,7 @@ const MainLayout = ({ children }) => {
                                     {isOpen && active && (
                                         <span style={{
                                             marginLeft: 'auto', width: 6, height: 6,
-                                            borderRadius: '50%', background: '#c8a97a', flexShrink: 0,
+                                            borderRadius: '50%', background: 'var(--brand)', flexShrink: 0,
                                         }}></span>
                                     )}
                                 </Link>
@@ -271,7 +271,7 @@ const MainLayout = ({ children }) => {
                             onClick={() => setDropdownOpen(o => !o)}
                             style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '4px 8px', borderRadius: 8, userSelect: 'none' }}
                         >
-                            <div style={{ width: 34, height: 34, borderRadius: '50%', background: user?.avatarUrl ? '#f0ece8' : 'linear-gradient(135deg, #e8d5a8, #c8a97a)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: user?.avatarUrl ? '2px solid rgba(200,169,122,0.5)' : 'none' }}>
+                            <div style={{ width: 34, height: 34, borderRadius: '50%', background: user?.avatarUrl ? '#f0ece8' : 'linear-gradient(135deg, var(--brand-light), var(--brand))', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: user?.avatarUrl ? '2px solid rgba(200,169,122,0.5)' : 'none' }}>
                                 {user?.avatarUrl
                                     ? <img src={user.avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display='none'} />
                                     : <span style={{ color: 'white', fontWeight: 700, fontSize: '0.9rem' }}>
@@ -326,7 +326,7 @@ const MainLayout = ({ children }) => {
                     display: 'flex',
                     justifyContent: 'space-between',
                 }}>
-                    <span>© 2026 <strong style={{ color: '#c8a97a' }}>Arthentic</strong>. All rights reserved.</span>
+                    <span>© 2026 <strong style={{ color: 'var(--brand)' }}>Arthentic</strong>. All rights reserved.</span>
                     <span>Version 1.0.0</span>
                 </footer>
             </div>
