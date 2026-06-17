@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import ArtistLayout from '../../components/ArtistLayout';
+import ArtistLayout from '../../components/layout/ArtistLayout';
 import { useAuth } from '../../contexts/AuthContext';
 import { userApi } from '../../services/api';
 

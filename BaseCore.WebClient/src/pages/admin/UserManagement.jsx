@@ -168,12 +168,6 @@ const Users = () => {
   }, [showModal]);
 
   // ── Modal ────────────────────────────────────────────────────────
-  const openAdd = () => {
-    setEditingUser(null);
-    setForm({ username: "", password: "", name: "", email: "", phone: "", position: "", userType: 0 });
-    setFormError("");
-    setShowModal(true);
-  };
   const openEdit = (u) => {
     setEditingUser(u);
     setForm({

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import PublicLayout from '../../components/PublicLayout';
+import PublicLayout from '../../components/layout/PublicLayout';
 import { orderApi } from '../../services/api';
-
-const fmt = (p) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p);
+import { formatVND as fmt } from '../../utils/format';
 
 const OrderConfirmation = () => {
   const { orderId } = useParams();
@@ -22,10 +21,10 @@ const OrderConfirmation = () => {
 
   if (loading) return (
     <PublicLayout>
-      <div style={{ background: '#faf8f5', minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 36, height: 36, border: '2px solid var(--brand)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }}></div>
-          <p style={{ color: '#767676', fontSize: '0.9rem', letterSpacing: '0.06em' }}>Đang tải thông tin đơn hàng...</p>
+      <div className="bg-cream min-h-[60vh] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-9 h-9 mx-auto mb-4 rounded-full border-2 border-brand border-t-transparent animate-spin [animation-duration:0.8s]" />
+          <p className="text-muted text-[0.9rem] tracking-[0.06em]">Đang tải thông tin đơn hàng...</p>
         </div>
       </div>
     </PublicLayout>
@@ -33,16 +32,11 @@ const OrderConfirmation = () => {
 
   if (error || !order) return (
     <PublicLayout>
-      <div style={{ background: '#faf8f5', minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center', padding: '0 20px' }}>
-          <p style={{ fontSize: '2rem', color: '#ccc', marginBottom: 16 }}>✦</p>
-          <p style={{ color: '#767676', marginBottom: 24, fontWeight: 300 }}>{error || 'Không tìm thấy đơn hàng.'}</p>
-          <Link to="/my-orders" style={{
-            display: 'inline-block', padding: '13px 32px',
-            background: 'var(--ink)', color: 'white',
-            fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.14em',
-            textTransform: 'uppercase', textDecoration: 'none',
-          }}>
+      <div className="bg-cream min-h-[60vh] flex items-center justify-center">
+        <div className="text-center px-5">
+          <p className="text-[2rem] text-[#ccc] mb-4">✦</p>
+          <p className="text-muted mb-6 font-light">{error || 'Không tìm thấy đơn hàng.'}</p>
+          <Link to="/my-orders" className="inline-block px-8 py-[13px] bg-ink text-white no-underline text-[0.78rem] font-bold tracking-[0.14em] uppercase">
             Xem đơn hàng
           </Link>
         </div>
@@ -55,109 +49,83 @@ const OrderConfirmation = () => {
 
   return (
     <PublicLayout>
-      <div style={{ background: '#faf8f5', minHeight: '80vh' }}>
-        <div style={{ maxWidth: 640, margin: '0 auto', padding: '60px 20px' }}>
+      <div className="bg-cream min-h-[80vh]">
+        <div className="max-w-[640px] mx-auto px-5 py-15">
 
           {/* Success banner */}
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <div style={{
-              width: 64, height: 64, background: 'var(--ink)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              margin: '0 auto 24px',
-            }}>
-              <i className="fas fa-check" style={{ color: 'white', fontSize: '1.5rem' }}></i>
+          <div className="text-center mb-12">
+            <div className="w-16 h-16 mx-auto mb-6 bg-ink flex items-center justify-center">
+              <i className="fas fa-check text-white text-2xl"></i>
             </div>
-            <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.18em', color: 'var(--brand)', textTransform: 'uppercase', marginBottom: 10 }}>
+            <p className="text-[0.72rem] font-bold tracking-[0.18em] text-brand uppercase mb-2.5">
               Đặt hàng thành công
             </p>
-            <h2 style={{ fontWeight: 200, fontSize: 'clamp(1.3rem,3vw,1.8rem)', color: 'var(--ink)', letterSpacing: '0.04em', margin: '0 0 12px' }}>
+            <h2 className="font-extralight text-[clamp(1.3rem,3vw,1.8rem)] text-ink tracking-[0.04em] mt-0 mb-3">
               Cảm ơn bạn!
             </h2>
-            <p style={{ color: '#767676', fontSize: '0.95rem', fontWeight: 300 }}>
+            <p className="text-muted text-[0.95rem] font-light">
               Đơn hàng #{order.id} đã được tiếp nhận.<br />
               Chúng tôi sẽ liên hệ xác nhận sớm nhất.
             </p>
           </div>
 
           {/* Chi tiết đơn hàng */}
-          <div style={{ background: 'white', padding: '28px 32px', marginBottom: 16, boxShadow: '0 2px 16px rgba(0,0,0,0.04)' }}>
-            <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.16em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 20 }}>
+          <div className="bg-white px-8 py-7 mb-4 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
+            <p className="text-[0.68rem] font-bold tracking-[0.16em] text-brand-dark uppercase mb-5">
               Chi tiết đơn hàng #{order.id}
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
+            <div className="flex flex-col gap-3 mb-5">
               {order.shippingAddress && (
-                <div style={{ display: 'flex', gap: 12, fontSize: '0.88rem', color: 'var(--ink)' }}>
-                  <i className="fas fa-map-marker-alt" style={{ color: 'var(--brand)', marginTop: 2, width: 14 }}></i>
-                  <span style={{ fontWeight: 300 }}>{order.shippingAddress}</span>
+                <div className="flex gap-3 text-[0.88rem] text-ink">
+                  <i className="fas fa-map-marker-alt text-brand mt-0.5 w-3.5"></i>
+                  <span className="font-light">{order.shippingAddress}</span>
                 </div>
               )}
               {order.paymentMethod && (
-                <div style={{ display: 'flex', gap: 12, fontSize: '0.88rem', color: 'var(--ink)' }}>
-                  <i className="fas fa-wallet" style={{ color: 'var(--brand)', marginTop: 2, width: 14 }}></i>
-                  <span style={{ fontWeight: 300 }}>
+                <div className="flex gap-3 text-[0.88rem] text-ink">
+                  <i className="fas fa-wallet text-brand mt-0.5 w-3.5"></i>
+                  <span className="font-light">
                     {order.paymentMethod === 'COD' ? 'Thanh toán khi nhận hàng' : 'Chuyển khoản ngân hàng'}
                   </span>
                 </div>
               )}
               {order.status && (
-                <div style={{ display: 'flex', gap: 12, fontSize: '0.88rem', color: 'var(--ink)' }}>
-                  <i className="fas fa-info-circle" style={{ color: 'var(--brand)', marginTop: 2, width: 14 }}></i>
-                  <span style={{ fontWeight: 600 }}>{order.status}</span>
+                <div className="flex gap-3 text-[0.88rem] text-ink">
+                  <i className="fas fa-info-circle text-brand mt-0.5 w-3.5"></i>
+                  <span className="font-semibold">{order.status}</span>
                 </div>
               )}
             </div>
 
             {items.length > 0 && (
-              <>
-                <div style={{ borderTop: '1.5px solid #e8e4df', paddingTop: 18, marginBottom: 12 }}>
-                  {items.map((item, idx) => (
-                    <div key={idx} style={{
-                      display: 'flex', justifyContent: 'space-between',
-                      padding: '9px 0', fontSize: '0.88rem',
-                      borderBottom: '1px solid #f9f6f2',
-                    }}>
-                      <span style={{ color: 'var(--ink)', fontWeight: 300 }}>
-                        {item.productName || item.name}
-                        <span style={{ color: '#aaa', marginLeft: 8 }}>×{item.quantity || item.qty}</span>
-                      </span>
-                      <span style={{ fontWeight: 600, color: 'var(--ink)' }}>
-                        {fmt(item.price * (item.quantity || item.qty))}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </>
+              <div className="border-t-[1.5px] border-line pt-[18px] mb-3">
+                {items.map((item, idx) => (
+                  <div key={idx} className="flex justify-between py-[9px] text-[0.88rem] border-b border-[#f9f6f2]">
+                    <span className="text-ink font-light">
+                      {item.productName || item.name}
+                      <span className="text-[#aaa] ml-2">×{item.quantity || item.qty}</span>
+                    </span>
+                    <span className="font-semibold text-ink">
+                      {fmt(item.price * (item.quantity || item.qty))}
+                    </span>
+                  </div>
+                ))}
+              </div>
             )}
 
-            <div style={{
-              borderTop: '1.5px solid #e8e4df', paddingTop: 16,
-              display: 'flex', justifyContent: 'space-between',
-              fontWeight: 600, fontSize: '1rem', color: 'var(--ink)',
-            }}>
+            <div className="border-t-[1.5px] border-line pt-4 flex justify-between font-semibold text-base text-ink">
               <span>Tổng cộng</span>
-              <span style={{ fontWeight: 700 }}>{fmt(total)}</span>
+              <span className="font-bold">{fmt(total)}</span>
             </div>
           </div>
 
           {/* Actions */}
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <Link to="/my-orders" style={{
-              flex: 1, textAlign: 'center', padding: '13px 0',
-              background: 'var(--ink)', color: 'white',
-              textDecoration: 'none',
-              fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-            }}>
+          <div className="flex gap-3 flex-wrap">
+            <Link to="/my-orders" className="flex-1 text-center py-[13px] bg-ink text-white no-underline text-[0.78rem] font-bold tracking-[0.14em] uppercase">
               Xem đơn hàng của tôi
             </Link>
-            <Link to="/shop" style={{
-              flex: 1, textAlign: 'center', padding: '13px 0',
-              background: 'transparent', border: '1.5px solid var(--ink)',
-              color: 'var(--ink)', textDecoration: 'none',
-              fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-            }}>
+            <Link to="/shop" className="flex-1 text-center py-[13px] bg-transparent border-[1.5px] border-ink text-ink no-underline text-[0.78rem] font-bold tracking-[0.14em] uppercase">
               Tiếp tục mua sắm
             </Link>
           </div>

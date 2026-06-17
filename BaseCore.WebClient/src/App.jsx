@@ -1,47 +1,59 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
 import { AuthModalProvider, useAuthModal } from './contexts/AuthModalContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import MainLayout from './components/MainLayout';
-import AuthModal from './components/AuthModal';
+import ProtectedRoute from './components/common/ProtectedRoute';
+import MainLayout from './components/layout/MainLayout';
+import AuthModal from './components/common/AuthModal';
+import ErrorBoundary from './components/common/ErrorBoundary';
 
-// Shared
-import NotFound from './pages/NotFound';
+// Trang chủ + 404 nạp sẵn (eager) để first paint nhanh, không cần chờ chunk
+import Home from './pages/public/Home';
+import NotFound from './pages/public/NotFound';
 
+// Các trang còn lại tách chunk riêng (lazy) → giảm kích thước bundle khởi tạo
 // Public pages
-import Home          from './pages/Home';
-import Shop          from './pages/Shop';
-import Cart          from './pages/Cart';
-import ProductDetail from './pages/ProductDetail';
-import Artists       from './pages/Artists';
-import ArtistDetail  from './pages/ArtistDetail';
-import Blog          from './pages/Blog';
-import BlogDetail    from './pages/BlogDetail';
+const Shop          = lazy(() => import('./pages/public/Shop'));
+const Cart          = lazy(() => import('./pages/public/Cart'));
+const ProductDetail = lazy(() => import('./pages/public/ProductDetail'));
+const Artists       = lazy(() => import('./pages/public/Artists'));
+const ArtistDetail  = lazy(() => import('./pages/public/ArtistDetail'));
+const Blog          = lazy(() => import('./pages/public/Blog'));
+const BlogDetail    = lazy(() => import('./pages/public/BlogDetail'));
 
 // User protected pages
-import MyOrders          from './pages/user/MyOrders';
-import Profile           from './pages/user/Profile';
-import Checkout          from './pages/user/Checkout';
-import OrderConfirmation from './pages/user/OrderConfirmation';
-import OrderDetail       from './pages/OrderDetail';
+const MyOrders          = lazy(() => import('./pages/user/MyOrders'));
+const Profile           = lazy(() => import('./pages/user/Profile'));
+const Checkout          = lazy(() => import('./pages/user/Checkout'));
+const OrderConfirmation = lazy(() => import('./pages/user/OrderConfirmation'));
+const OrderDetail       = lazy(() => import('./pages/public/OrderDetail'));
 
 // Admin pages
-import Dashboard      from './pages/admin/AdminDashboard';
-import Products       from './pages/admin/AdminProducts';
-import Categories     from './pages/admin/AdminCategories';
-import Orders         from './pages/admin/AdminOrders';
-import Users          from './pages/admin/UserManagement';
-import AdminBlogPosts from './pages/admin/AdminBlogPosts';
+const Dashboard      = lazy(() => import('./pages/admin/AdminDashboard'));
+const Products       = lazy(() => import('./pages/admin/AdminProducts'));
+const Categories     = lazy(() => import('./pages/admin/AdminCategories'));
+const Orders         = lazy(() => import('./pages/admin/AdminOrders'));
+const Users          = lazy(() => import('./pages/admin/UserManagement'));
+const AdminBlogPosts = lazy(() => import('./pages/admin/AdminBlogPosts'));
 
 // Artist pages
-import ArtistDashboard from './pages/artist/ArtistDashboard';
-import ArtistProducts  from './pages/artist/ArtistProducts';
-import ArtistBlog      from './pages/artist/ArtistBlog';
-import ArtistOrders    from './pages/artist/ArtistOrders';
-import ArtistProfile   from './pages/artist/ArtistProfile';
+const ArtistDashboard = lazy(() => import('./pages/artist/ArtistDashboard'));
+const ArtistProducts  = lazy(() => import('./pages/artist/ArtistProducts'));
+const ArtistBlog      = lazy(() => import('./pages/artist/ArtistBlog'));
+const ArtistOrders    = lazy(() => import('./pages/artist/ArtistOrders'));
+const ArtistProfile   = lazy(() => import('./pages/artist/ArtistProfile'));
+
+// Fallback hiển thị khi chunk của route đang được tải
+function PageLoader() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+      <div className="w-10 h-10 rounded-full border-4 border-[#ede9fe] border-t-[#7c3aed] animate-spin [animation-duration:0.8s]" />
+      <span className="text-gray-400 text-[0.9rem]">Đang tải...</span>
+    </div>
+  );
+}
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -65,6 +77,7 @@ function AppRoutes() {
     <>
       <ScrollToTop />
       <AuthModal />
+      <Suspense fallback={<PageLoader />}>
       <Routes>
         {/* /login và /register chuyển về modal */}
         <Route path="/login"    element={<AuthRedirect tab="login" />} />
@@ -154,6 +167,7 @@ function AppRoutes() {
       <Route path="/404" element={<NotFound />} />
       <Route path="*"    element={<Navigate to="/404" replace />} />
     </Routes>
+    </Suspense>
     </>
   );
 }
@@ -164,7 +178,9 @@ function App() {
       <AuthProvider>
         <CartProvider>
           <AuthModalProvider>
-            <AppRoutes />
+            <ErrorBoundary>
+              <AppRoutes />
+            </ErrorBoundary>
           </AuthModalProvider>
         </CartProvider>
       </AuthProvider>

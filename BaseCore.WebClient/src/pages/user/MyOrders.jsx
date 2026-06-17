@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { orderApi } from '../../services/api';
-import PublicLayout from '../../components/PublicLayout';
-
-const fmt = (p) =>
-  new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p);
+import PublicLayout from '../../components/layout/PublicLayout';
+import { formatVND as fmt } from '../../utils/format';
 
 const fmtDate = (d) =>
   new Date(d).toLocaleDateString('vi-VN', {
@@ -21,23 +19,16 @@ const TABS = [
   { key: 'Cancelled',  label: 'Đã hủy' },
 ];
 
-const STATUS_MAP = {
-  Pending:    { label: 'Chờ xác nhận', color: '#92400e', bg: '#fef3c7', dot: '#f59e0b' },
-  Processing: { label: 'Đang xử lý',   color: '#1e40af', bg: '#dbeafe', dot: '#3b82f6' },
-  Shipping:   { label: 'Đang giao',    color: '#5b21b6', bg: '#ede9fe', dot: '#8b5cf6' },
-  Completed:  { label: 'Đã giao',      color: '#065f46', bg: '#d1fae5', dot: '#10b981' },
-  Cancelled:  { label: 'Đã hủy',       color: '#991b1b', bg: '#fee2e2', dot: '#ef4444' },
-};
+import { ORDER_STATUS as STATUS_MAP } from '../../utils/orderStatus';
 
 const StatusBadge = ({ status }) => {
   const s = STATUS_MAP[status] || { label: status, color: '#6b7280', bg: '#f3f4f6', dot: '#9ca3af' };
   return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center', gap: 5,
-      padding: '4px 12px', fontSize: '0.72rem', fontWeight: 700,
-      letterSpacing: '0.06em', background: s.bg, color: s.color,
-    }}>
-      <span style={{ width: 6, height: 6, borderRadius: '50%', background: s.dot, display: 'inline-block' }}></span>
+    <span
+      className="inline-flex items-center gap-[5px] px-3 py-1 text-[0.72rem] font-bold tracking-[0.06em]"
+      style={{ background: s.bg, color: s.color }}
+    >
+      <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: s.dot }}></span>
       {s.label}
     </span>
   );
@@ -45,9 +36,9 @@ const StatusBadge = ({ status }) => {
 
 const MyOrders = () => {
   const navigate = useNavigate();
-  const [orders, setOrders]             = useState([]);
-  const [loading, setLoading]           = useState(true);
-  const [activeTab, setActiveTab]       = useState('all');
+  const [orders, setOrders]       = useState([]);
+  const [loading, setLoading]     = useState(true);
+  const [activeTab, setActiveTab] = useState('all');
 
   const loadOrders = async (silent = false) => {
     if (!silent) setLoading(true);
@@ -69,77 +60,64 @@ const MyOrders = () => {
 
   return (
     <PublicLayout>
-      <div style={{ background: '#faf8f5', minHeight: '80vh' }}>
-        <div style={{ maxWidth: 960, margin: '0 auto', padding: '48px 20px' }}>
+      <div className="bg-cream min-h-[80vh]">
+        <div className="max-w-[960px] mx-auto px-5 py-12">
 
           {/* Header */}
-          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 40, flexWrap: 'wrap', gap: 16 }}>
+          <div className="flex items-end justify-between mb-10 flex-wrap gap-4">
             <div>
-              <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.18em', color: 'var(--brand)', textTransform: 'uppercase', marginBottom: 8 }}>
+              <p className="text-[0.72rem] font-bold tracking-[0.18em] text-brand uppercase mb-2">
                 Tài khoản
               </p>
-              <h1 style={{ fontWeight: 200, fontSize: 'clamp(1.4rem, 3vw, 2rem)', color: 'var(--ink)', letterSpacing: '0.04em', margin: 0 }}>
+              <h1 className="font-extralight text-[clamp(1.4rem,3vw,2rem)] text-ink tracking-[0.04em] m-0">
                 Đơn hàng của tôi
               </h1>
-              <p style={{ fontSize: '0.72rem', color: '#aaa', marginTop: 6, margin: '6px 0 0' }}>
-                <i className="fas fa-sync-alt" style={{ marginRight: 5, color: 'var(--brand)' }} />
+              <p className="text-[0.72rem] text-[#aaa] mt-1.5">
+                <i className="fas fa-sync-alt mr-1.5 text-brand" />
                 Tự động cập nhật mỗi 30 giây
               </p>
             </div>
-            <Link to="/shop" style={{
-              padding: '11px 24px', background: 'transparent',
-              border: '1.5px solid var(--ink)', color: 'var(--ink)',
-              fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.12em',
-              textTransform: 'uppercase', textDecoration: 'none',
-              display: 'inline-block',
-            }}>
+            <Link to="/shop" className="px-6 py-[11px] bg-transparent border-[1.5px] border-ink text-ink text-[0.75rem] font-bold tracking-[0.12em] uppercase no-underline inline-block">
               Tiếp tục mua sắm
             </Link>
           </div>
 
           {/* Tabs */}
-          <div style={{ display: 'flex', gap: 0, flexWrap: 'nowrap', overflowX: 'auto', marginBottom: 32, borderBottom: '1.5px solid #e8e4df' }}>
-            {TABS.map(t => (
-              <button key={t.key} onClick={() => setActiveTab(t.key)} style={{
-                padding: '11px 18px', border: 'none', cursor: 'pointer',
-                fontWeight: activeTab === t.key ? 700 : 400,
-                fontSize: '0.82rem', letterSpacing: '0.06em',
-                background: 'transparent', whiteSpace: 'nowrap',
-                color: activeTab === t.key ? 'var(--ink)' : '#767676',
-                borderBottom: activeTab === t.key ? '2px solid var(--ink)' : '2px solid transparent',
-                marginBottom: -1.5, transition: 'all 0.18s',
-              }}>
-                {t.label}
-                {t.key !== 'all' && orders.filter(o => o.status === t.key).length > 0 && (
-                  <span style={{ marginLeft: 6, fontSize: '0.7rem', color: 'var(--brand)' }}>
-                    ({orders.filter(o => o.status === t.key).length})
-                  </span>
-                )}
-              </button>
-            ))}
+          <div className="flex flex-nowrap overflow-x-auto mb-8 border-b-[1.5px] border-line">
+            {TABS.map(t => {
+              const active = activeTab === t.key;
+              const cnt = orders.filter(o => o.status === t.key).length;
+              return (
+                <button
+                  key={t.key}
+                  onClick={() => setActiveTab(t.key)}
+                  className={`px-[18px] py-[11px] border-none cursor-pointer text-[0.82rem] tracking-[0.06em] bg-transparent whitespace-nowrap -mb-[1.5px] border-b-2 transition-all ${active ? 'font-bold text-ink border-ink' : 'font-normal text-muted border-transparent'}`}
+                >
+                  {t.label}
+                  {t.key !== 'all' && cnt > 0 && (
+                    <span className="ml-1.5 text-[0.7rem] text-brand">({cnt})</span>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           {/* Loading skeleton */}
           {loading && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="flex flex-col gap-3">
               {[1, 2, 3].map(i => (
-                <div key={i} style={{ height: 80, background: '#ede9e0', opacity: 0.5 }} />
+                <div key={i} className="h-20 bg-[#ede9e0] opacity-50" />
               ))}
             </div>
           )}
 
           {/* Empty */}
           {!loading && orders.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '80px 0' }}>
-              <p style={{ fontSize: '2rem', color: '#e8e4df', marginBottom: 20 }}>✦</p>
-              <p style={{ fontWeight: 300, fontSize: '1.1rem', color: '#767676', marginBottom: 8 }}>Bạn chưa có đơn hàng nào</p>
-              <p style={{ fontSize: '0.85rem', color: '#aaa', marginBottom: 28 }}>Khám phá bộ sưu tập nghệ thuật của chúng tôi</p>
-              <Link to="/shop" style={{
-                display: 'inline-block', padding: '13px 32px',
-                background: 'var(--ink)', color: 'white',
-                fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.14em',
-                textTransform: 'uppercase', textDecoration: 'none',
-              }}>
+            <div className="text-center py-20">
+              <p className="text-[2rem] text-line mb-5">✦</p>
+              <p className="font-light text-[1.1rem] text-muted mb-2">Bạn chưa có đơn hàng nào</p>
+              <p className="text-[0.85rem] text-[#aaa] mb-7">Khám phá bộ sưu tập nghệ thuật của chúng tôi</p>
+              <Link to="/shop" className="inline-block px-8 py-[13px] bg-ink text-white text-[0.78rem] font-bold tracking-[0.14em] uppercase no-underline">
                 Khám phá ngay
               </Link>
             </div>
@@ -147,49 +125,42 @@ const MyOrders = () => {
 
           {/* Tab empty */}
           {!loading && orders.length > 0 && filtered.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '60px 0', color: '#aaa' }}>
-              <p style={{ fontSize: '2rem', marginBottom: 12 }}>✦</p>
-              <p style={{ fontWeight: 300 }}>Không có đơn hàng nào ở trạng thái này.</p>
+            <div className="text-center py-[60px] text-[#aaa]">
+              <p className="text-[2rem] mb-3">✦</p>
+              <p className="font-light">Không có đơn hàng nào ở trạng thái này.</p>
             </div>
           )}
 
           {/* Danh sách đơn hàng */}
           {!loading && filtered.length > 0 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div className="flex flex-col gap-2.5">
               {filtered.map(order => (
                 <div
                   key={order.id}
                   onClick={() => navigate(`/my-orders/${order.id}`)}
-                  style={{
-                    background: 'white', padding: '20px 24px', cursor: 'pointer',
-                    borderLeft: '3px solid transparent',
-                    boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
-                    transition: 'all 0.2s',
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)'; e.currentTarget.style.borderLeftColor = 'var(--brand)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'; e.currentTarget.style.borderLeftColor = 'transparent'; }}
+                  className="bg-white px-6 py-5 cursor-pointer border-l-[3px] border-l-transparent hover:border-l-brand shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-all"
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+                  <div className="flex justify-between items-start mb-2.5">
                     <div>
-                      <span style={{ fontWeight: 600, fontSize: '0.92rem', color: 'var(--ink)' }}>Đơn #{order.id}</span>
-                      <div style={{ color: '#aaa', fontSize: '0.78rem', marginTop: 3 }}>
+                      <span className="font-semibold text-[0.92rem] text-ink">Đơn #{order.id}</span>
+                      <div className="text-[#aaa] text-[0.78rem] mt-[3px]">
                         {fmtDate(order.createdAt || order.orderDate)}
                       </div>
                     </div>
                     <StatusBadge status={order.status} />
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div className="flex justify-between items-center">
                     {order.items && (
-                      <span style={{ color: '#aaa', fontSize: '0.8rem' }}>
+                      <span className="text-[#aaa] text-[0.8rem]">
                         {order.items.length} tác phẩm
                       </span>
                     )}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                      <span style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.95rem' }}>
+                    <div className="flex items-center gap-3.5">
+                      <span className="font-semibold text-ink text-[0.95rem]">
                         {fmt(order.totalAmount || order.total || 0)}
                       </span>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--brand)', fontWeight: 700 }}>
-                        Xem chi tiết <i className="fas fa-arrow-right" style={{ fontSize: '0.65rem' }} />
+                      <span className="text-[0.75rem] text-brand font-bold">
+                        Xem chi tiết <i className="fas fa-arrow-right text-[0.65rem]" />
                       </span>
                     </div>
                   </div>

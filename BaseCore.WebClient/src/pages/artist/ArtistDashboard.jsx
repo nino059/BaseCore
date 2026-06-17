@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import ArtistLayout from '../../components/ArtistLayout';
+import ArtistLayout from '../../components/layout/ArtistLayout';
 import { productApi, blogApi, orderApi } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
-
-const fmt = (n) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n);
+import { formatVND as fmt } from '../../utils/format';
 
 const StatCard = ({ icon, label, value, color = 'var(--ink)', bg = '#f7f5f2' }) => (
   <div style={{ background: 'white', border: '1px solid #e8e4df', padding: '24px 28px', flex: 1, minWidth: 160 }}>
@@ -25,14 +24,8 @@ const StatusBadge = ({ status }) => {
   return <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.08em', color, background: bg, padding: '3px 10px', textTransform: 'uppercase' }}>{label}</span>;
 };
 
-// STATUS_CFG giống hệt Admin (dùng cho đơn hàng)
-const STATUS_CFG = {
-  Pending:    { label: "Chờ xác nhận", color: "#f59e0b" },
-  Processing: { label: "Đang xử lý",   color: "#3b82f6" },
-  Shipped:    { label: "Đang giao",    color: "var(--brand-dark)" },
-  Completed:  { label: "Hoàn thành",   color: "#10b981" },
-  Cancelled:  { label: "Đã hủy",       color: "#ef4444" },
-};
+// Nhãn/màu trạng thái đơn hàng — dùng nguồn chung
+import { ORDER_STATUS as STATUS_CFG } from "../../utils/orderStatus";
 
 // ─── Bar Chart (giống hệt Admin) ─────────────────────────────
 const BarChart = ({ data, color = "var(--brand)" }) => {
@@ -135,7 +128,6 @@ const ArtistDashboard = () => {
   const { user } = useAuth();
   const [stats, setStats] = useState({ selling: 0, pending: 0, blogs: 0, orders: 0, revenue: 0 });
   const [recentOrders, setRecentOrders] = useState([]);
-  const [pendingProducts, setPendingProducts] = useState([]);
   const [monthlyOrders, setMonthlyOrders] = useState([]);
   const [monthlyRev, setMonthlyRev] = useState([]);
   const [statusDist, setStatusDist] = useState([]);
@@ -188,7 +180,6 @@ const ArtistDashboard = () => {
         revenue: totalRevenue,
         totalArtworks,                   // Thêm để dùng cho box nếu cần
       });
-      setPendingProducts(products.filter(p => p.status === 'Pending').slice(0, 3));
       setRecentOrders(orders.slice(0, 5));
 
       // ── Tính 6 tháng gần nhất (an toàn) cho artist ─────────────────

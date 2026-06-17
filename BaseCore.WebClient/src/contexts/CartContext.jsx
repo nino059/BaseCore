@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- context + hook + provider cố ý đặt cùng file */
 import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
 import { useAuth } from './AuthContext';
 
@@ -22,14 +23,14 @@ export const CartProvider = ({ children }) => {
     } catch {
       setItems([]);
     }
-  }, [cartKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [cartKey]);
 
   // Lưu cart mỗi khi items thay đổi (dùng ref để luôn save đúng key)
   useEffect(() => {
     localStorage.setItem(cartKeyRef.current, JSON.stringify(items));
   }, [items]);
 
-  const addToCart = (product, qty = 1) =>
+  const addToCart = (product) =>
     setItems(prev => {
       const exist = prev.find(i => i.id === product.id);
       if (exist) return prev; // tranh là độc bản, không thêm lại
@@ -38,18 +39,13 @@ export const CartProvider = ({ children }) => {
 
   const removeFromCart = (id) => setItems(prev => prev.filter(i => i.id !== id));
 
-  const updateQty = (id, qty) => {
-    if (qty < 1) { removeFromCart(id); return; }
-    setItems(prev => prev.map(i => i.id === id ? { ...i, qty: 1 } : i));
-  };
-
   const clearCart = () => setItems([]);
 
   const total = items.reduce((s, i) => s + (i.discountPrice ?? i.price) * i.qty, 0);
   const count = items.reduce((s, i) => s + i.qty, 0);
 
   return (
-    <CartContext.Provider value={{ items, addToCart, removeFromCart, updateQty, clearCart, total, count }}>
+    <CartContext.Provider value={{ items, addToCart, removeFromCart, clearCart, total, count }}>
       {children}
     </CartContext.Provider>
   );

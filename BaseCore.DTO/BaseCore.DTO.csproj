@@ -17,7 +17,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.8" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0-preview.3.26207.106" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="11.0.0-preview.3.26207.106" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.84.0" />
@@ -27,7 +27,7 @@
     <PackageReference Include="Serilog" Version="4.3.2-dev-02430" />
     <PackageReference Include="System.Drawing.Common" Version="11.0.0-preview.3.26207.106" />
     <PackageReference Include="System.Text.Json" Version="11.0.0-preview.3.26207.106" />
-	<PackageReference Include="MongoDB.Driver" Version="2.23.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.3.1" />
   </ItemGroup>
 
 </Project>

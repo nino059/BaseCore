@@ -1,19 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { blogApi } from '../../services/api';
-import BlogRenderer from '../../components/BlogRenderer';
+import BlogRenderer from '../../components/common/BlogRenderer';
 
 const CATEGORIES = ['Tìm hiểu nghệ thuật', 'Kỹ thuật vẽ', 'Câu chuyện tác phẩm', 'Nghệ sĩ & Cảm hứng', 'Khác'];
 
-const STATUS_CFG = {
-  Pending:   { label:'Chờ duyệt', color:'#92400e', bg:'#fef3c7' },
-  Published: { label:'Đã đăng',   color:'#065f46', bg:'#d1fae5' },
-  Rejected:  { label:'Từ chối',   color:'#991b1b', bg:'#fee2e2' },
-};
-
-const StatusBadge = ({ status }) => {
-  const c = STATUS_CFG[status] || { label:status, color:'#374151', bg:'#f3f4f6' };
-  return <span style={{ fontSize:'0.72rem', fontWeight:700, color:c.color, background:c.bg, padding:'3px 10px', borderRadius:20, whiteSpace:'nowrap' }}>{c.label}</span>;
-};
+import StatusBadge from '../../components/ui/StatusBadge';
 
 // ─── Block editor helpers ──────────────────────────────────────────────────
 
@@ -58,7 +49,7 @@ const insertBtn = () => ({
   display: 'inline-flex', alignItems: 'center',
 });
 
-const BlockEditor = ({ blocks, onChange }) => {
+const BlockEditor = ({ blocks, onChange, showToast }) => {
   const fileRefs = useRef({});
 
   const update = useCallback((idx, patch) => {
@@ -98,7 +89,7 @@ const BlockEditor = ({ blocks, onChange }) => {
       update(idx, { url, uploading: false });
     } catch {
       update(idx, { uploading: false });
-      alert('Upload ảnh thất bại. Vui lòng thử lại.');
+      showToast?.('Upload ảnh thất bại. Vui lòng thử lại.', 'error');
     }
   };
 
@@ -193,7 +184,7 @@ const BlockEditor = ({ blocks, onChange }) => {
 
 // ─── Blog editor (full-page overlay) ──────────────────────────────────────
 
-const BlogEditor = ({ post, onSave, onClose }) => {
+const BlogEditor = ({ post, onSave, onClose, showToast }) => {
   const coverRef = useRef(null);
   const [form, setForm] = useState({
     title:         post?.title         || '',
@@ -217,7 +208,7 @@ const BlogEditor = ({ post, onSave, onClose }) => {
       const url = res.data?.url || res.data?.imageUrl || res.data;
       set('coverImageUrl', url);
     } catch {
-      alert('Upload ảnh bìa thất bại.');
+      showToast?.('Upload ảnh bìa thất bại.', 'error');
     }
     setCoverUploading(false);
   };
@@ -358,7 +349,7 @@ const BlogEditor = ({ post, onSave, onClose }) => {
             </button>
           </div>
 
-          <BlockEditor blocks={blocks} onChange={setBlocks} />
+          <BlockEditor blocks={blocks} onChange={setBlocks} showToast={showToast} />
         </form>
       </div>
     </div>
@@ -405,7 +396,6 @@ const AdminBlogPosts = () => {
     catch { showToast('Xóa thất bại', 'error'); }
   };
 
-  const openNew  = () => { setEditing(null); setShowEditor(true); };
   const openEdit = (p) => { setEditing(p);   setShowEditor(true); };
 
   const counts = {
@@ -495,7 +485,7 @@ const AdminBlogPosts = () => {
                   <td style={{ padding:'14px 16px', fontSize:'0.82rem', color:'#94a3b8', whiteSpace:'nowrap' }}>
                     {new Date(p.createdAt).toLocaleDateString('vi-VN')}
                   </td>
-                  <td style={{ padding:'14px 16px' }}><StatusBadge status={p.status} /></td>
+                  <td style={{ padding:'14px 16px' }}><StatusBadge status={p.status} type="blog" /></td>
                   <td style={{ padding:'14px 16px' }}>
                     <div style={{ display:'flex', gap:6 }}>
                       <button onClick={() => setPreview(p)} title="Xem trước bài viết (giống như người xem sẽ thấy)"
@@ -588,7 +578,7 @@ const AdminBlogPosts = () => {
                     XEM TRƯỚC KHI DUYỆT
                   </p>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 2 }}>
-                    <StatusBadge status={preview.status} />
+                    <StatusBadge status={preview.status} type="blog" />
                     <span style={{ fontSize: '0.82rem', color: '#666' }}>
                       {preview.authorName || '—'} · {preview.category}
                     </span>
@@ -752,6 +742,7 @@ const AdminBlogPosts = () => {
           post={editing}
           onSave={() => { setShowEditor(false); load(); }}
           onClose={() => setShowEditor(false)}
+          showToast={showToast}
         />
       )}
 

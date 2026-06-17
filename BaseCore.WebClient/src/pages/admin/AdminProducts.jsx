@@ -3,29 +3,9 @@ import { productApi, categoryApi } from "../../services/api";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const STATUSES = ["Pending","ForSale","Ordered","Sold","Rejected"];
-const STATUS_VI = {
-  Pending:  "Chờ duyệt",
-  ForSale:  "Đang bán",
-  Ordered:  "Đã đặt",
-  Sold:     "Đã bán",
-  Rejected: "Từ chối",
-};
-const STATUS_COLOR = {
-  Pending:  "#92400e",
-  ForSale:  "#065f46",
-  Ordered:  "#1e40af",
-  Sold:     "#6b7280",
-  Rejected: "#991b1b",
-};
-const STATUS_BG = {
-  Pending:  "#fef3c7",
-  ForSale:  "#d1fae5",
-  Ordered:  "#dbeafe",
-  Sold:     "#f3f4f6",
-  Rejected: "#fee2e2",
-};
+import { getProductStatus } from "../../utils/orderStatus";
 
-const fmt = v => Number(v || 0).toLocaleString("vi-VN") + "₫";
+import { formatVNDCompact as fmt } from "../../utils/format";
 
 // ─── UI Components ────────────────────────────────────────────────────────────
 const Toast = ({ toasts }) => (
@@ -175,8 +155,8 @@ const ProductReviewModal = ({ product, onApprove, onReject, onClose, fmt }) => {
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
               <div style={{ padding:'10px 14px', background:'#f8fafc', borderRadius:10 }}>
                 <div style={{ fontSize:'0.68rem', color:'#94a3b8', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4 }}>Trạng thái</div>
-                <span style={{ fontSize:'0.78rem', fontWeight:700, color: STATUS_COLOR[product.status]||'#6b7280', background: STATUS_BG[product.status]||'#f3f4f6', padding:'3px 10px', borderRadius:20 }}>
-                  {STATUS_VI[product.status]||product.status}
+                <span style={{ fontSize:'0.78rem', fontWeight:700, color: getProductStatus(product.status).color, background: getProductStatus(product.status).bg, padding:'3px 10px', borderRadius:20 }}>
+                  {getProductStatus(product.status).label}
                 </span>
               </div>
               <div style={{ padding:'10px 14px', background:'#f8fafc', borderRadius:10 }}>
@@ -478,7 +458,7 @@ export default function AdminProducts() {
           <select className="form-control" value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
             style={{ flex:"0 0 auto", width:165, borderRadius:9, border:"1.5px solid #e5e7eb", fontSize:"0.87rem" }}>
             <option value="">Tất cả trạng thái</option>
-            {STATUSES.map(s => <option key={s} value={s}>{STATUS_VI[s]}</option>)}
+            {STATUSES.map(s => <option key={s} value={s}>{getProductStatus(s).label}</option>)}
           </select>
           {hasFilter && (
             <button onClick={clearFilters} style={{ padding:"7px 14px", borderRadius:9, border:"1.5px solid #fecaca",
@@ -591,11 +571,11 @@ export default function AdminProducts() {
                     <td style={{ padding:"12px 14px", textAlign:"center" }}>
                       <span style={{
                         display:"inline-block", padding:"4px 12px", borderRadius:20, fontSize:"0.72rem", fontWeight:700,
-                        background: STATUS_BG[p.status]    || "#f3f4f6",
-                        color:      STATUS_COLOR[p.status] || "#6b7280",
+                        background: getProductStatus(p.status).bg,
+                        color:      getProductStatus(p.status).color,
                         whiteSpace:"nowrap",
                       }}>
-                        {STATUS_VI[p.status] || p.status}
+                        {getProductStatus(p.status).label}
                       </span>
                     </td>
 

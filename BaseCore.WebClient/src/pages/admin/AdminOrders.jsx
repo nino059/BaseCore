@@ -1,60 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { orderApi } from '../../services/api';
 
 // ─── Config trạng thái ────────────────────────────────────────
-const STATUS_CFG = {
-  Pending:    { label: 'Chờ xác nhận', color: '#f59e0b', bg: '#fef3c7', icon: 'fa-clock'        },
-  Processing: { label: 'Đang xử lý',   color: '#3b82f6', bg: '#dbeafe', icon: 'fa-cog'          },
-  Shipped:    { label: 'Đang giao',    color: 'var(--brand-dark)', bg: '#f5edd6', icon: 'fa-truck'         },
-  Completed:  { label: 'Hoàn thành',  color: '#10b981', bg: '#d1fae5', icon: 'fa-check-circle'  },
-  Cancelled:  { label: 'Đã hủy',      color: '#ef4444', bg: '#fee2e2', icon: 'fa-times-circle'  },
-};
-
-const STATUS_STEPS = ['Pending', 'Processing', 'Shipped', 'Completed'];
-const fmt = v => Number(v || 0).toLocaleString('vi-VN') + '₫';
-
-// ─── Toast ────────────────────────────────────────────────────
-const Toast = ({ toasts }) => (
-  <div style={{ position:'fixed', top:20, right:20, zIndex:9999, display:'flex', flexDirection:'column', gap:8 }}>
-    {toasts.map(t => (
-      <div key={t.id} style={{
-        padding:'11px 18px', borderRadius:10, color:'white', fontWeight:600, fontSize:'0.88rem',
-        background: t.type==='success' ? '#10b981' : t.type==='error' ? '#ef4444' : '#3b82f6',
-        boxShadow:'0 4px 20px rgba(0,0,0,0.15)', minWidth:260, animation:'slideIn .25s ease',
-      }}>
-        <i className={`fas ${t.type==='success'?'fa-check-circle':t.type==='error'?'fa-times-circle':'fa-info-circle'} mr-2`}></i>
-        {t.message}
-      </div>
-    ))}
-  </div>
-);
-
-// ─── Confirm Dialog ───────────────────────────────────────────
-const ConfirmDialog = ({ open, title, message, onConfirm, onCancel }) => {
-  if (!open) return null;
-  return (
-    <>
-      <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.5)', zIndex:2000 }} onClick={onCancel} />
-      <div style={{
-        position:'fixed', top:'50%', left:'50%', transform:'translate(-50%,-50%)',
-        background:'white', borderRadius:16, padding:'28px 32px', zIndex:2001,
-        minWidth:340, boxShadow:'0 20px 60px rgba(0,0,0,0.2)', textAlign:'center',
-      }}>
-        <div style={{ fontSize:'2.2rem', marginBottom:10 }}>⚠️</div>
-        <h5 style={{ fontWeight:800, marginBottom:8, color:'#1f2937' }}>{title}</h5>
-        <p style={{ color:'#6b7280', marginBottom:24, fontSize:'0.9rem' }}>{message}</p>
-        <div style={{ display:'flex', gap:10, justifyContent:'center' }}>
-          <button onClick={onCancel} style={{ padding:'9px 24px', borderRadius:9, border:'1.5px solid #e5e7eb', background:'white', color:'#374151', fontWeight:600, cursor:'pointer' }}>
-            Hủy bỏ
-          </button>
-          <button onClick={onConfirm} style={{ padding:'9px 24px', borderRadius:9, border:'none', background:'#ef4444', color:'white', fontWeight:700, cursor:'pointer' }}>
-            Xác nhận xóa
-          </button>
-        </div>
-      </div>
-    </>
-  );
-};
+import { ORDER_STATUS as STATUS_CFG, ORDER_STEPS as STATUS_STEPS } from '../../utils/orderStatus';
+import { formatVNDCompact as fmt } from '../../utils/format';
+import { useToast } from '../../hooks/useToast';
+import Toaster from '../../components/ui/Toaster';
 
 // ─── Status Badge ─────────────────────────────────────────────
 const StatusBadge = ({ status }) => {
@@ -91,21 +42,7 @@ const Orders = () => {
   const PAGE_SIZE = 10;
   const [showModal,     setShowModal]     = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [statusUpdate,  setStatusUpdate]  = useState('');
-  const [updating,      setUpdating]      = useState(false);
-  const [quickUpdating, setQuickUpdating] = useState({});
-  const [confirm, setConfirm] = useState({ open:false, title:'', message:'', onConfirm:null });
-  const [toasts,  setToasts]  = useState([]);
-  const toastId = useRef(0);
-
-  const showToast = useCallback((message, type='success') => {
-    const id = ++toastId.current;
-    setToasts(p => [...p, { id, message, type }]);
-    setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 3500);
-  }, []);
-
-  const openConfirm  = (title, message, cb) => setConfirm({ open:true, title, message, onConfirm:cb });
-  const closeConfirm = () => setConfirm(p => ({ ...p, open:false }));
+  const { toasts, showToast } = useToast();
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
@@ -142,7 +79,7 @@ const Orders = () => {
     total:      allOrders.length,
     pending:    allOrders.filter(o => o.status === 'Pending').length,
     processing: allOrders.filter(o => o.status === 'Processing').length,
-    shipped:    allOrders.filter(o => o.status === 'Shipped').length,
+    shipped:    allOrders.filter(o => o.status === 'Shipping').length,
     completed:  allOrders.filter(o => o.status === 'Completed').length,
     cancelled:  allOrders.filter(o => o.status === 'Cancelled').length,
   }), [allOrders]);
@@ -157,33 +94,8 @@ const Orders = () => {
         items: data.details || data.items || [],
       };
       setSelectedOrder(order);
-      setStatusUpdate(order.status || 'Pending');
       setShowModal(true);
     } catch { showToast('Không lấy được chi tiết đơn hàng', 'error'); }
-  };
-
-  // ── Cập nhật trạng thái trong modal ──
-  const handleUpdateStatus = async () => {
-    if (!selectedOrder || statusUpdate === selectedOrder.status) return;
-    setUpdating(true);
-    try {
-      await orderApi.update(selectedOrder.id, { status: statusUpdate });
-      setSelectedOrder(prev => ({ ...prev, status: statusUpdate }));
-      setAllOrders(prev => prev.map(o => o.id === selectedOrder.id ? { ...o, status: statusUpdate } : o));
-      showToast('Cập nhật trạng thái thành công');
-    } catch { showToast('Cập nhật thất bại', 'error'); }
-    finally { setUpdating(false); }
-  };
-
-  // ── Đổi trạng thái nhanh inline ──
-  const handleQuickStatus = async (orderId, newStatus) => {
-    setQuickUpdating(p => ({ ...p, [orderId]: true }));
-    try {
-      await orderApi.update(orderId, { status: newStatus });
-      setAllOrders(p => p.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
-      showToast('Đã cập nhật trạng thái');
-    } catch { showToast('Cập nhật thất bại', 'error'); }
-    finally { setQuickUpdating(p => ({ ...p, [orderId]: false })); }
   };
 
   const hasFilter = search || filterStatus;
@@ -210,8 +122,7 @@ const Orders = () => {
         .chip-close:hover { color:#ef4444; }
       `}</style>
 
-      <Toast toasts={toasts} />
-      <ConfirmDialog {...confirm} onCancel={closeConfirm} />
+      <Toaster toasts={toasts} />
 
       {/* ── KPI Cards ── */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(6,1fr)', gap:12, marginBottom:18 }}>
@@ -219,7 +130,7 @@ const Orders = () => {
           { label:'Tổng đơn',     value:stats.total,      icon:'fa-list',         color:'var(--brand)', bg:'#f5edd6', key:''           },
           { label:'Chờ xác nhận', value:stats.pending,    icon:'fa-clock',        color:'#f59e0b', bg:'#fef3c7', key:'Pending'    },
           { label:'Đang xử lý',   value:stats.processing, icon:'fa-cog',          color:'#3b82f6', bg:'#dbeafe', key:'Processing' },
-          { label:'Đang giao',    value:stats.shipped,    icon:'fa-truck',        color:'var(--brand-dark)', bg:'#f5edd6', key:'Shipped'    },
+          { label:'Đang giao',    value:stats.shipped,    icon:'fa-truck',        color:'var(--brand-dark)', bg:'#f5edd6', key:'Shipping'   },
           { label:'Hoàn thành',   value:stats.completed,  icon:'fa-check-circle', color:'#10b981', bg:'#d1fae5', key:'Completed'  },
           { label:'Đã hủy',       value:stats.cancelled,  icon:'fa-times-circle', color:'#ef4444', bg:'#fee2e2', key:'Cancelled'  },
         ].map((s, i) => {

@@ -1,66 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ArtistLayout from '../../components/ArtistLayout';
+import ArtistLayout from '../../components/layout/ArtistLayout';
 import { orderApi } from '../../services/api';
+import { formatVND as fmt } from '../../utils/format';
 
-const fmt = (n) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n);
-
-const ORDER_STATUS_LABEL = {
-  Pending:    'Chờ xác nhận',
-  Processing: 'Đang xử lý',
-  Shipping:   'Đang giao',
-  Completed:  'Đã giao',
-  Cancelled:  'Đã hủy',
-};
-
-const ORDER_STATUS_STYLE = {
-  Pending:    { color: '#92400e', background: '#fef3c7' },
-  Processing: { color: '#1e40af', background: '#dbeafe' },
-  Shipping:   { color: '#7c3aed', background: '#ede9fe' },
-  Completed:  { color: '#065f46', background: '#d1fae5' },
-  Cancelled:  { color: '#991b1b', background: '#fee2e2' },
-};
-
-const PRODUCT_STATUS_LABEL = {
-  ForSale:  'Đang bán',
-  Ordered:  'Đã đặt',
-  Sold:     'Đã bán',
-  Pending:  'Chờ duyệt',
-  Rejected: 'Từ chối',
-};
-
-const PRODUCT_STATUS_STYLE = {
-  ForSale:  { color: '#065f46', background: '#d1fae5' },
-  Ordered:  { color: '#1e40af', background: '#dbeafe' },
-  Sold:     { color: '#6b7280', background: '#f3f4f6' },
-  Pending:  { color: '#92400e', background: '#fef3c7' },
-  Rejected: { color: '#991b1b', background: '#fee2e2' },
-};
-
-const NEXT_STATUS = {
-  Pending:    ['Processing'],
-  Processing: ['Shipping'],
-  Shipping:   ['Completed'],
-  Completed:  [],
-  Cancelled:  [],
-};
-
-const CAN_CANCEL = ['Pending', 'Processing', 'Shipping'];
+import { getOrderStatus, getProductStatus, ORDER_NEXT, ORDER_CAN_CANCEL } from '../../utils/orderStatus';
 
 const OrderStatusBadge = ({ status }) => {
-  const s = ORDER_STATUS_STYLE[status] || { color: '#374151', background: '#f3f4f6' };
+  const s = getOrderStatus(status);
   return (
-    <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.06em', ...s, padding: '3px 10px', borderRadius: 20, whiteSpace: 'nowrap' }}>
-      {ORDER_STATUS_LABEL[status] || status}
+    <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.06em', color: s.color, background: s.bg, padding: '3px 10px', borderRadius: 20, whiteSpace: 'nowrap' }}>
+      {s.label}
     </span>
   );
 };
 
 const ProductStatusBadge = ({ status }) => {
-  const s = PRODUCT_STATUS_STYLE[status] || { color: '#374151', background: '#f3f4f6' };
+  const s = getProductStatus(status);
   return (
-    <span style={{ fontSize: '0.68rem', fontWeight: 700, ...s, padding: '2px 8px', borderRadius: 20, whiteSpace: 'nowrap' }}>
-      {PRODUCT_STATUS_LABEL[status] || status}
+    <span style={{ fontSize: '0.68rem', fontWeight: 700, color: s.color, background: s.bg, padding: '2px 8px', borderRadius: 20, whiteSpace: 'nowrap' }}>
+      {s.label}
     </span>
   );
 };
@@ -115,7 +74,7 @@ const ArtistOrders = () => {
     try {
       await orderApi.updateStatus(orderId, newStatus);
       setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
-      showToast(`Đã cập nhật trạng thái: ${ORDER_STATUS_LABEL[newStatus]}`);
+      showToast(`Đã cập nhật trạng thái: ${getOrderStatus(newStatus).label}`);
     } catch (err) {
       showToast(err.response?.data?.message || 'Không thể cập nhật trạng thái', 'error');
     } finally {
@@ -205,8 +164,8 @@ const ArtistOrders = () => {
       ) : (
         <div style={{ background: 'white', borderRadius: 14, boxShadow: '0 2px 12px rgba(0,0,0,.06)', overflow: 'hidden' }}>
           {filteredOrders.map((o, i) => {
-            const nextSteps   = NEXT_STATUS[o.status] || [];
-            const canCancel   = CAN_CANCEL.includes(o.status);
+            const nextSteps   = ORDER_NEXT[o.status] || [];
+            const canCancel   = ORDER_CAN_CANCEL.includes(o.status);
             const totalAmount = o.items?.reduce((s, it) => s + (it.unitPrice || 0), 0) || 0;
             return (
               <div
@@ -292,7 +251,7 @@ const ArtistOrders = () => {
                             }}>
                             {updating === o.id + ns
                               ? <><span className="spinner-border spinner-border-sm mr-1"></span>Đang cập nhật...</>
-                              : ORDER_STATUS_LABEL[ns]
+                              : getOrderStatus(ns).label
                             }
                           </button>
                         ))}

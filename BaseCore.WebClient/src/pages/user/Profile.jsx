@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { userApi } from '../../services/api';
-import PublicLayout from '../../components/PublicLayout';
+import PublicLayout from '../../components/layout/PublicLayout';
 
 const inp = {
   width: '100%', padding: '12px 16px',

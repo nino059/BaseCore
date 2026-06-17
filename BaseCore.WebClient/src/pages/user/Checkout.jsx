@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import PublicLayout from '../../components/PublicLayout';
+import PublicLayout from '../../components/layout/PublicLayout';
 import { useCart } from '../../contexts/CartContext';
 import { orderApi, userApi } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
-
-const fmt = (p) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p);
+import { formatVND as fmt } from '../../utils/format';
 
 const inp = {
   width: '100%', padding: '12px 14px',
@@ -43,9 +42,9 @@ const Checkout = () => {
     setError('');
     try {
       const shippingParts = [form.address, form.ward, form.city].filter(Boolean);
-      if (saveAddress && user?.id) {
+      if (saveAddress && user?.userId) {
         try {
-          await userApi.update(user.id, {
+          await userApi.update(user.userId, {
             fullName: form.fullName,
             phone: form.phone,
             address: shippingParts.join(', '),
@@ -60,7 +59,7 @@ const Checkout = () => {
         items: items.map(i => ({
           productId: i.id,
           quantity: i.qty,
-          price: i.price,
+          price: i.discountPrice ?? i.price,
         })),
       };
       const res = await orderApi.create(orderData);
@@ -100,7 +99,7 @@ const Checkout = () => {
   return (
     <PublicLayout>
       <div style={{ background: '#faf8f5', minHeight: '80vh' }}>
-        <div className="container py-5">
+        <div className="max-w-[1140px] mx-auto px-4 py-5">
 
           {/* Header */}
           <div style={{ marginBottom: 36 }}>
@@ -122,23 +121,23 @@ const Checkout = () => {
           )}
 
           <form onSubmit={handleSubmit}>
-            <div className="row">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               {/* Form địa chỉ */}
-              <div className="col-lg-7 mb-4">
+              <div className="lg:col-span-7 mb-4">
                 <div style={{ background: 'white', padding: '28px 32px', boxShadow: '0 2px 16px rgba(0,0,0,0.04)' }}>
                   <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.16em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 24 }}>
                     Thông tin giao hàng
                   </p>
 
-                  <div className="row">
-                    <div className="col-md-6 mb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                    <div className="mb-4">
                       <Label>Họ và tên *</Label>
                       <input name="fullName" value={form.fullName} onChange={handleChange} required
                         style={inp} placeholder="Nguyễn Văn A"
                         onFocus={e => e.target.style.borderColor = 'var(--ink)'}
                         onBlur={e => e.target.style.borderColor = '#e8e4df'} />
                     </div>
-                    <div className="col-md-6 mb-4">
+                    <div className="mb-4">
                       <Label>Số điện thoại *</Label>
                       <input name="phone" value={form.phone} onChange={handleChange} required type="tel"
                         style={inp} placeholder="0901 234 567"
@@ -155,15 +154,15 @@ const Checkout = () => {
                       onBlur={e => e.target.style.borderColor = '#e8e4df'} />
                   </div>
 
-                  <div className="row">
-                    <div className="col-md-6 mb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                    <div className="mb-4">
                       <Label>Xã / Phường</Label>
                       <input name="ward" value={form.ward} onChange={handleChange}
                         style={inp} placeholder="Phường Bến Nghé"
                         onFocus={e => e.target.style.borderColor = 'var(--ink)'}
                         onBlur={e => e.target.style.borderColor = '#e8e4df'} />
                     </div>
-                    <div className="col-md-6 mb-4">
+                    <div className="mb-4">
                       <Label>Tỉnh / Thành phố *</Label>
                       <select name="city" value={form.city} onChange={handleChange} required
                         style={{ ...inp, cursor: 'pointer' }}>
@@ -224,7 +223,7 @@ const Checkout = () => {
               </div>
 
               {/* Tóm tắt đơn hàng */}
-              <div className="col-lg-5">
+              <div className="lg:col-span-5">
                 <div style={{ background: 'white', padding: '28px 32px', boxShadow: '0 2px 16px rgba(0,0,0,0.04)', position: 'sticky', top: 80 }}>
                   <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.16em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 20 }}>
                     Đơn hàng ({count} sản phẩm)

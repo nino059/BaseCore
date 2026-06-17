@@ -9,7 +9,6 @@ namespace BaseCore.Entities
     {
         public Role()
         {
-            RoleModule = new HashSet<Module>();
             UserRole = new HashSet<UserRole>();
         }
 
@@ -23,7 +22,6 @@ namespace BaseCore.Entities
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
         public int RoleType { get; set; }
-        public virtual ICollection<Module> RoleModule { get; set; }
         public virtual ICollection<UserRole> UserRole { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import ArtistLayout from '../../components/ArtistLayout';
+import ArtistLayout from '../../components/layout/ArtistLayout';
 import { productApi, categoryApi } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { toImg } from '../../utils/image';
@@ -8,15 +8,9 @@ import { toImg } from '../../utils/image';
 const THEMES    = ['Phong cảnh','Chân dung','Tĩnh vật','Trừu tượng','Động vật','Đô thị','Lịch sử','Tâm linh','Khác'];
 const MATERIALS = ['Giấy dó','Giấy điệp','Lụa','Vải bố','Sơn mài','Gỗ','Gốm sứ','Giấy thường','Tre, nứa, mây','Chất liệu khác'];
 
-const STATUS_CFG = {
-  Pending:  { label:'Chờ duyệt', color:'#92400e', bg:'#fef3c7', icon:'fa-clock' },
-  ForSale:  { label:'Đang bán',  color:'#065f46', bg:'#d1fae5', icon:'fa-check-circle' },
-  Ordered:  { label:'Đã đặt',    color:'#1e40af', bg:'#dbeafe', icon:'fa-shopping-cart' },
-  Sold:     { label:'Đã bán',    color:'#6b7280', bg:'#f3f4f6', icon:'fa-box' },
-  Rejected: { label:'Từ chối',   color:'#991b1b', bg:'#fee2e2', icon:'fa-ban' },
-};
+import { PRODUCT_STATUS as STATUS_CFG } from '../../utils/orderStatus';
 
-const fmt = (n) => new Intl.NumberFormat('vi-VN').format(n) + '₫';
+import { formatVNDCompact as fmt } from '../../utils/format';
 const emptyForm = {
   name:'', artistName:'', categoryId:'',
   price:'', theme:'', material:'',
@@ -553,7 +547,7 @@ const ArtistProducts = () => {
                           </div>
                       }
                     </div>
-                    <input type="file" ref={fileRef} accept="image/*" className="d-none" onChange={handleUpload} />
+                    <input type="file" ref={fileRef} accept="image/*" className="hidden" onChange={handleUpload} />
                     <button onClick={() => fileRef.current?.click()} disabled={uploading}
                       style={{
                         width:'100%', padding:'7px 0', borderRadius:8,

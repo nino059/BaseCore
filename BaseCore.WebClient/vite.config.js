@@ -12,7 +12,7 @@ export default defineConfig({
                 target: 'http://localhost:5000',
                 changeOrigin: true,
                 secure: false,
-                configure: (proxy, options) => {
+                configure: (proxy) => {
                     proxy.on('error', (err, req, res) => {
                         console.log('Proxy error:', err.message);
                         res.writeHead(500, { 'Content-Type': 'application/json' });

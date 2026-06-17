@@ -1,18 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { productApi, userApi, categoryApi, orderApi, blogApi } from "../../services/api";
-import { useAuth } from "../../contexts/AuthContext";
 
 // ─── Constants ────────────────────────────────────────────────
-const STATUS_CFG = {
-  Pending:    { label: "Chờ xác nhận", color: "#f59e0b" },
-  Processing: { label: "Đang xử lý",   color: "#3b82f6" },
-  Shipped:    { label: "Đang giao",    color: "var(--brand-dark)" },
-  Completed:  { label: "Hoàn thành",   color: "#10b981" },
-  Cancelled:  { label: "Đã hủy",       color: "#ef4444" },
-};
+import { ORDER_STATUS as STATUS_CFG } from "../../utils/orderStatus";
 
-const fmt = (v) => Number(v || 0).toLocaleString("vi-VN") + "₫";
+import { formatVNDCompact as fmt } from "../../utils/format";
 
 // ─── Bar Chart ────────────────────────────────────────────────
 const BarChart = ({ data, color = "var(--brand)" }) => {
@@ -115,7 +108,6 @@ const AreaChart = ({ data, color = "#10b981", showValues = false }) => {
 // MAIN COMPONENT
 // ════════════════════════════════════════════════════════════
 const Dashboard = () => {
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [loading,       setLoading]       = useState(true);

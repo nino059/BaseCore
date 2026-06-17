@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- context + hook + provider cố ý đặt cùng file */
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { flushSync } from 'react-dom';
 import { authApi } from '../services/api';

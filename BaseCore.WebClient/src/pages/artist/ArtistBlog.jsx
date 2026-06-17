@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import ArtistLayout from '../../components/ArtistLayout';
+import ArtistLayout from '../../components/layout/ArtistLayout';
 import { blogApi } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../hooks/useToast';
+import Toaster from '../../components/ui/Toaster';
+import ConfirmDialog from '../../components/ui/ConfirmDialog';
 
 const CATEGORIES = ['Tìm hiểu nghệ thuật', 'Kỹ thuật vẽ', 'Câu chuyện tác phẩm', 'Nghệ sĩ & Cảm hứng', 'Khác'];
 
@@ -53,7 +56,7 @@ function contentToBlocks(raw) {
 
 // ─── Block editor component ────────────────────────────────────────────────
 
-const BlockEditor = ({ blocks, onChange }) => {
+const BlockEditor = ({ blocks, onChange, showToast }) => {
   const fileRefs = useRef({});
 
   const update = useCallback((idx, patch) => {
@@ -103,7 +106,7 @@ const BlockEditor = ({ blocks, onChange }) => {
       update(idx, { url, uploading: false });
     } catch {
       update(idx, { uploading: false });
-      alert('Upload ảnh thất bại. Vui lòng thử lại.');
+      showToast?.('Upload ảnh thất bại. Vui lòng thử lại.', 'error');
     }
   };
 
@@ -244,7 +247,7 @@ const insertBtn = () => ({
 
 // ─── Blog editor (full page overlay) ──────────────────────────────────────
 
-const BlogEditor = ({ post, authorName, onSave, onClose }) => {
+const BlogEditor = ({ post, authorName, onSave, onClose, showToast }) => {
   const coverRef = useRef(null);
   const [form, setForm] = useState({
     title:        post?.title        || '',
@@ -268,7 +271,7 @@ const BlogEditor = ({ post, authorName, onSave, onClose }) => {
       const url = res.data?.url || res.data?.imageUrl || res.data;
       set('coverImageUrl', url);
     } catch {
-      alert('Upload ảnh bìa thất bại.');
+      showToast?.('Upload ảnh bìa thất bại.', 'error');
     }
     setCoverUploading(false);
   };
@@ -434,7 +437,7 @@ const BlogEditor = ({ post, authorName, onSave, onClose }) => {
             </button>
           </div>
 
-          <BlockEditor blocks={blocks} onChange={setBlocks} />
+          <BlockEditor blocks={blocks} onChange={setBlocks} showToast={showToast} />
         </form>
       </div>
     </div>
@@ -445,10 +448,12 @@ const BlogEditor = ({ post, authorName, onSave, onClose }) => {
 
 const ArtistBlog = () => {
   const { user } = useAuth();
+  const { toasts, showToast } = useToast();
   const [posts, setPosts]       = useState([]);
   const [loading, setLoading]   = useState(true);
   const [showEditor, setShowEditor] = useState(false);
   const [editing, setEditing]   = useState(null);
+  const [confirmId, setConfirmId] = useState(null);
 
   const load = () => {
     setLoading(true);
@@ -460,10 +465,18 @@ const ArtistBlog = () => {
 
   useEffect(() => { load(); }, []);
 
-  const handleDelete = async (id) => {
-    if (!confirm('Xóa bài viết này?')) return;
-    await blogApi.delete(id);
-    load();
+  const handleDelete = (id) => setConfirmId(id);
+
+  const doDelete = async () => {
+    try {
+      await blogApi.delete(confirmId);
+      showToast('Đã xóa bài viết', 'warning');
+      load();
+    } catch {
+      showToast('Xóa bài viết thất bại', 'error');
+    } finally {
+      setConfirmId(null);
+    }
   };
 
   const openNew = () => { setEditing(null); setShowEditor(true); };
@@ -477,6 +490,16 @@ const ArtistBlog = () => {
 
   return (
     <ArtistLayout>
+      <Toaster toasts={toasts} />
+      <ConfirmDialog
+        open={confirmId !== null}
+        title="Xóa bài viết?"
+        message="Bài viết sẽ bị xóa vĩnh viễn và không thể khôi phục."
+        confirmLabel="Xác nhận xóa"
+        danger
+        onConfirm={doDelete}
+        onCancel={() => setConfirmId(null)}
+      />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
         <button onClick={openNew} style={sqBtn()}>
           <i className="fas fa-pen" style={{ marginRight: 8 }} />Viết bài mới
@@ -540,6 +563,7 @@ const ArtistBlog = () => {
           authorName={user?.name || user?.username || ''}
           onSave={() => { setShowEditor(false); load(); }}
           onClose={() => setShowEditor(false)}
+          showToast={showToast}
         />
       )}
     </ArtistLayout>
