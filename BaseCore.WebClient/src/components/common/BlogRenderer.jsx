@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import { userApi } from '../../services/api';
+import { toImg } from '../../utils/image';
 
 /**
  * BlogRenderer - Elegant, premium reading experience for art articles
@@ -7,11 +10,16 @@ import React, { useState, useEffect, useCallback } from 'react';
 const BlogRenderer = ({ post, compact = false }) => {
   const [progress, setProgress] = useState(0);
   const [lightboxImage, setLightboxImage] = useState(null);
+  const [avatarSrc, setAvatarSrc] = useState(null);
+  const [avatarErr, setAvatarErr] = useState(false);
+  const [artistLinkId, setArtistLinkId] = useState(null);
 
   const {
     title,
     excerpt,
     authorName,
+    authorId,
+    authorAvatarUrl,
     category,
     coverImageUrl,
     publishedAt,
@@ -19,6 +27,10 @@ const BlogRenderer = ({ post, compact = false }) => {
     readTime,
     content,
   } = post || {};
+
+  const resolvedAuthorName = authorName || post?.AuthorName || 'Tác giả';
+  const resolvedAuthorId = authorId || post?.AuthorId;
+  const resolvedAvatarFromPost = authorAvatarUrl || post?.AuthorAvatarUrl || '';
 
   // Parse blocks
   let blocks = [];
@@ -34,6 +46,41 @@ const BlogRenderer = ({ post, compact = false }) => {
     ? new Date(date).toLocaleDateString('vi-VN', { day: 'numeric', month: 'long', year: 'numeric' })
     : '';
 
+
+  useEffect(() => {
+    setAvatarErr(false);
+    setArtistLinkId(resolvedAuthorId || null);
+
+    const direct = resolvedAvatarFromPost;
+    if (direct) {
+      setAvatarSrc(toImg(direct) || direct);
+      if (resolvedAuthorId) return;
+    } else {
+      setAvatarSrc(null);
+    }
+
+    if (!resolvedAuthorId && !resolvedAuthorName) return;
+
+    userApi.getArtists()
+      .then((res) => {
+        const artists = Array.isArray(res.data) ? res.data : [];
+        const match = artists.find((a) => {
+          const id = a.id || a.Id;
+          const name = a.name || a.Name;
+          if (resolvedAuthorId && id === resolvedAuthorId) return true;
+          if (resolvedAuthorName && name && name.toLowerCase() === resolvedAuthorName.toLowerCase()) return true;
+          return false;
+        });
+        if (!match) return;
+        const id = match.id || match.Id;
+        if (id) setArtistLinkId(id);
+        if (!direct) {
+          const url = match.avatarUrl || match.AvatarUrl || '';
+          if (url) setAvatarSrc(toImg(url) || url);
+        }
+      })
+      .catch(() => {});
+  }, [post, resolvedAvatarFromPost, resolvedAuthorId, resolvedAuthorName]);
 
   // Beautiful reading progress (full mode only)
   useEffect(() => {
@@ -149,30 +196,65 @@ const BlogRenderer = ({ post, compact = false }) => {
         </h1>
 
         {/* Refined author block */}
-        {authorName && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 22 }}>
-            <div style={{
-              width: 44, height: 44, borderRadius: '50%', background: '#e8e4df',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '1.05rem', fontWeight: 600, color: 'var(--brand-dark)', flexShrink: 0,
-            }}>
-              {(authorName || 'A')[0].toUpperCase()}
-            </div>
-            <div>
-              <div style={{ fontSize: '0.98rem', fontWeight: 600, color: '#2c2c2c' }}>{authorName}</div>
-              <div style={{ fontSize: '0.76rem', color: '#888' }}>Tác giả</div>
-            </div>
-          </div>
-        )}
+        {resolvedAuthorName && (() => {
+          const authorInner = (
+            <>
+              <div style={{
+                width: 48, height: 48, borderRadius: '50%', background: '#e8e4df',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '1.05rem', fontWeight: 600, color: 'var(--brand-dark)', flexShrink: 0,
+                overflow: 'hidden', border: '2px solid rgba(200,169,122,0.42)',
+                transition: 'border-color 0.2s ease',
+              }}>
+                {avatarSrc && !avatarErr ? (
+                  <img
+                    src={avatarSrc}
+                    alt={resolvedAuthorName}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    onError={() => setAvatarErr(true)}
+                  />
+                ) : (
+                  resolvedAuthorName.charAt(0).toUpperCase()
+                )}
+              </div>
+              <div>
+                <div style={{ fontSize: '0.98rem', fontWeight: 600, color: '#2c2c2c', transition: 'color 0.2s ease' }}>
+                  {resolvedAuthorName}
+                </div>
+                <div style={{ fontSize: '0.76rem', color: '#888' }}>Tác giả</div>
+              </div>
+            </>
+          );
+
+          const wrapStyle = {
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 14,
+            marginBottom: 22,
+            textDecoration: 'none',
+            color: 'inherit',
+          };
+
+          return artistLinkId ? (
+            <Link
+              to={`/artists/${artistLinkId}`}
+              className="blog-author-link"
+              style={wrapStyle}
+            >
+              {authorInner}
+            </Link>
+          ) : (
+            <div style={wrapStyle}>{authorInner}</div>
+          );
+        })()}
 
         {/* Elegant excerpt */}
         {excerpt && (
           <div style={{ marginBottom: compact ? 18 : 28 }}>
-            <p style={{
+            <p className="blog-prose__excerpt" style={{
               fontSize: compact ? '0.96rem' : '1.065rem', color: '#4f4a42',
-              fontStyle: 'italic', lineHeight: 1.78, maxWidth: '68ch',
+              fontStyle: 'italic', lineHeight: 1.78,
               borderLeft: '3.5px solid var(--brand)', paddingLeft: 20, margin: 0,
-              textAlign: 'justify',
             }}>
               {excerpt}
             </p>
@@ -182,10 +264,12 @@ const BlogRenderer = ({ post, compact = false }) => {
       </div>
 
       {/* Body Content - Premium reading experience */}
-      <div style={{
-        padding: compact ? '0 26px 36px' : '4px 52px 88px',
-        maxWidth: '100%',
-      }}>
+      <div
+        className="blog-prose"
+        style={{
+          padding: compact ? '0 26px 36px' : '4px 52px 88px',
+        }}
+      >
         {blocks.length === 0 && (
           <p style={{ color: '#999', fontStyle: 'italic' }}>Bài viết chưa có nội dung.</p>
         )}
@@ -258,30 +342,15 @@ const BlogRenderer = ({ post, compact = false }) => {
           return (
             <p
               key={index}
+              className={`blog-prose__paragraph${isFirstText ? ' blog-prose__paragraph--lead' : ''}`}
               style={{
                 fontSize: compact ? '0.97rem' : '1.075rem',
                 lineHeight: 1.88,
                 color: '#2f2a24',
                 margin: '0 0 1.48em',
-                maxWidth: '70ch',
-                textAlign: 'justify',
-                hyphens: 'auto',
-                WebkitHyphens: 'auto',
-                MozHyphens: 'auto',
-                textWrap: 'pretty',
-                textJustify: 'inter-word',
               }}
             >
-              {isFirstText && (
-                <span style={{
-                  float: 'left', fontSize: '3.45rem', lineHeight: 0.78,
-                  paddingRight: 8, paddingTop: 3, fontWeight: 500,
-                  color: 'var(--brand-dark)', fontFamily: 'inherit',
-                }}>
-                  {text.charAt(0)}
-                </span>
-              )}
-              {isFirstText ? text.slice(1) : text}
+              {text}
             </p>
           );
         })}
@@ -331,12 +400,6 @@ const BlogRenderer = ({ post, compact = false }) => {
           >
             ×
           </button>
-          <div style={{
-            position: 'absolute', bottom: 26, left: '50%', transform: 'translateX(-50%)',
-            fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.08em',
-          }}>
-            Nhấn ESC hoặc click ngoài để đóng
-          </div>
         </div>
       )}
 
@@ -361,6 +424,34 @@ const BlogRenderer = ({ post, compact = false }) => {
 
       <style>{`
         @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+
+        .blog-prose__excerpt,
+        .blog-prose__paragraph {
+          text-align: justify;
+          text-justify: inter-word;
+          overflow-wrap: break-word;
+          word-break: break-word;
+        }
+
+        .blog-author-link:hover > div:first-child {
+          border-color: var(--brand) !important;
+        }
+        .blog-author-link:hover > div:last-child > div:first-child {
+          color: var(--brand-dark) !important;
+        }
+
+        .blog-prose__paragraph--lead::first-letter {
+          -webkit-initial-letter: 2;
+          initial-letter: 2;
+          -webkit-initial-letter-align: auto;
+          initial-letter-align: auto;
+          font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+          font-weight: 400;
+          color: var(--brand-dark);
+          letter-spacing: -0.02em;
+          margin-right: 0.06em;
+          padding: 0;
+        }
       `}</style>
     </article>
   );

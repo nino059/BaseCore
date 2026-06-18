@@ -15,9 +15,8 @@ namespace BaseCore.Repository
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<BlogPost> BlogPosts { get; set; }
-        public DbSet<Role> Roles { get; set; }
-        public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<UserAddress> UserAddresses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -50,7 +49,6 @@ namespace BaseCore.Repository
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Name).HasMaxLength(200).IsRequired();
                 entity.Property(e => e.Price).HasPrecision(18, 2);
-                entity.Property(e => e.DiscountPrice).HasPrecision(18, 2);
                 entity.Property(e => e.Description).HasMaxLength(1000);
                 entity.Property(e => e.ImageUrl).HasMaxLength(500);
                 entity.Property(e => e.ArtistName).HasMaxLength(200);
@@ -76,18 +74,14 @@ namespace BaseCore.Repository
                 entity.Property(e => e.Phone).HasMaxLength(20);
                 entity.HasMany(e => e.OrderDetails)
                       .WithOne(d => d.Order)
-                      .HasForeignKey(d => d.OrderId);
+                      .HasForeignKey(d => d.OrderId)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<OrderDetail>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.UnitPrice).HasPrecision(18, 2);
-
-                entity.HasOne(e => e.Order)
-                      .WithMany()
-                      .HasForeignKey(e => e.OrderId)
-                      .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(e => e.Product)
                       .WithMany()
@@ -105,7 +99,6 @@ namespace BaseCore.Repository
                 entity.Property(e => e.AuthorName).HasMaxLength(200);
                 entity.Property(e => e.CoverImageUrl).HasMaxLength(500);
                 entity.Property(e => e.Status).HasMaxLength(20).HasDefaultValue("Pending");
-                entity.Property(e => e.ReadTime).HasMaxLength(20);
             });
 
             modelBuilder.Entity<Notification>(entity =>
@@ -117,6 +110,18 @@ namespace BaseCore.Repository
                 entity.Property(e => e.Type).HasMaxLength(20).IsRequired();
                 entity.Property(e => e.RefId).HasMaxLength(50).IsRequired(false);
                 entity.HasIndex(e => new { e.UserId, e.CreatedAt });
+            });
+
+            modelBuilder.Entity<UserAddress>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.UserId).HasMaxLength(450).IsRequired();
+                entity.Property(e => e.FullName).HasMaxLength(100).IsRequired();
+                entity.Property(e => e.Phone).HasMaxLength(20).IsRequired();
+                entity.Property(e => e.AddressLine).HasMaxLength(300).IsRequired();
+                entity.Property(e => e.Ward).HasMaxLength(100);
+                entity.Property(e => e.City).HasMaxLength(100).IsRequired();
+                entity.HasIndex(e => new { e.UserId, e.IsDefault });
             });
 
             // ✅ KHÔNG seed data ở đây — data đã có sẵn trong DB

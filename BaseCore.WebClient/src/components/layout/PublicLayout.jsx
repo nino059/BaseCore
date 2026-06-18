@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
 import { useAuthModal } from '../../contexts/AuthModalContext';
 import NotificationBell from '../common/NotificationBell';
+import NavActionIcon from '../common/NavActionIcon';
 
 const NAV_ITEMS = [
   { to: '/',        label: 'Trang chủ' },
@@ -128,19 +129,9 @@ const PublicLayout = ({ children }) => {
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <NotificationBell theme="dark" />
                 {!isAdmin && !isArtist && (
-                  <Link to="/cart" style={{ position: 'relative', color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', padding: '6px 8px' }}>
-                    <i className="fas fa-shopping-bag" style={{ fontSize: '1rem' }}></i>
-                    {cartCount > 0 && (
-                      <span style={{
-                        position: 'absolute', top: 2, right: 2,
-                        background: 'var(--brand)', color: 'white',
-                        borderRadius: '50%', width: 17, height: 17,
-                        fontSize: 10, fontWeight: 700,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        border: '1.5px solid rgba(20,16,12,0.9)',
-                      }}>{cartCount > 9 ? '9+' : cartCount}</span>
-                    )}
-                  </Link>
+                  <NavActionIcon theme="dark" count={cartCount} title="Giỏ hàng" href="/cart">
+                    <i className="fas fa-shopping-bag" style={{ fontSize: '1rem', lineHeight: 1 }} />
+                  </NavActionIcon>
                 )}
               </div>
             )}

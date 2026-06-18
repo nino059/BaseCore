@@ -108,7 +108,7 @@ function AppRoutes() {
       <Route path="/checkout" element={
         <ProtectedRoute><Checkout /></ProtectedRoute>
       } />
-      <Route path="/order-confirmation/:orderId" element={
+      <Route path="/order-confirmation/:orderId?" element={
         <ProtectedRoute><OrderConfirmation /></ProtectedRoute>
       } />
 

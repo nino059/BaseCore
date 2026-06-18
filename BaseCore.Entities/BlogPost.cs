@@ -33,8 +33,5 @@ namespace BaseCore.Entities
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public DateTime? PublishedAt { get; set; }
-
-        [MaxLength(20)]
-        public string? ReadTime { get; set; }
     }
 }

@@ -7,6 +7,16 @@ import { useAuth } from '../../contexts/AuthContext';
 import { toImg as toImgUrl } from '../../utils/image';
 
 import { formatVND as fmt } from '../../utils/format';
+import { normCartId } from '../../utils/cart';
+import {
+  validateFilterField,
+  validateFilterRange,
+  effectiveFilterValue,
+  clampPrice,
+  clampSize,
+  formatPriceChipLabel,
+  formatSizeChipLabel,
+} from '../../utils/shopFilters';
 import Pagination from '../../components/ui/Pagination';
 import EmptyState from '../../components/ui/EmptyState';
 
@@ -33,7 +43,7 @@ const SIZE_PRESETS = [
 const PER_PAGE = 12;
 
 const Shop = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [all, setAll]           = useState([]);
   const [categories, setCats]   = useState([]);
@@ -44,6 +54,7 @@ const Shop = () => {
   // Applied filters
   const [search,     setSearch]     = useState('');
   const [categoryId, setCategoryId] = useState('');
+  const [theme,      setTheme]      = useState('');
   const [minPrice,   setMinPrice]   = useState('');
   const [maxPrice,   setMaxPrice]   = useState('');
   const [minSize,    setMinSize]    = useState('');
@@ -60,11 +71,23 @@ const Shop = () => {
   const [cartMessage, setCartMessage] = useState(null);
 
   useEffect(() => {
-    const c  = searchParams.get('category');
-    const kw = searchParams.get('q');
-    if (c)  setCategoryId(c);
-    if (kw) { setSearch(kw); setSearchDraft(kw); }
+    const c  = searchParams.get('category') || '';
+    const kw = searchParams.get('q') || '';
+    const th = searchParams.get('theme') || '';
+    setCategoryId(c);
+    setSearch(kw);
+    setSearchDraft(kw);
+    setTheme(th);
   }, [searchParams]);
+
+  const patchUrl = (patch) => {
+    const next = new URLSearchParams(searchParams);
+    Object.entries(patch).forEach(([key, value]) => {
+      if (value) next.set(key, value);
+      else next.delete(key);
+    });
+    setSearchParams(next, { replace: true });
+  };
 
   useEffect(() => {
     Promise.all([
@@ -80,13 +103,27 @@ const Shop = () => {
 
   const reset = () => setPage(1);
 
+  const filterErrors = useMemo(() => ({
+    minPrice: validateFilterField(minPrice, 'price'),
+    maxPrice: validateFilterField(maxPrice, 'price'),
+    minSize: validateFilterField(minSize, 'size'),
+    maxSize: validateFilterField(maxSize, 'size'),
+    priceRange: validateFilterRange(minPrice, maxPrice, 'price'),
+    sizeRange: validateFilterRange(minSize, maxSize, 'size'),
+  }), [minPrice, maxPrice, minSize, maxSize]);
+
+  const effMinPrice = effectiveFilterValue(minPrice, filterErrors.minPrice, filterErrors.priceRange);
+  const effMaxPrice = effectiveFilterValue(maxPrice, filterErrors.maxPrice, filterErrors.priceRange);
+  const effMinSize = effectiveFilterValue(minSize, filterErrors.minSize, filterErrors.sizeRange);
+  const effMaxSize = effectiveFilterValue(maxSize, filterErrors.maxSize, filterErrors.sizeRange);
+
   const filtered = useMemo(() => {
     const q = (search || '').toLowerCase().trim();
     return all
       .filter(p => {
-        const name   = (p.name || '').toLowerCase();
-        const art    = (p.artistName || p.artist || '').toLowerCase();
-        const price  = p.discountPrice ?? p.price ?? 0;
+        const name = (p.name || '').toLowerCase();
+        const art  = (p.artistName || p.artist || '').toLowerCase();
+        const price  = p.price ?? 0;
         const w      = Number(p.width  || 0);
         const h      = Number(p.height || 0);
         const maxDim = Math.max(w, h);
@@ -94,15 +131,16 @@ const Shop = () => {
         return (
           matchesSearch &&
           (!categoryId || String(p.categoryId) === String(categoryId)) &&
-          (!minPrice || price >= Number(minPrice)) &&
-          (!maxPrice || price <= Number(maxPrice)) &&
-          (!minSize || maxDim >= Number(minSize)) &&
-          (!maxSize || maxDim <= Number(maxSize))
+          (!theme || p.theme === theme) &&
+          (effMinPrice == null || price >= effMinPrice) &&
+          (effMaxPrice == null || price <= effMaxPrice) &&
+          (effMinSize == null || maxDim >= effMinSize) &&
+          (effMaxSize == null || maxDim <= effMaxSize)
         );
       })
       .sort((a, b) => {
-        const pa = a.discountPrice ?? a.price ?? 0;
-        const pb = b.discountPrice ?? b.price ?? 0;
+        const pa = a.price ?? 0;
+        const pb = b.price ?? 0;
 
         const nameA = (a.name || '').toLowerCase();
         const nameB = (b.name || '').toLowerCase();
@@ -113,7 +151,7 @@ const Shop = () => {
         if (sort === 'name_desc')   return nameB.localeCompare(nameA, 'vi');
         return 0;
       });
-  }, [all, search, categoryId, minPrice, maxPrice, minSize, maxSize, sort]);
+  }, [all, search, categoryId, theme, effMinPrice, effMaxPrice, effMinSize, effMaxSize, sort]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
   const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
@@ -122,12 +160,23 @@ const Shop = () => {
     categories.map(c => ({ ...c, count: all.filter(p => String(p.categoryId) === String(c.id)).length })),
   [categories, all]);
 
+  const themesWithCount = useMemo(() => {
+    const map = {};
+    all.forEach(p => {
+      if (!p.theme) return;
+      map[p.theme] = (map[p.theme] || 0) + 1;
+    });
+    return Object.entries(map)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [all]);
+
   const handleAdd = (e, product) => {
     e.preventDefault(); e.stopPropagation();
     if (!user) { navigate('/login'); return; }
 
     // Kiểm tra xem tranh đã có trong giỏ hàng chưa (dựa trên dữ liệu thực)
-    const alreadyInCart = items.some(i => i.id === product.id);
+    const alreadyInCart = items.some(i => normCartId(i.id) === normCartId(product.id));
     if (alreadyInCart) {
       setCartMessage(`Tranh "${product.name}" đã có trong giỏ hàng.`);
       setTimeout(() => setCartMessage(null), 2500);
@@ -142,21 +191,30 @@ const Shop = () => {
   const clearAll = () => {
     setSearch(''); setSearchDraft('');
     setCategoryId('');
+    setTheme('');
     setMinPrice(''); setMaxPrice('');
     setMinSize(''); setMaxSize('');
     setSort('default');
+    setSearchParams({}, { replace: true });
     reset();
   };
 
-  const activeCount = [search, categoryId, minPrice || maxPrice, minSize || maxSize].filter(Boolean).length + (sort !== 'default' ? 1 : 0);
+  const activeCount = [search, categoryId, theme, minPrice || maxPrice, minSize || maxSize].filter(Boolean).length + (sort !== 'default' ? 1 : 0);
+
+  const priceChipLabel = formatPriceChipLabel(minPrice, maxPrice, fmt);
+  const sizeChipLabel = formatSizeChipLabel(minSize, maxSize);
 
   const chips = [
-    search     && { key: 'search', icon: 'fa-search',      label: `"${search}"`,        clear: () => { setSearch(''); setSearchDraft(''); reset(); } },
-    categoryId && { key: 'cat',    icon: 'fa-layer-group', label: catsWithCount.find(c => String(c.id) === String(categoryId))?.name || 'Danh mục', clear: () => { setCategoryId(''); reset(); } },
-    (minPrice || maxPrice) && { key: 'price', icon: 'fa-tag',   label: `Giá: ${minPrice ? fmt(minPrice) : '0'} – ${maxPrice ? fmt(maxPrice) : '∞'}`, clear: () => { setMinPrice(''); setMaxPrice(''); reset(); } },
-    (minSize  || maxSize)  && { key: 'size',  icon: 'fa-ruler', label: `Kích thước: ${minSize || '0'} – ${maxSize || '∞'} cm`, clear: () => { setMinSize(''); setMaxSize(''); reset(); } },
+    search     && { key: 'search', icon: 'fa-search',      label: `"${search}"`,        clear: () => { setSearch(''); setSearchDraft(''); patchUrl({ q: '' }); reset(); } },
+    categoryId && { key: 'cat',    icon: 'fa-layer-group', label: catsWithCount.find(c => String(c.id) === String(categoryId))?.name || 'Danh mục', clear: () => { setCategoryId(''); patchUrl({ category: '' }); reset(); } },
+    theme      && { key: 'theme',  icon: 'fa-palette',     label: theme, clear: () => { setTheme(''); patchUrl({ theme: '' }); reset(); } },
+    priceChipLabel && { key: 'price', icon: 'fa-tag',   label: priceChipLabel, clear: () => { setMinPrice(''); setMaxPrice(''); reset(); } },
+    sizeChipLabel  && { key: 'size',  icon: 'fa-ruler', label: sizeChipLabel, clear: () => { setMinSize(''); setMaxSize(''); reset(); } },
     sort !== 'default' && { key: 'sort', icon: 'fa-sort', label: SORTS.find(s => s.value === sort)?.label, clear: () => { setSort('default'); reset(); } },
   ].filter(Boolean);
+
+  const errStyle = { fontSize: '0.78rem', color: '#b91c1c', marginTop: 4, lineHeight: 1.4 };
+  const inputErrBorder = (hasErr) => hasErr ? '1.5px solid #fca5a5' : '1.5px solid #e8e4df';
 
   const LeftFilters = () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
@@ -189,7 +247,7 @@ const Shop = () => {
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <button
-            onClick={() => { setCategoryId(''); reset(); }}
+            onClick={() => { setCategoryId(''); patchUrl({ category: '' }); reset(); }}
             style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: !categoryId ? 700 : 400, fontSize: '0.88rem', background: !categoryId ? '#f0ece8' : 'transparent', color: !categoryId ? 'var(--ink)' : '#767676' }}
           >
             <span>Tất cả</span>
@@ -198,7 +256,12 @@ const Shop = () => {
           {catsWithCount.map(cat => (
             <button
               key={cat.id}
-              onClick={() => { setCategoryId(String(cat.id) === categoryId ? '' : String(cat.id)); reset(); }}
+              onClick={() => {
+                const next = String(cat.id) === categoryId ? '' : String(cat.id);
+                setCategoryId(next);
+                patchUrl({ category: next });
+                reset();
+              }}
               style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: String(cat.id) === categoryId ? 700 : 400, fontSize: '0.88rem', background: String(cat.id) === categoryId ? '#f0ece8' : 'transparent', color: String(cat.id) === categoryId ? 'var(--ink)' : '#767676' }}
             >
               <span>{cat.name}</span>
@@ -207,6 +270,38 @@ const Shop = () => {
           ))}
         </div>
       </div>
+
+      {/* Chủ đề */}
+      {themesWithCount.length > 0 && (
+        <div style={{ padding: '14px 20px', borderTop: '1px solid #f0ece8' }}>
+          <div style={{ fontWeight: 700, fontSize: '0.78rem', color: 'var(--brand-dark)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>
+            <i className="fas fa-palette" style={{ color: 'var(--brand)', fontSize: '0.88rem' }} /> CHỦ ĐỀ
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <button
+              onClick={() => { setTheme(''); patchUrl({ theme: '' }); reset(); }}
+              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: !theme ? 700 : 400, fontSize: '0.88rem', background: !theme ? '#f0ece8' : 'transparent', color: !theme ? 'var(--ink)' : '#767676' }}
+            >
+              <span>Tất cả</span>
+            </button>
+            {themesWithCount.map(t => (
+              <button
+                key={t.name}
+                onClick={() => {
+                  const next = theme === t.name ? '' : t.name;
+                  setTheme(next);
+                  patchUrl({ theme: next });
+                  reset();
+                }}
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: theme === t.name ? 700 : 400, fontSize: '0.88rem', background: theme === t.name ? '#f0ece8' : 'transparent', color: theme === t.name ? 'var(--ink)' : '#767676' }}
+              >
+                <span>{t.name}</span>
+                <span style={{ fontSize: '0.75rem', color: theme === t.name ? 'var(--brand-dark)' : '#aaa', background: theme === t.name ? '#e8e4df' : '#f5f5f5', padding: '1px 8px', fontWeight: 600 }}>{t.count}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -239,21 +334,22 @@ const RightFilters = () => (
               <button 
                 onClick={() => { 
                   const current = Number(minPrice) || 0; 
-                  setMinPrice(Math.max(0, current - 100000)); 
+                  setMinPrice(String(clampPrice(current - 100000))); 
                   reset(); 
                 }}
                 style={{ width: 20, height: 20, padding: 0, border: '1px solid #e8e4df', background: '#faf8f5', color: 'var(--brand-dark)', fontSize: '0.85rem', cursor: 'pointer', borderRadius: 3 }}
               >−</button>
               <input 
                 type="number" 
+                min="0"
                 value={minPrice} 
                 onChange={e => { setMinPrice(e.target.value); reset(); }}
-                style={{ width: '90px', padding: '5px 6px', border: '1.5px solid #e8e4df', fontSize: '0.82rem', outline: 'none', background: '#faf8f5' }} 
+                style={{ width: '90px', padding: '5px 6px', border: inputErrBorder(!!filterErrors.minPrice || !!filterErrors.priceRange), fontSize: '0.82rem', outline: 'none', background: '#faf8f5' }} 
               />
               <button 
                 onClick={() => { 
                   const current = Number(minPrice) || 0; 
-                  setMinPrice(current + 100000); 
+                  setMinPrice(String(clampPrice(current + 100000))); 
                   reset(); 
                 }}
                 style={{ width: 20, height: 20, padding: 0, border: '1px solid #e8e4df', background: '#faf8f5', color: 'var(--brand-dark)', fontSize: '0.85rem', cursor: 'pointer', borderRadius: 3 }}
@@ -269,21 +365,22 @@ const RightFilters = () => (
               <button 
                 onClick={() => { 
                   const current = Number(maxPrice) || 0; 
-                  setMaxPrice(Math.max(0, current - 100000)); 
+                  setMaxPrice(String(clampPrice(current - 100000))); 
                   reset(); 
                 }}
                 style={{ width: 20, height: 20, padding: 0, border: '1px solid #e8e4df', background: '#faf8f5', color: 'var(--brand-dark)', fontSize: '0.85rem', cursor: 'pointer', borderRadius: 3 }}
               >−</button>
               <input 
                 type="number" 
+                min="0"
                 value={maxPrice} 
                 onChange={e => { setMaxPrice(e.target.value); reset(); }}
-                style={{ width: '90px', padding: '5px 6px', border: '1.5px solid #e8e4df', fontSize: '0.82rem', outline: 'none', background: '#faf8f5' }} 
+                style={{ width: '90px', padding: '5px 6px', border: inputErrBorder(!!filterErrors.maxPrice || !!filterErrors.priceRange), fontSize: '0.82rem', outline: 'none', background: '#faf8f5' }} 
               />
               <button 
                 onClick={() => { 
                   const current = Number(maxPrice) || 0; 
-                  setMaxPrice(current + 100000); 
+                  setMaxPrice(String(clampPrice(current + 100000))); 
                   reset(); 
                 }}
                 style={{ width: 20, height: 20, padding: 0, border: '1px solid #e8e4df', background: '#faf8f5', color: 'var(--brand-dark)', fontSize: '0.85rem', cursor: 'pointer', borderRadius: 3 }}
@@ -291,16 +388,21 @@ const RightFilters = () => (
               <span style={{ fontSize: '0.75rem', color: '#666' }}>đ</span>
             </div>
           </div>
+          {(filterErrors.minPrice || filterErrors.maxPrice || filterErrors.priceRange) && (
+            <div style={errStyle}>
+              {filterErrors.minPrice || filterErrors.maxPrice || filterErrors.priceRange}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Kích thước - 1 dòng, 2 ô cạnh nhau */}
+      {/* Kích thước - 2 dòng giống giá */}
       <div style={{ padding: '16px 20px' }}>
-        <div style={{ fontWeight: 700, fontSize: '0.78rem', color: 'var(--brand-dark)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>
+        <div style={{ fontWeight: 700, fontSize: '0.78rem', color: 'var(--brand-dark)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>
           <i className="fas fa-ruler-combined" style={{ color: 'var(--brand)', fontSize: '0.88rem' }} /> KÍCH THƯỚC
         </div>
 
-        <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
+        <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
           {SIZE_PRESETS.map(preset => {
             const active = minSize === preset.min && maxSize === preset.max;
             return (
@@ -321,61 +423,74 @@ const RightFilters = () => (
             );
           })}
         </div>
-        
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <span style={{ fontSize: '0.7rem', color: '#666' }}>Từ</span>
-          {/* Từ - có cả - và + */}
-          <button 
-            onClick={() => { 
-              const current = Number(minSize) || 0; 
-              setMinSize(Math.max(0, current - 5)); 
-              reset(); 
-            }}
-            style={{ width: 16, height: 16, padding: 0, border: '1px solid #e8e4df', background: '#faf8f5', color: 'var(--brand-dark)', fontSize: '0.7rem', cursor: 'pointer', borderRadius: 3, lineHeight: 1 }}
-          >−</button>
-          <input 
-            type="number" 
-            placeholder="" 
-            value={minSize} 
-            onChange={e => { setMinSize(e.target.value); reset(); }}
-            style={{ width: '30px', padding: '4px 4px', border: '1.5px solid #e8e4df', fontSize: '0.75rem', outline: 'none', background: '#faf8f5' }} 
-          />
-          <button 
-            onClick={() => { 
-              const current = Number(minSize) || 0; 
-              setMinSize(current + 5); 
-              reset(); 
-            }}
-            style={{ width: 16, height: 16, padding: 0, border: '1px solid #e8e4df', background: '#faf8f5', color: 'var(--brand-dark)', fontSize: '0.7rem', cursor: 'pointer', borderRadius: 3, lineHeight: 1 }}
-          >+</button>
 
-          <span style={{ fontSize: '0.7rem', color: '#666', marginLeft: 4, marginRight: 2 }}>đến</span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {/* Từ */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: '0.72rem', color: '#888', width: 32 }}>Từ</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <button 
+                onClick={() => { 
+                  const current = Number(minSize) || 0; 
+                  setMinSize(String(clampSize(current - 5))); 
+                  reset(); 
+                }}
+                style={{ width: 20, height: 20, padding: 0, border: '1px solid #e8e4df', background: '#faf8f5', color: 'var(--brand-dark)', fontSize: '0.85rem', cursor: 'pointer', borderRadius: 3 }}
+              >−</button>
+              <input 
+                type="number" 
+                min="0"
+                value={minSize} 
+                onChange={e => { setMinSize(e.target.value); reset(); }}
+                style={{ width: '90px', padding: '5px 6px', border: inputErrBorder(!!filterErrors.minSize || !!filterErrors.sizeRange), fontSize: '0.82rem', outline: 'none', background: '#faf8f5' }} 
+              />
+              <button 
+                onClick={() => { 
+                  const current = Number(minSize) || 0; 
+                  setMinSize(String(clampSize(current + 5))); 
+                  reset(); 
+                }}
+                style={{ width: 20, height: 20, padding: 0, border: '1px solid #e8e4df', background: '#faf8f5', color: 'var(--brand-dark)', fontSize: '0.85rem', cursor: 'pointer', borderRadius: 3 }}
+              >+</button>
+              <span style={{ fontSize: '0.75rem', color: '#666' }}>cm</span>
+            </div>
+          </div>
 
-          {/* Đến - có cả - và + */}
-          <button 
-            onClick={() => { 
-              const current = Number(maxSize) || 0; 
-              setMaxSize(Math.max(0, current - 10)); 
-              reset(); 
-            }}
-            style={{ width: 16, height: 16, padding: 0, border: '1px solid #e8e4df', background: '#faf8f5', color: 'var(--brand-dark)', fontSize: '0.7rem', cursor: 'pointer', borderRadius: 3, lineHeight: 1 }}
-          >−</button>
-          <input 
-            type="number" 
-            placeholder="" 
-            value={maxSize} 
-            onChange={e => { setMaxSize(e.target.value); reset(); }}
-            style={{ width: '30px', padding: '4px 4px', border: '1.5px solid #e8e4df', fontSize: '0.75rem', outline: 'none', background: '#faf8f5' }} 
-          />
-          <button 
-            onClick={() => { 
-              const current = Number(maxSize) || 0; 
-              setMaxSize(current + 10); 
-              reset(); 
-            }}
-            style={{ width: 16, height: 16, padding: 0, border: '1px solid #e8e4df', background: '#faf8f5', color: 'var(--brand-dark)', fontSize: '0.7rem', cursor: 'pointer', borderRadius: 3, lineHeight: 1 }}
-          >+</button>
-          <span style={{ fontSize: '0.65rem', color: '#666' }}>cm</span>
+          {/* Đến */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: '0.72rem', color: '#888', width: 32 }}>đến</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <button 
+                onClick={() => { 
+                  const current = Number(maxSize) || 0; 
+                  setMaxSize(String(clampSize(current - 5))); 
+                  reset(); 
+                }}
+                style={{ width: 20, height: 20, padding: 0, border: '1px solid #e8e4df', background: '#faf8f5', color: 'var(--brand-dark)', fontSize: '0.85rem', cursor: 'pointer', borderRadius: 3 }}
+              >−</button>
+              <input 
+                type="number" 
+                min="0"
+                value={maxSize} 
+                onChange={e => { setMaxSize(e.target.value); reset(); }}
+                style={{ width: '90px', padding: '5px 6px', border: inputErrBorder(!!filterErrors.maxSize || !!filterErrors.sizeRange), fontSize: '0.82rem', outline: 'none', background: '#faf8f5' }} 
+              />
+              <button 
+                onClick={() => { 
+                  const current = Number(maxSize) || 0; 
+                  setMaxSize(String(clampSize(current + 5))); 
+                  reset(); 
+                }}
+                style={{ width: 20, height: 20, padding: 0, border: '1px solid #e8e4df', background: '#faf8f5', color: 'var(--brand-dark)', fontSize: '0.85rem', cursor: 'pointer', borderRadius: 3 }}
+              >+</button>
+              <span style={{ fontSize: '0.75rem', color: '#666' }}>cm</span>
+            </div>
+          </div>
+          {(filterErrors.minSize || filterErrors.maxSize || filterErrors.sizeRange) && (
+            <div style={errStyle}>
+              {filterErrors.minSize || filterErrors.maxSize || filterErrors.sizeRange}
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -572,8 +687,7 @@ const RightFilters = () => (
                   {paged.map(p => {
                     const imgUrl  = toImgUrl(p.imageUrl);
                     const inCart  = addedId === p.id;
-                    const price   = p.discountPrice ?? p.price ?? 0;
-                    const hasDisc = p.discountPrice && p.discountPrice < p.price;
+                    const price   = p.price ?? 0;
                     return (
                       <Link key={p.id} to={`/product/${p.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                         <div className="sp-card" style={{ background: 'white', overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -594,11 +708,6 @@ const RightFilters = () => (
                             {p.categoryName && (
                               <div style={{ position: 'absolute', top: 10, left: 10, background: 'rgba(26,26,26,0.6)', color: 'white', padding: '3px 10px', fontSize: '0.68rem', fontWeight: 700, backdropFilter: 'blur(4px)', letterSpacing: '0.04em' }}>
                                 {p.categoryName}
-                              </div>
-                            )}
-                            {hasDisc && (
-                              <div style={{ position: 'absolute', top: 10, right: 10, background: 'var(--ink)', color: 'white', padding: '3px 8px', fontSize: '0.68rem', fontWeight: 800 }}>
-                                -{Math.round((1 - p.discountPrice / p.price) * 100)}%
                               </div>
                             )}
                             {p.stock === 0 && (
@@ -637,11 +746,6 @@ const RightFilters = () => (
                                 <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.92rem', lineHeight: 1.1 }}>
                                   {fmt(price)}
                                 </div>
-                                {hasDisc && (
-                                  <div style={{ fontSize: '0.73rem', color: '#aaa', textDecoration: 'line-through', lineHeight: 1 }}>
-                                    {fmt(p.price)}
-                                  </div>
-                                )}
                               </div>
                               {!isArtist && (
                               <button className="sp-add"

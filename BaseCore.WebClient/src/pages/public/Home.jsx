@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { productApi, categoryApi } from '../../services/api';
+import { productApi, categoryApi, userApi } from '../../services/api';
 import PublicLayout from '../../components/layout/PublicLayout';
 import { useCart } from '../../contexts/CartContext';
 import hero1 from '../../assets/images/hero-1.jpg';
@@ -13,12 +13,13 @@ import { toImg } from '../../utils/image';
 const heroImages = [hero1, hero2];
 
 /* ─── Product card – 4 col artnam style ─── */
-const ArtCard = ({ product, addedId, onAdd }) => {FileList
+const ArtCard = ({ product, addedId, onAdd, showArtist = true, dark = false, showPrice = true }) => {
   const [hov, setHov] = useState(false);
   const { isArtist } = useAuth();
-  const hasDisc = product.discountPrice && product.discountPrice < product.price;
-  const price   = product.discountPrice ?? product.price ?? 0;
+  const price   = product.price ?? 0;
   const imgUrl  = toImg(product.imageUrl);
+  const nameColor  = dark ? 'rgba(255,255,255,0.92)' : '#1a1a1a';
+  const priceColor = dark ? '#c8a97a' : (product.status === 'ForSale' ? '#1a1a1a' : '#9ca3af');
 
   return (
     <Link to={`/product/${product.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
@@ -35,18 +36,6 @@ const ArtCard = ({ product, addedId, onAdd }) => {FileList
               <i className="fas fa-image" style={{ fontSize: '2rem' }} />
             </div>
           )}
-          {product.status === 'ForSale' ? (
-            <div style={{ position: 'absolute', top: 10, left: 10, background: '#065f46', color: 'white', padding: '3px 10px', fontSize: '0.66rem', fontWeight: 700, letterSpacing: '0.08em' }}>ĐANG BÁN</div>
-          ) : product.status === 'Ordered' ? (
-            <div style={{ position: 'absolute', top: 10, left: 10, background: '#92400e', color: 'white', padding: '3px 10px', fontSize: '0.66rem', fontWeight: 700, letterSpacing: '0.08em' }}>ĐÃ ĐẶT</div>
-          ) : (
-            <div style={{ position: 'absolute', top: 10, left: 10, background: '#1a1a1a', color: 'white', padding: '3px 10px', fontSize: '0.66rem', fontWeight: 700, letterSpacing: '0.08em' }}>ĐÃ BÁN</div>
-          )}
-          {hasDisc && (
-            <div style={{ position: 'absolute', top: 10, right: 10, background: '#c0392b', color: 'white', padding: '3px 8px', fontSize: '0.66rem', fontWeight: 800 }}>
-              -{Math.round((1 - product.discountPrice / product.price) * 100)}%
-            </div>
-          )}
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.28)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
             opacity: hov ? 1 : 0, transition: 'opacity .25s' }}>
             <span style={{ background: 'white', color: '#1a1a1a', padding: '8px 16px', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.06em' }}>XEM NGAY</span>
@@ -57,46 +46,60 @@ const ArtCard = ({ product, addedId, onAdd }) => {FileList
             )}
           </div>
         </div>
-        <div style={{ fontSize: '0.72rem', color: '#8b6c4a', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 5 }}>
-          {(product.artistName || product.artist)
-            ? <Link
-                to={product.sellerId ? `/artists/${product.sellerId}` : '/artists'}
-                onClick={e => e.stopPropagation()}
-                style={{ color: '#8b6c4a', textDecoration: 'none' }}
-                onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
-                onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
-              >{product.artistName || product.artist}</Link>
-            : ' '
-          }
-        </div>
-        <div style={{ fontWeight: 500, fontSize: '0.88rem', color: '#1a1a1a', marginBottom: 5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {showArtist && (
+          <div style={{ fontSize: '0.72rem', color: '#8b6c4a', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 5 }}>
+            {(product.artistName || product.artist)
+              ? <Link
+                  to={product.sellerId ? `/artists/${product.sellerId}` : '/artists'}
+                  onClick={e => e.stopPropagation()}
+                  style={{ color: '#8b6c4a', textDecoration: 'none' }}
+                  onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
+                  onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
+                >{product.artistName || product.artist}</Link>
+              : ' '
+            }
+          </div>
+        )}
+        <div style={{ fontWeight: 500, fontSize: '0.88rem', color: nameColor, marginBottom: showPrice ? 5 : 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: dark ? 'center' : 'left' }}>
           {product.name}
         </div>
-        <div style={{ fontWeight: 700, fontSize: '0.88rem', color: product.status === 'ForSale' ? '#1a1a1a' : '#9ca3af' }}>
-          {fmt(price)}
-          {hasDisc && product.status === 'ForSale' && (
-            <span style={{ fontSize: '0.75rem', color: '#aaa', textDecoration: 'line-through', marginLeft: 8, fontWeight: 400 }}>{fmt(product.price)}</span>
-          )}
-        </div>
+        {showPrice && (
+          <div style={{ fontWeight: 700, fontSize: '0.88rem', color: priceColor }}>
+            {fmt(price)}
+          </div>
+        )}
       </div>
     </Link>
   );
 };
 
 /* ─── Section heading artnam style ─── */
-const SecHead = ({ label, title, linkTo, linkText = 'Xem tất cả' }) => (
-  <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 36 }}>
-    <div>
-      {label && <p style={{ color: '#8b6c4a', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 8 }}>{label}</p>}
-      <h2 style={{ fontWeight: 300, fontSize: 'clamp(1.4rem,3vw,1.9rem)', color: '#1a1a1a', margin: 0, letterSpacing: '0.02em' }}>{title}</h2>
+const SecHead = ({ label, title, linkTo, linkText = 'Xem tất cả', dark = false }) => {
+  const c = dark ? 'rgba(255,255,255,0.9)' : '#1a1a1a';
+  const accent = dark ? '#c8a97a' : '#8b6c4a';
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-end', marginBottom: 48 }}>
+      <div style={{ flex: 1 }} />
+      <div style={{ textAlign: 'center' }}>
+        {label && (
+          <p style={{ color: accent, fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.28em', textTransform: 'uppercase', marginBottom: 12 }}>
+            {label}
+          </p>
+        )}
+        <h2 style={{ fontWeight: 400, fontSize: 'clamp(1.8rem,3.5vw,2.6rem)', color: c, margin: 0, letterSpacing: '0.03em', fontFamily: "'Playfair Display', serif" }}>
+          {title}
+        </h2>
+      </div>
+      <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+        {linkTo && (
+          <Link to={linkTo} style={{ color: accent, textDecoration: 'none', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+            {linkText} →
+          </Link>
+        )}
+      </div>
     </div>
-    {linkTo && (
-      <Link to={linkTo} style={{ color: '#1a1a1a', textDecoration: 'none', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', borderBottom: '1px solid #1a1a1a', paddingBottom: 1, whiteSpace: 'nowrap' }}>
-        {linkText} →
-      </Link>
-    )}
-  </div>
-);
+  );
+};
 
 /* ─── Skeleton ─── */
 const Sk = ({ ratio = '125%' }) => (
@@ -112,6 +115,7 @@ const Sk = ({ ratio = '125%' }) => (
 const Home = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [categories,  setCategories]  = useState([]);
+  const [artistProfiles, setArtistProfiles] = useState({});
   const [loading,     setLoading]     = useState(true);
   const { addToCart } = useCart();
   const { user } = useAuth();
@@ -127,30 +131,63 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    Promise.all([categoryApi.getAll(), productApi.getAll({ pageSize: 999 })])
-      .then(([catRes, prodRes]) => {
-        setCategories(catRes.data || []);
-        const data = prodRes.data?.items || prodRes.data?.data || prodRes.data || [];
-        setAllProducts(Array.isArray(data) ? data : []);
+    Promise.allSettled([
+      categoryApi.getAll(),
+      productApi.getAll({ pageSize: 999 }),
+      userApi.getArtists(),
+    ])
+      .then(([catRes, prodRes, artRes]) => {
+        if (catRes.status === 'fulfilled') setCategories(catRes.value.data || []);
+        if (prodRes.status === 'fulfilled') {
+          const data = prodRes.value.data?.items || prodRes.value.data?.data || prodRes.value.data || [];
+          setAllProducts(Array.isArray(data) ? data : []);
+        }
+        if (artRes.status === 'fulfilled') {
+          const map = {};
+          (artRes.value.data || []).forEach(a => { map[a.id] = a; });
+          setArtistProfiles(map);
+        }
       })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
 
-  const newest  = useMemo(() => [...allProducts].sort((a, b) => b.id - a.id).slice(0, 8),  [allProducts]);
-  const popular = useMemo(() => [...allProducts].sort((a, b) => b.id - a.id).slice(8, 16), [allProducts]);
+  const newest  = useMemo(() => [...allProducts].sort((a, b) => b.id - a.id).slice(0, 10), [allProducts]);
+  const popular = useMemo(() =>
+    [...allProducts]
+      .sort((a, b) => (b.price ?? 0) - (a.price ?? 0))
+      .slice(0, 10),
+  [allProducts]);
 
   const artists = useMemo(() => {
     const map = {};
     allProducts.forEach(p => {
       const name = p.artistName || p.artist;
-      if (!name) return;
-      if (!map[name]) map[name] = { name, count: 0, cover: null, sellerId: p.sellerId || null };
-      map[name].count++;
-      if (!map[name].cover && p.imageUrl) map[name].cover = toImg(p.imageUrl);
+      const sellerId = p.sellerId;
+      if (!name && !sellerId) return;
+      const key = sellerId ? `id:${sellerId}` : `name:${name}`;
+      if (!map[key]) {
+        const profile = sellerId ? artistProfiles[sellerId] : null;
+        map[key] = {
+          name: profile?.name || profile?.fullName || name || 'Nghệ sĩ',
+          count: 0,
+          avatarUrl: profile?.avatarUrl ? toImg(profile.avatarUrl) : null,
+          sellerId: sellerId || null,
+        };
+      }
+      map[key].count++;
+      if (sellerId && artistProfiles[sellerId]) {
+        const profile = artistProfiles[sellerId];
+        map[key].name = profile.name || profile.fullName || map[key].name;
+        if (!map[key].avatarUrl && profile.avatarUrl) {
+          map[key].avatarUrl = toImg(profile.avatarUrl);
+        }
+      }
     });
-    return Object.values(map).sort((a, b) => b.count - a.count).slice(0, 4);
-  }, [allProducts]);
+    return Object.values(map)
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'vi'))
+      .slice(0, 4);
+  }, [allProducts, artistProfiles]);
 
   /* Lấy 3 danh mục lớn (cho section 3 cột) */
   const cats3 = useMemo(() =>
@@ -161,13 +198,17 @@ const Home = () => {
     })),
   [categories, allProducts]);
 
-  /* Lấy các danh mục còn lại (cho strip 5 cột) */
-  const catsStrip = useMemo(() =>
-    categories.slice(0, 6).map(c => ({
-      ...c,
-      coverUrl: toImg(allProducts.find(p => String(p.categoryId) === String(c.id) && p.imageUrl)?.imageUrl),
-    })),
-  [categories, allProducts]);
+  /* Lấy chủ đề từ sản phẩm (cho strip 6 cột) */
+  const themesStrip = useMemo(() => {
+    const map = {};
+    allProducts.forEach(p => {
+      if (!p.theme) return;
+      if (!map[p.theme]) map[p.theme] = { name: p.theme, coverUrl: null, count: 0 };
+      map[p.theme].count++;
+      if (!map[p.theme].coverUrl && p.imageUrl) map[p.theme].coverUrl = toImg(p.imageUrl);
+    });
+    return Object.values(map).sort((a, b) => b.count - a.count).slice(0, 6);
+  }, [allProducts]);
 
   const handleAdd = (e, product) => {
     e.preventDefault(); e.stopPropagation();
@@ -205,10 +246,26 @@ const Home = () => {
         .cat-strip:hover .cat-strip-img img { transform: scale(1.05); }
 
         /* artist card */
-        .art-artist { display: block; text-decoration: none; color: inherit; }
-        .art-artist-img { overflow: hidden; }
-        .art-artist-img img { transition: transform .5s ease; display: block; width: 100%; height: 100%; object-fit: cover; }
-        .art-artist:hover .art-artist-img img { transform: scale(1.04); }
+        .art-artist { display: block; text-decoration: none; color: inherit; text-align: center; }
+        .art-artist-avatar { overflow: hidden; border-radius: 50%; margin: 0 auto 14px; }
+        .art-artist-avatar img { transition: transform .5s ease; display: block; width: 100%; height: 100%; object-fit: cover; }
+        .art-artist:hover .art-artist-avatar img { transform: scale(1.06); }
+        .art-artist-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+        @media (max-width: 992px) {
+          .art-artist-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 520px) {
+          .art-artist-grid { grid-template-columns: 1fr; }
+        }
+        .about-title-row { margin-bottom: 48px; }
+        .about-title-row h2 { white-space: nowrap; }
+        .about-features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; align-items: start; }
+        @media (max-width: 992px) {
+          .about-title-row h2 { white-space: normal; }
+        }
+        @media (max-width: 768px) {
+          .about-features-grid { grid-template-columns: 1fr; gap: 36px; }
+        }
       `}</style>
 
       {/* ══════════════════════════════ HERO ══════════════════════════════ */}
@@ -291,9 +348,9 @@ const Home = () => {
       {/* ══════════════════ SECTION 1: 3 CỘT DANH MỤC LỚN ══════════════════
           Giống artnam: ảnh dọc portrait, text bên dưới (không phải overlay)
       ════════════════════════════════════════════════════════════════════════ */}
-      <section style={{ background: 'white', padding: '80px 0' }}>
+      <section style={{ background: 'white', padding: '30px 0' }}>
         <div className="container">
-          <SecHead label="Bộ sưu tập" title="Tranh Theo Thể Loại" linkTo="/shop" />
+          <SecHead title="Tranh Theo Thể Loại" linkTo="/shop" />
 
           {loading ? (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 28 }}>
@@ -306,7 +363,7 @@ const Home = () => {
               {cats3.map(cat => (
                 <Link key={cat.id} to={`/shop?category=${cat.id}`} className="cat3" style={{ textDecoration: 'none', color: 'inherit' }}>
                   {/* Ảnh portrait */}
-                  <div className="cat3-img-wrap" style={{ paddingBottom: '130%', position: 'relative', background: '#f2ede8', marginBottom: 16 }}>
+                  <div className="cat3-img-wrap" style={{ paddingBottom: '90%', position: 'relative', background: '#f2ede8', marginBottom: 16 }}>
                     {cat.coverUrl ? (
                       <img src={cat.coverUrl} alt={cat.name} loading="lazy"
                         style={{ position: 'absolute', inset: 0 }}
@@ -318,16 +375,11 @@ const Home = () => {
                       </div>
                     )}
                   </div>
-                  {/* Text bên dưới ảnh – giống artnam */}
-                  <p style={{ color: '#aaa', fontSize: '0.68rem', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 6 }}>
-                    {cat.count} tác phẩm
-                  </p>
-                  <h3 className="cat3-title" style={{ fontWeight: 400, fontSize: '1.05rem', color: '#1a1a1a', marginBottom: 10, letterSpacing: '0.02em' }}>
+                  {/* Text bên dưới ảnh */}
+                  
+                  <h3 className="cat3-title" style={{ fontWeight: 400, fontSize: '2rem', color: '#1a1a1a', marginBottom: 10, letterSpacing: '0.02em', textAlign: 'center' }}>
                     {cat.name}
                   </h3>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#1a1a1a', letterSpacing: '0.1em', textTransform: 'uppercase', borderBottom: '1px solid #1a1a1a', paddingBottom: 1 }}>
-                    Khám phá ngay →
-                  </span>
                 </Link>
               ))}
             </div>
@@ -335,34 +387,40 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ══════════════════ SECTION 2: STRIP 6 CỘT DANH MỤC NHỎ ══════════════
-          Giống artnam "Tranh theo đề tài": ảnh nhỏ + tên bên dưới, scroll ngang
+      {/* ══════════════════ SECTION 2: STRIP 6 CỘT CHỦ ĐỀ ══════════════════════
+          Gom theo product.theme: ảnh nhỏ + tên chủ đề bên dưới
       ════════════════════════════════════════════════════════════════════════ */}
-      {!loading && catsStrip.length > 0 && (
-        <section style={{ background: '#faf8f5', padding: '64px 0' }}>
+      {(loading || themesStrip.length > 0) && (
+        <section style={{ background: '#1a1a1a', padding: '64px 0' }}>
           <div className="container">
-            <SecHead label="Chủ đề" title="Tranh Theo Đề Tài" linkTo="/shop" />
-            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(catsStrip.length, 6)}, 1fr)`, gap: 16 }}>
-              {catsStrip.map(cat => (
-                <Link key={cat.id} to={`/shop?category=${cat.id}`} className="cat-strip" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <div className="cat-strip-img" style={{ paddingBottom: '100%', position: 'relative', background: '#f2ede8', marginBottom: 12 }}>
-                    {cat.coverUrl ? (
-                      <img src={cat.coverUrl} alt={cat.name} loading="lazy"
-                        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-                        onError={e => e.target.style.display = 'none'}
-                      />
-                    ) : (
-                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c8b8a8' }}>
-                        <i className="fas fa-palette" style={{ fontSize: '2rem' }} />
-                      </div>
-                    )}
-                  </div>
-                  <p style={{ fontWeight: 600, fontSize: '0.82rem', color: '#1a1a1a', textAlign: 'center', margin: 0, letterSpacing: '0.02em' }}>
-                    {cat.name}
-                  </p>
-                </Link>
-              ))}
-            </div>
+            <SecHead label="Chủ đề" title="Tranh Theo Chủ Đề" linkTo="/shop" dark />
+            {loading ? (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 16 }}>
+                {[1, 2, 3, 4, 5, 6].map(i => <Sk key={i} ratio="100%" />)}
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(themesStrip.length, 6)}, 1fr)`, gap: 16 }}>
+                {themesStrip.map(theme => (
+                  <Link key={theme.name} to={`/shop?theme=${encodeURIComponent(theme.name)}`} className="cat-strip" style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <div className="cat-strip-img" style={{ paddingBottom: '100%', position: 'relative', background: '#2a2a2a', marginBottom: 12 }}>
+                      {theme.coverUrl ? (
+                        <img src={theme.coverUrl} alt={theme.name} loading="lazy"
+                          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                          onError={e => e.target.style.display = 'none'}
+                        />
+                      ) : (
+                        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c8b8a8' }}>
+                          <i className="fas fa-palette" style={{ fontSize: '2rem' }} />
+                        </div>
+                      )}
+                    </div>
+                    <p style={{ fontWeight: 600, fontSize: '0.82rem', color: 'rgba(255,255,255,0.85)', textAlign: 'center', margin: 0, letterSpacing: '0.02em' }}>
+                      {theme.name}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       )}
@@ -373,7 +431,7 @@ const Home = () => {
           <SecHead label="Vừa cập nhật" title="Tranh Mới Nhất" linkTo="/shop" />
           {loading ? (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 24 }}>
-              {Array.from({ length: 8 }).map((_, i) => <Sk key={i} />)}
+              {Array.from({ length: 10 }).map((_, i) => <Sk key={i} />)}
             </div>
           ) : newest.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '60px 0', color: '#aaa' }}>
@@ -390,35 +448,42 @@ const Home = () => {
 
       {/* ══════════════════ SECTION 4: THƯỞNG LÃM NHIỀU NHẤT – 4 cột ═════════ */}
       {!loading && popular.length > 0 && (
-        <section style={{ background: '#faf8f5', padding: '72px 0' }}>
+        <section style={{ background: '#1a1a1a', padding: '72px 0' }}>
           <div className="container">
-            <SecHead label="Arthentic đề xuất" title="Được Yêu Thích Nhất" linkTo="/shop" />
+            <SecHead label="Arthentic đề xuất" title="Được Yêu Thích Nhất" linkTo="/shop" dark />
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 24 }}>
-              {popular.map(p => <ArtCard key={p.id} product={p} addedId={addedId} onAdd={handleAdd} />)}
+              {popular.map(p => (
+                <ArtCard
+                  key={p.id}
+                  product={p}
+                  addedId={addedId}
+                  onAdd={handleAdd}
+                  showArtist={false}
+                  showPrice={false}
+                  dark
+                />
+              ))}
             </div>
           </div>
         </section>
       )}
 
-      {/* ══════════════════ SECTION 5: HỌA SĨ NỔI BẬT – 4 cột portrait ═══════
-          Giống artnam: ảnh portrait + tên + số tranh bên dưới (không hình tròn)
-      ════════════════════════════════════════════════════════════════════════ */}
+      {/* ══════════════════ SECTION 5: HỌA SĨ NỔI BẬT – avatar tròn ══════════════════ */}
       {!loading && artists.length > 0 && (
         <section style={{ background: 'white', padding: '72px 0' }}>
           <div className="container">
-            <SecHead label="Nghệ sĩ" title="Họa Sĩ Nổi Bật" linkTo="/artists" linkText="Tất cả họa sĩ" />
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 28 }}>
+            <SecHead label="Nghệ sĩ" title="Vẽ nên kiệt tác" linkTo="/artists" linkText="Tất cả họa sĩ" />
+            <div className="art-artist-grid">
               {artists.map(artist => (
-                <Link key={artist.name} to={artist.sellerId ? `/artists/${artist.sellerId}` : '/artists'} className="art-artist" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <div className="art-artist-img" style={{ paddingBottom: '120%', position: 'relative', background: '#f2ede8', marginBottom: 14 }}>
-                    {artist.cover ? (
-                      <img src={artist.cover} alt={artist.name} loading="lazy"
-                        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                <Link key={artist.sellerId || artist.name} to={artist.sellerId ? `/artists/${artist.sellerId}` : '/artists'} className="art-artist" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <div className="art-artist-avatar" style={{ width: 200, height: 200, background: '#f2ede8' }}>
+                    {artist.avatarUrl ? (
+                      <img src={artist.avatarUrl} alt={artist.name} loading="lazy"
                         onError={e => e.target.style.display = 'none'}
                       />
                     ) : (
-                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ fontSize: '3rem', fontWeight: 200, color: '#c8b8a8' }}>{artist.name[0].toUpperCase()}</span>
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(160deg, #c8a97a 0%, #8b6c4a 100%)' }}>
+                        <span style={{ fontSize: '3.2rem', fontWeight: 200, color: 'white' }}>{artist.name[0].toUpperCase()}</span>
                       </div>
                     )}
                   </div>
@@ -428,9 +493,6 @@ const Home = () => {
                   <h3 style={{ fontWeight: 500, fontSize: '0.95rem', color: '#1a1a1a', marginBottom: 8, letterSpacing: '0.02em' }}>
                     {artist.name}
                   </h3>
-                  <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#1a1a1a', letterSpacing: '0.1em', textTransform: 'uppercase', borderBottom: '1px solid #1a1a1a', paddingBottom: 1 }}>
-                    Xem tranh →
-                  </span>
                 </Link>
               ))}
             </div>
@@ -441,19 +503,14 @@ const Home = () => {
       {/* ══════════════════════════ VỀ ARTHENTIC ══════════════════════════ */}
       <section style={{ padding: '80px 0', background: '#1a1a1a', color: 'white' }}>
         <div className="container" style={{ paddingInline: 32 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 48 }}>
-            <div>
-              <p style={{ color: '#c8a97a', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 16 }}>Về chúng tôi</p>
-              <h2 style={{ fontWeight: 200, fontSize: '1.9rem', color: 'white', marginBottom: 20, lineHeight: 1.3, letterSpacing: '0.02em' }}>
-                <em style={{ fontStyle: 'italic' }}>Arthentic</em> —<br />nơi nghệ thuật<br />có giá trị thật
-              </h2>
-              <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.88rem', lineHeight: 1.85, marginBottom: 28 }}>
-                Chúng tôi tin rằng nghệ thuật không phải là xa xỉ phẩm — đó là ngôn ngữ chữa lành, kết nối, và nâng tầm tinh thần con người.
-              </p>
-              <Link to="/artists" style={{ color: '#c8a97a', textDecoration: 'none', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', borderBottom: '1px solid #c8a97a', paddingBottom: 2 }}>
-                Gặp gỡ họa sĩ →
-              </Link>
-            </div>
+          <div className="about-title-row">
+            <p style={{ color: '#c8a97a', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 16, textAlign: 'center' }}>Về chúng tôi</p>
+            <h2 style={{ fontWeight: 200, fontSize: 'clamp(1.7rem, 3.8vw, 2.4rem)', textAlign: 'center', color: 'white', margin: 0, lineHeight: 1.3, letterSpacing: '0.02em', fontFamily: "'Playfair Display', serif" }}>
+              <em style={{ fontStyle: 'italic' }}>Arthentic</em> — nơi nghệ thuật có giá trị thật
+            </h2>
+          </div>
+
+          <div className="about-features-grid">
             {[
               { icon: 'fa-award',     title: 'Nâng tầm nghệ thuật bản địa',   desc: 'Tôn vinh và lan tỏa giá trị của nghệ thuật tạo hình Việt Nam đến người yêu tranh trong nước và quốc tế.' },
               { icon: 'fa-handshake', title: 'Kết nối họa sĩ và công chúng',  desc: 'Tạo nền tảng minh bạch, tin cậy để họa sĩ bán tranh trực tiếp, không qua trung gian.' },
@@ -468,19 +525,24 @@ const Home = () => {
               </div>
             ))}
           </div>
+
+          <div style={{ marginTop: 48, maxWidth: 520 }}>
+            <Link to="/artists" style={{ color: '#c8a97a', textDecoration: 'none', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', borderBottom: '1px solid #c8a97a', paddingBottom: 2,textAlign: 'right'}}>
+              Gặp gỡ họa sĩ →
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* ════════════════════ CTA ══════════════════════ */}
       <section style={{ padding: '80px 0', background: '#f9f6f2', textAlign: 'center' }}>
         <div className="container">
-          <p style={{ color: '#8b6c4a', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 16 }}>Dành cho họa sĩ</p>
-          <h2 style={{ fontWeight: 200, fontSize: 'clamp(1.8rem,4vw,2.8rem)', color: '#1a1a1a', marginBottom: 16, lineHeight: 1.2, letterSpacing: '0.02em' }}>
-            Bạn là nghệ sĩ?<br />
-            <em style={{ fontStyle: 'italic', fontWeight: 400 }}>Hãy đưa tác phẩm ra thế giới.</em>
-          </h2>
-          <p style={{ color: '#767676', maxWidth: 520, margin: '0 auto 40px', lineHeight: 1.85, fontSize: '0.95rem' }}>
-            Tham gia cùng hàng chục họa sĩ đang bán tác phẩm trực tiếp trên Arthentic — không qua trung gian, không ẩn phí.
+          <p style={{ color: '#c8a97a', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 16, textAlign: 'center' }}>Dành cho họa sĩ</p>
+            <h2 style={{ fontWeight: 200, fontSize: 'clamp(1.7rem, 3.8vw, 2.4rem)', textAlign: 'center', color: '#1a1a1a', margin: 0, lineHeight: 1.3, letterSpacing: '0.02em', fontFamily: "'Playfair Display', serif" }}>
+              Hãy đưa tác phẩm của bạn đến với những người yêu nghệ thuật
+            </h2>
+          <p style={{ color: '#767676', maxWidth: 920, margin: '0 auto 15px', lineHeight: 1.85, fontSize: '1.15rem' }}>
+            <em style={{ fontStyle: 'italic' }}>Tham gia cùng hàng chục họa sĩ đang bán tác phẩm trực tiếp trên Arthentic không qua trung gian, không ẩn phí</em>
           </p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
             <button onClick={openRegister} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#1a1a1a', color: 'white', border: 'none', cursor: 'pointer', padding: '13px 32px', fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>

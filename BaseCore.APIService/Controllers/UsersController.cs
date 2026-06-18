@@ -15,13 +15,37 @@ namespace BaseCore.APIService.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserRepositoryEF _userRepository;
+        private readonly IUserAddressRepositoryEF _addressRepository;
         private readonly Cloudinary _cloudinary;
 
-        public UsersController(IUserRepositoryEF userRepository, Cloudinary cloudinary)
+        public UsersController(
+            IUserRepositoryEF userRepository,
+            IUserAddressRepositoryEF addressRepository,
+            Cloudinary cloudinary)
         {
-            _userRepository = userRepository;
-            _cloudinary     = cloudinary;
+            _userRepository    = userRepository;
+            _addressRepository = addressRepository;
+            _cloudinary        = cloudinary;
         }
+
+        private bool CanAccessUser(string userId)
+        {
+            var callerId   = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var callerRole = User.FindFirst(ClaimTypes.Role)?.Value;
+            return callerId == userId || callerRole == "Admin";
+        }
+
+        private static object ToAddressResponse(UserAddress a) => new
+        {
+            a.Id,
+            fullName    = a.FullName,
+            phone       = a.Phone,
+            addressLine = a.AddressLine,
+            ward        = a.Ward ?? "",
+            city        = a.City,
+            isDefault   = a.IsDefault,
+            a.CreatedAt
+        };
 
         // ─────────────────────────────────────────────
         // POST /api/users/{id}/avatar
@@ -236,6 +260,140 @@ namespace BaseCore.APIService.Controllers
         }
 
         // ─────────────────────────────────────────────
+        // GET /api/users/{id}/addresses
+        // ─────────────────────────────────────────────
+        [HttpGet("{id}/addresses")]
+        public async Task<IActionResult> GetAddresses(string id)
+        {
+            if (!CanAccessUser(id)) return Forbid();
+
+            var addresses = await _addressRepository.GetByUserIdAsync(id);
+            return Ok(addresses.Select(ToAddressResponse));
+        }
+
+        // ─────────────────────────────────────────────
+        // POST /api/users/{id}/addresses
+        // ─────────────────────────────────────────────
+        [HttpPost("{id}/addresses")]
+        public async Task<IActionResult> CreateAddress(string id, [FromBody] UserAddressDto dto)
+        {
+            if (!CanAccessUser(id)) return Forbid();
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var count = await _addressRepository.CountByUserIdAsync(id);
+            var makeDefault = dto.IsDefault || count == 0;
+            if (!makeDefault && await _addressRepository.GetDefaultAsync(id) == null)
+                makeDefault = true;
+
+            if (makeDefault)
+                await _addressRepository.ClearDefaultAsync(id);
+
+            var address = new UserAddress
+            {
+                UserId      = id,
+                FullName    = dto.FullName.Trim(),
+                Phone       = dto.Phone.Trim(),
+                AddressLine = dto.AddressLine.Trim(),
+                Ward        = string.IsNullOrWhiteSpace(dto.Ward) ? null : dto.Ward.Trim(),
+                City        = dto.City.Trim(),
+                IsDefault   = makeDefault,
+                CreatedAt   = DateTime.Now
+            };
+
+            await _addressRepository.AddAsync(address);
+            return Ok(ToAddressResponse(address));
+        }
+
+        // ─────────────────────────────────────────────
+        // PUT /api/users/{id}/addresses/{addressId}
+        // ─────────────────────────────────────────────
+        [HttpPut("{id}/addresses/{addressId}")]
+        public async Task<IActionResult> UpdateAddress(string id, int addressId, [FromBody] UserAddressDto dto)
+        {
+            if (!CanAccessUser(id)) return Forbid();
+
+            var address = await _addressRepository.GetByIdAsync(addressId, id);
+            if (address == null) return NotFound(new { message = "Không tìm thấy địa chỉ" });
+
+            address.FullName    = dto.FullName.Trim();
+            address.Phone       = dto.Phone.Trim();
+            address.AddressLine = dto.AddressLine.Trim();
+            address.Ward        = string.IsNullOrWhiteSpace(dto.Ward) ? null : dto.Ward.Trim();
+            address.City        = dto.City.Trim();
+
+            if (dto.IsDefault && !address.IsDefault)
+            {
+                await _addressRepository.ClearDefaultAsync(id);
+                address.IsDefault = true;
+            }
+            else if (!dto.IsDefault && address.IsDefault)
+            {
+                var others = await _addressRepository.GetByUserIdAsync(id);
+                if (others.Count <= 1)
+                    address.IsDefault = true;
+                else
+                {
+                    address.IsDefault = false;
+                    await _addressRepository.UpdateAsync(address);
+                    var next = others.FirstOrDefault(a => a.Id != addressId);
+                    if (next != null)
+                    {
+                        next.IsDefault = true;
+                        await _addressRepository.UpdateAsync(next);
+                    }
+                    return Ok(ToAddressResponse(address));
+                }
+            }
+
+            await _addressRepository.UpdateAsync(address);
+            return Ok(ToAddressResponse(address));
+        }
+
+        // ─────────────────────────────────────────────
+        // PUT /api/users/{id}/addresses/{addressId}/default
+        // ─────────────────────────────────────────────
+        [HttpPut("{id}/addresses/{addressId}/default")]
+        public async Task<IActionResult> SetDefaultAddress(string id, int addressId)
+        {
+            if (!CanAccessUser(id)) return Forbid();
+
+            var address = await _addressRepository.GetByIdAsync(addressId, id);
+            if (address == null) return NotFound(new { message = "Không tìm thấy địa chỉ" });
+
+            await _addressRepository.ClearDefaultAsync(id);
+            address.IsDefault = true;
+            await _addressRepository.UpdateAsync(address);
+            return Ok(ToAddressResponse(address));
+        }
+
+        // ─────────────────────────────────────────────
+        // DELETE /api/users/{id}/addresses/{addressId}
+        // ─────────────────────────────────────────────
+        [HttpDelete("{id}/addresses/{addressId}")]
+        public async Task<IActionResult> DeleteAddress(string id, int addressId)
+        {
+            if (!CanAccessUser(id)) return Forbid();
+
+            var address = await _addressRepository.GetByIdAsync(addressId, id);
+            if (address == null) return NotFound(new { message = "Không tìm thấy địa chỉ" });
+
+            var wasDefault = address.IsDefault;
+            await _addressRepository.DeleteAsync(address);
+
+            if (wasDefault)
+            {
+                var remaining = await _addressRepository.GetByUserIdAsync(id);
+                if (remaining.Count > 0)
+                {
+                    remaining[0].IsDefault = true;
+                    await _addressRepository.UpdateAsync(remaining[0]);
+                }
+            }
+
+            return Ok(new { message = "Đã xóa địa chỉ" });
+        }
+
+        // ─────────────────────────────────────────────
         // DELETE /api/users/{id} — Admin only
         // ─────────────────────────────────────────────
         [HttpDelete("{id}")]
@@ -259,5 +417,15 @@ namespace BaseCore.APIService.Controllers
         public string? CurrentPassword { get; set; }
         public string? NewPassword { get; set; }
         public int?    UserType  { get; set; }
+    }
+
+    public class UserAddressDto
+    {
+        public string FullName    { get; set; } = "";
+        public string Phone       { get; set; } = "";
+        public string AddressLine { get; set; } = "";
+        public string? Ward       { get; set; }
+        public string City        { get; set; } = "";
+        public bool IsDefault     { get; set; }
     }
 }

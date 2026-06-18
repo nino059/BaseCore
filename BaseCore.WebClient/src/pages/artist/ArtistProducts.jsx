@@ -21,13 +21,35 @@ const emptyForm = {
 };
 
 // ─── Field wrapper ───────────────────────────────────────────
+const inputStyle = {
+  width: '100%',
+  boxSizing: 'border-box',
+  height: 38,
+  padding: '0 12px',
+  borderRadius: 8,
+  fontSize: '0.88rem',
+  border: '1.5px solid #e5e7eb',
+  outline: 'none',
+  background: '#fff',
+};
+
 const F = ({ label, children, required }) => (
-  <div>
+  <div style={{ minWidth: 0 }}>
     <label style={{ fontWeight:600, fontSize:'0.82rem', color:'#374151', display:'block', marginBottom:5 }}>
       {label}{required && <span style={{ color:'#ef4444', marginLeft:3 }}>*</span>}
     </label>
     {children}
   </div>
+);
+
+const StepperBtn = ({ onClick, children }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className="ap-stepper-btn"
+  >
+    {children}
+  </button>
 );
 
 // ══════════════════════════════════════════════════════════════
@@ -127,25 +149,42 @@ const ArtistProducts = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
+    setModalErr('');
     try {
       const r = await productApi.uploadImage(file);
-      setForm(f => ({ ...f, imageUrl: r.data.url }));
+      const url = r.data?.url || r.data?.Url;
+      if (!url) throw new Error('Server không trả về URL ảnh');
+      setForm(f => ({ ...f, imageUrl: url }));
       showToast('Upload ảnh thành công');
     } catch (err) {
       setModalErr('Upload ảnh thất bại: ' + (err.response?.data?.message || err.message));
-    } finally { setUploading(false); }
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = '';
+    }
+  };
+
+  const parsePositiveInt = (val, label) => {
+    const n = Number(val);
+    if (!val || !Number.isFinite(n) || n <= 0) return { error: `${label} phải là số nguyên dương` };
+    return { value: Math.round(n) };
   };
 
   const handleSave = async () => {
     setModalErr('');
     if (!form.name.trim())                          return setModalErr('Vui lòng nhập tên tác phẩm');
+    if (form.name.trim().length > 200)              return setModalErr('Tên tác phẩm tối đa 200 ký tự');
     if (!form.categoryId)                            return setModalErr('Vui lòng chọn thể loại');
-    if (!form.price || Number(form.price) <= 0)      return setModalErr('Giá bán phải lớn hơn 0');
+    if (!form.price || !Number.isFinite(Number(form.price)) || Number(form.price) <= 0)
+      return setModalErr('Giá bán phải lớn hơn 0');
     if (!form.material)                              return setModalErr('Vui lòng chọn chất liệu');
     if (!form.theme)                                 return setModalErr('Vui lòng chọn chủ đề');
-    if (!form.width  || Number(form.width)  <= 0)    return setModalErr('Chiều rộng phải lớn hơn 0');
-    if (!form.height || Number(form.height) <= 0)    return setModalErr('Chiều cao phải lớn hơn 0');
+    const w = parsePositiveInt(form.width, 'Chiều rộng');
+    if (w.error) return setModalErr(w.error);
+    const h = parsePositiveInt(form.height, 'Chiều cao');
+    if (h.error) return setModalErr(h.error);
     if (!form.description.trim())                    return setModalErr('Vui lòng nhập mô tả tác phẩm');
+    if (form.description.trim().length > 1000)       return setModalErr('Mô tả tối đa 1000 ký tự');
     if (!form.imageUrl)                              return setModalErr('Vui lòng upload ảnh tác phẩm');
 
     setSaving(true);
@@ -157,8 +196,8 @@ const ArtistProducts = () => {
         price:       Number(form.price),
         theme:       form.theme,
         material:    form.material,
-        width:       Number(form.width),
-        height:      Number(form.height),
+        width:       w.value,
+        height:      h.value,
         description: form.description.trim(),
         imageUrl:    form.imageUrl,
       };
@@ -217,6 +256,25 @@ const ArtistProducts = () => {
           font-size:0.78rem; font-weight:600; color:#64748b; cursor:pointer; transition:all .15s; white-space:nowrap; }
         .tab-btn.active { border-color:var(--brand); background:#fdf6ec; color:var(--brand-dark); }
         .tab-btn:hover:not(.active) { border-color:var(--brand); color:var(--brand-dark); }
+        .ap-modal-panel { width:100%; max-width:860px; margin:20px 16px; max-height:calc(100vh - 40px); display:flex; flex-direction:column; }
+        .ap-modal-body { display:flex; gap:22px; align-items:flex-start; overflow-y:auto; flex:1; min-height:0; }
+        .ap-modal-side { width:220px; flex-shrink:0; display:flex; flex-direction:column; gap:16px; min-width:0; }
+        .ap-modal-main { flex:1; min-width:0; display:flex; flex-direction:column; gap:16px; }
+        .ap-form-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; min-width:0; }
+        .ap-form-section { background:#fffbf4; border-radius:12px; border:1.5px solid var(--brand-light); overflow:hidden; min-width:0; }
+        .ap-form-section-head { padding:10px 14px 8px; border-bottom:1px solid #f5ede0; }
+        .ap-form-section-body { padding:14px; display:flex; flex-direction:column; gap:12px; min-width:0; }
+        .ap-stepper-row { display:flex; gap:6px; align-items:center; min-width:0; }
+        .ap-stepper-row .form-control { flex:1; min-width:0; width:auto !important; height:38px; padding:0 8px; }
+        .ap-stepper-btn { flex-shrink:0; width:32px; height:38px; border-radius:7px; border:1.5px solid #e5e7eb; background:#f8fafc; cursor:pointer; font-weight:700; font-size:0.82rem; color:#6b7280; display:flex; align-items:center; justify-content:center; padding:0; }
+        .ap-stepper-btn:hover { border-color:var(--brand); color:var(--brand-dark); background:#fffbf4; }
+        .ap-size-grid { display:grid; grid-template-columns:minmax(0,1fr) 20px minmax(0,1fr); gap:10px; align-items:center; }
+        .ap-size-col { min-width:0; }
+        @media (max-width: 768px) {
+          .ap-modal-body { flex-direction:column; }
+          .ap-modal-side { width:100%; }
+          .ap-form-grid-2 { grid-template-columns:1fr; }
+        }
       `}</style>
 
       <Toaster toasts={toasts} />
@@ -430,11 +488,11 @@ const ArtistProducts = () => {
           position:'fixed', inset:0,
           background:'rgba(15,15,35,0.6)', zIndex:1050,
           display:'flex', alignItems:'flex-start', justifyContent:'center',
-          padding:'20px 0', overflowY:'auto',
+          overflowY:'auto',
         }}>
-          <div style={{
-            background:'white', borderRadius:18, width:'100%', maxWidth:860,
-            margin:'auto', boxShadow:'0 24px 80px rgba(0,0,0,0.25)', overflow:'hidden',
+          <div className="ap-modal-panel" style={{
+            background:'white', borderRadius:18,
+            boxShadow:'0 24px 80px rgba(0,0,0,0.25)', overflow:'hidden',
           }}>
             {/* Header */}
             <div style={{
@@ -469,14 +527,14 @@ const ArtistProducts = () => {
             )}
 
             {/* Body */}
-            <div style={{ padding:'24px 28px', display:'flex', gap:22 }}>
+            <div className="ap-modal-body" style={{ padding:'24px 28px' }}>
 
               {/* CỘT TRÁI */}
-              <div style={{ width:230, flexShrink:0, display:'flex', flexDirection:'column', gap:16 }}>
+              <div className="ap-modal-side">
 
                 {/* Ảnh */}
-                <div style={{ background:'#fffbf4', borderRadius:12, overflow:'hidden', border:'1.5px solid var(--brand-light)' }}>
-                  <div style={{ padding:'10px 14px 6px', borderBottom:'1px solid #f5ede0' }}>
+                <div className="ap-form-section">
+                  <div className="ap-form-section-head">
                     <span style={{ fontWeight:700, fontSize:'0.8rem', color:'#374151' }}>
                       <i className="fas fa-camera mr-1" style={{ color:'var(--brand)' }}></i>
                       Ảnh tác phẩm <span style={{ color:'#ef4444' }}>*</span>
@@ -515,7 +573,7 @@ const ArtistProducts = () => {
                 </div>
 
                 {/* Info box */}
-                <div style={{ background:'#fffbf4', borderRadius:12, border:'1.5px solid var(--brand-light)', padding:14 }}>
+                <div className="ap-form-section" style={{ padding:14 }}>
                   <div style={{ fontSize:'0.8rem', color:'var(--brand-dark)', lineHeight:1.7 }}>
                     <i className="fas fa-info-circle mr-1"></i>
                     Tác phẩm sau khi gửi sẽ ở trạng thái <strong>Chờ duyệt</strong>. Admin sẽ xem xét và duyệt để hiển thị trên cửa hàng.
@@ -524,30 +582,28 @@ const ArtistProducts = () => {
               </div>
 
               {/* CỘT PHẢI */}
-              <div style={{ flex:1, display:'flex', flexDirection:'column', gap:16 }}>
+              <div className="ap-modal-main">
 
                 {/* Thông tin cơ bản */}
-                <div style={{ background:'#fffbf4', borderRadius:12, border:'1.5px solid var(--brand-light)' }}>
-                  <div style={{ padding:'10px 14px 6px', borderBottom:'1px solid #f5ede0', borderLeft:'3px solid var(--brand)', borderRadius:'11px 11px 0 0' }}>
+                <div className="ap-form-section">
+                  <div className="ap-form-section-head" style={{ borderLeft:'3px solid var(--brand)' }}>
                     <span style={{ fontWeight:700, fontSize:'0.8rem', color:'#374151' }}>
                       <i className="fas fa-info-circle mr-1" style={{ color:'var(--brand)' }}></i>Thông tin cơ bản
                     </span>
                   </div>
-                  <div style={{ padding:'14px', display:'flex', flexDirection:'column', gap:12 }}>
+                  <div className="ap-form-section-body">
                     <F label="Tên tác phẩm" required>
                       <input className="form-control" placeholder="VD: Hoàng hôn trên sông Hương"
-                        value={form.name} onChange={ch('name')}
-                        style={{ borderRadius:8, fontSize:'0.88rem', border:'1.5px solid #e5e7eb' }} />
+                        value={form.name} onChange={ch('name')} style={inputStyle} />
                     </F>
-                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+                    <div className="ap-form-grid-2">
                       <F label="Tên họa sĩ">
                         <input className="form-control" placeholder="Tên tác giả"
-                          value={form.artistName} onChange={ch('artistName')}
-                          style={{ borderRadius:8, fontSize:'0.88rem', border:'1.5px solid #e5e7eb' }} />
+                          value={form.artistName} onChange={ch('artistName')} style={inputStyle} />
                       </F>
                       <F label="Thể loại tranh" required>
                         <select className="form-control" value={form.categoryId} onChange={ch('categoryId')}
-                          style={{ borderRadius:8, fontSize:'0.88rem', border:'1.5px solid #e5e7eb' }}>
+                          style={{ ...inputStyle, paddingRight: 28 }}>
                           <option value="">-- Chọn thể loại --</option>
                           {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
@@ -557,24 +613,24 @@ const ArtistProducts = () => {
                 </div>
 
                 {/* Chi tiết kỹ thuật */}
-                <div style={{ background:'#fffbf4', borderRadius:12, border:'1.5px solid var(--brand-light)' }}>
-                  <div style={{ padding:'10px 14px 6px', borderBottom:'1px solid #f5ede0', borderLeft:'3px solid #d4a76a', borderRadius:'11px 11px 0 0' }}>
+                <div className="ap-form-section">
+                  <div className="ap-form-section-head" style={{ borderLeft:'3px solid #d4a76a' }}>
                     <span style={{ fontWeight:700, fontSize:'0.8rem', color:'#374151' }}>
                       <i className="fas fa-palette mr-1" style={{ color:'#d4a76a' }}></i>Thông tin tác phẩm
                     </span>
                   </div>
-                  <div style={{ padding:'14px', display:'flex', flexDirection:'column', gap:12 }}>
-                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+                  <div className="ap-form-section-body">
+                    <div className="ap-form-grid-2">
                       <F label="Chất liệu" required>
                         <select className="form-control" value={form.material} onChange={ch('material')}
-                          style={{ borderRadius:8, fontSize:'0.88rem', border: form.material ? '1.5px solid var(--brand)' : '1.5px solid #e5e7eb' }}>
+                          style={{ ...inputStyle, paddingRight: 28, border: form.material ? '1.5px solid var(--brand)' : '1.5px solid #e5e7eb' }}>
                           <option value="">-- Chọn chất liệu --</option>
                           {MATERIALS.map(m => <option key={m} value={m}>{m}</option>)}
                         </select>
                       </F>
                       <F label="Chủ đề / Phong cách" required>
                         <select className="form-control" value={form.theme} onChange={ch('theme')}
-                          style={{ borderRadius:8, fontSize:'0.88rem', border: form.theme ? '1.5px solid var(--brand)' : '1.5px solid #e5e7eb' }}>
+                          style={{ ...inputStyle, paddingRight: 28, border: form.theme ? '1.5px solid var(--brand)' : '1.5px solid #e5e7eb' }}>
                           <option value="">-- Chọn chủ đề --</option>
                           {THEMES.map(t => <option key={t} value={t}>{t}</option>)}
                         </select>
@@ -582,39 +638,35 @@ const ArtistProducts = () => {
                     </div>
 
                     {/* Kích thước */}
-                    <div>
-                      <label style={{ fontWeight:600, fontSize:'0.82rem', color:'#374151', display:'block', marginBottom:5 }}>
+                    <div style={{ minWidth: 0 }}>
+                      <label style={{ fontWeight:600, fontSize:'0.82rem', color:'#374151', display:'block', marginBottom:8 }}>
                         Kích thước (cm) <span style={{ color:'#ef4444' }}>*</span>
                       </label>
-                      <div style={{ display:'grid', gridTemplateColumns:'1fr auto 1fr', gap:8, alignItems:'flex-start' }}>
-                        <div>
-                          <div style={{ display:'flex', gap:3, alignItems:'center' }}>
-                            <button type="button" onClick={() => adj('width',-5)}
-                              style={{ flexShrink:0, width:28, height:34, borderRadius:7, border:'1.5px solid #e5e7eb', background:'#f8fafc', cursor:'pointer', fontWeight:700, fontSize:'0.78rem', color:'#6b7280' }}>−</button>
+                      <div className="ap-size-grid">
+                        <div className="ap-size-col">
+                          <div className="ap-stepper-row">
+                            <StepperBtn onClick={() => adj('width', -5)}>−</StepperBtn>
                             <input className="form-control" type="number" min={1} placeholder="Rộng"
                               value={form.width} onChange={ch('width')}
-                              style={{ borderRadius:7, fontSize:'0.88rem', border: form.width ? '1.5px solid var(--brand)' : '1.5px solid #e5e7eb', textAlign:'center', padding:'6px 4px' }} />
-                            <button type="button" onClick={() => adj('width',5)}
-                              style={{ flexShrink:0, width:28, height:34, borderRadius:7, border:'1.5px solid #e5e7eb', background:'#f8fafc', cursor:'pointer', fontWeight:700, fontSize:'0.78rem', color:'#6b7280' }}>+</button>
+                              style={{ textAlign:'center', border: form.width ? '1.5px solid var(--brand)' : '1.5px solid #e5e7eb' }} />
+                            <StepperBtn onClick={() => adj('width', 5)}>+</StepperBtn>
                           </div>
-                          <div style={{ fontSize:'0.7rem', color:'#94a3b8', textAlign:'center', marginTop:3 }}>Chiều rộng</div>
+                          <div style={{ fontSize:'0.7rem', color:'#94a3b8', textAlign:'center', marginTop:4 }}>Chiều rộng</div>
                         </div>
-                        <span style={{ fontWeight:700, color:'#94a3b8', fontSize:'1rem', paddingTop:8 }}>×</span>
-                        <div>
-                          <div style={{ display:'flex', gap:3, alignItems:'center' }}>
-                            <button type="button" onClick={() => adj('height',-5)}
-                              style={{ flexShrink:0, width:28, height:34, borderRadius:7, border:'1.5px solid #e5e7eb', background:'#f8fafc', cursor:'pointer', fontWeight:700, fontSize:'0.78rem', color:'#6b7280' }}>−</button>
+                        <span style={{ fontWeight:700, color:'#94a3b8', fontSize:'1rem', textAlign:'center' }}>×</span>
+                        <div className="ap-size-col">
+                          <div className="ap-stepper-row">
+                            <StepperBtn onClick={() => adj('height', -5)}>−</StepperBtn>
                             <input className="form-control" type="number" min={1} placeholder="Cao"
                               value={form.height} onChange={ch('height')}
-                              style={{ borderRadius:7, fontSize:'0.88rem', border: form.height ? '1.5px solid var(--brand)' : '1.5px solid #e5e7eb', textAlign:'center', padding:'6px 4px' }} />
-                            <button type="button" onClick={() => adj('height',5)}
-                              style={{ flexShrink:0, width:28, height:34, borderRadius:7, border:'1.5px solid #e5e7eb', background:'#f8fafc', cursor:'pointer', fontWeight:700, fontSize:'0.78rem', color:'#6b7280' }}>+</button>
+                              style={{ textAlign:'center', border: form.height ? '1.5px solid var(--brand)' : '1.5px solid #e5e7eb' }} />
+                            <StepperBtn onClick={() => adj('height', 5)}>+</StepperBtn>
                           </div>
-                          <div style={{ fontSize:'0.7rem', color:'#94a3b8', textAlign:'center', marginTop:3 }}>Chiều cao</div>
+                          <div style={{ fontSize:'0.7rem', color:'#94a3b8', textAlign:'center', marginTop:4 }}>Chiều cao</div>
                         </div>
                       </div>
                       {form.width && form.height && (
-                        <div style={{ marginTop:6, fontSize:'0.75rem', color:'var(--brand)', fontWeight:600, textAlign:'center' }}>
+                        <div style={{ marginTop:8, fontSize:'0.75rem', color:'var(--brand)', fontWeight:600, textAlign:'center' }}>
                           Kích thước: {form.width} × {form.height} cm
                         </div>
                       )}
@@ -623,25 +675,23 @@ const ArtistProducts = () => {
                 </div>
 
                 {/* Giá bán */}
-                <div style={{ background:'#fffbf4', borderRadius:12, border:'1.5px solid var(--brand-light)' }}>
-                  <div style={{ padding:'10px 14px 6px', borderBottom:'1px solid #f5ede0', borderLeft:'3px solid #10b981', borderRadius:'11px 11px 0 0' }}>
+                <div className="ap-form-section">
+                  <div className="ap-form-section-head" style={{ borderLeft:'3px solid #10b981' }}>
                     <span style={{ fontWeight:700, fontSize:'0.8rem', color:'#374151' }}>
                       <i className="fas fa-tag mr-1" style={{ color:'#10b981' }}></i>Giá bán
                     </span>
                   </div>
-                  <div style={{ padding:'14px' }}>
+                  <div className="ap-form-section-body">
                     <F label="Giá bán (VNĐ)" required>
-                      <div style={{ display:'flex', gap:3 }}>
-                        <button type="button" onClick={() => adj('price',-100000)}
-                          style={{ flexShrink:0, width:28, height:36, borderRadius:7, border:'1.5px solid #e5e7eb', background:'#f8fafc', cursor:'pointer', fontWeight:700, fontSize:'0.78rem', color:'#6b7280' }}>−</button>
+                      <div className="ap-stepper-row">
+                        <StepperBtn onClick={() => adj('price', -100000)}>−</StepperBtn>
                         <input className="form-control" type="number" min={0} step={100000} placeholder="0"
                           value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value.replace(/[^0-9]/g,'') }))}
-                          style={{ borderRadius:7, fontSize:'0.88rem', border: form.price ? '1.5px solid #10b981' : '1.5px solid #e5e7eb' }} />
-                        <button type="button" onClick={() => adj('price',100000)}
-                          style={{ flexShrink:0, width:28, height:36, borderRadius:7, border:'1.5px solid #e5e7eb', background:'#f8fafc', cursor:'pointer', fontWeight:700, fontSize:'0.78rem', color:'#6b7280' }}>+</button>
+                          style={{ border: form.price ? '1.5px solid #10b981' : '1.5px solid #e5e7eb' }} />
+                        <StepperBtn onClick={() => adj('price', 100000)}>+</StepperBtn>
                       </div>
                       {form.price > 0 && (
-                        <div style={{ fontSize:'0.72rem', color:'#10b981', marginTop:4, fontWeight:600 }}>
+                        <div style={{ fontSize:'0.72rem', color:'#10b981', marginTop:6, fontWeight:600 }}>
                           ≈ {new Intl.NumberFormat('vi-VN',{style:'currency',currency:'VND'}).format(form.price)}
                         </div>
                       )}
@@ -650,17 +700,17 @@ const ArtistProducts = () => {
                 </div>
 
                 {/* Mô tả */}
-                <div style={{ background:'#fffbf4', borderRadius:12, border:'1.5px solid var(--brand-light)' }}>
-                  <div style={{ padding:'10px 14px 6px', borderBottom:'1px solid #f5ede0', borderLeft:'3px solid #3b82f6', borderRadius:'11px 11px 0 0' }}>
+                <div className="ap-form-section">
+                  <div className="ap-form-section-head" style={{ borderLeft:'3px solid #3b82f6' }}>
                     <span style={{ fontWeight:700, fontSize:'0.8rem', color:'#374151' }}>
                       <i className="fas fa-align-left mr-1" style={{ color:'#3b82f6' }}></i>Mô tả tác phẩm <span style={{ color:'#ef4444' }}>*</span>
                     </span>
                   </div>
-                  <div style={{ padding:'14px' }}>
+                  <div className="ap-form-section-body">
                     <textarea className="form-control"
                       rows={5} placeholder="Mô tả câu chuyện, kỹ thuật, ý nghĩa của tác phẩm..."
                       value={form.description} onChange={ch('description')}
-                      style={{ borderRadius:8, fontSize:'0.88rem', resize:'vertical', border: form.description ? '1.5px solid #3b82f6' : '1.5px solid #e5e7eb' }}
+                      style={{ ...inputStyle, height:'auto', minHeight:120, padding:'10px 12px', resize:'vertical', width:'100%', boxSizing:'border-box', border: form.description ? '1.5px solid #3b82f6' : '1.5px solid #e5e7eb' }}
                     />
                     <div style={{ fontSize:'0.72rem', color:'#94a3b8', marginTop:4, textAlign:'right' }}>
                       {form.description.length} ký tự

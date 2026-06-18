@@ -58,7 +58,7 @@
                 }
             ],
             "UpstreamPathTemplate": "/api/users/{everything}",
-            "UpstreamHttpMethod": [ "GET", "PUT", "DELETE", "OPTIONS" ]
+            "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ]
         },
         {
             "DownstreamPathTemplate": "/api/users",

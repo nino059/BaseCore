@@ -7,6 +7,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useAuthModal } from '../../contexts/AuthModalContext';
 import { toImg } from '../../utils/image';
 import { formatVND as fmt } from '../../utils/format';
+import { normCartId } from '../../utils/cart';
 
 const sqBtn = (active = true) => ({
   padding: '13px 28px',
@@ -46,7 +47,7 @@ const ProductDetail = () => {
   const handleAddToCart = () => {
     if (!user) { openLogin(); return; }
 
-    const alreadyInCart = items.some(i => i.id === product.id);
+    const alreadyInCart = items.some(i => normCartId(i.id) === normCartId(product.id));
     if (alreadyInCart) {
       setAddedMsg(`Tranh "${product.name}" đã có trong giỏ hàng.`);
       setTimeout(() => setAddedMsg(''), 2500);

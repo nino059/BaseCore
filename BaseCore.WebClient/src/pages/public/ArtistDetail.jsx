@@ -7,7 +7,7 @@ import { formatVND as fmt } from '../../utils/format';
 /* ── Painting card ─────────────────────────────────────── */
 const PaintingCard = ({ p }) => {
   const [hover, setHover] = useState(false);
-  const price = p.discountPrice ?? p.price;
+  const price = p.price ?? 0;
 
   return (
     <Link

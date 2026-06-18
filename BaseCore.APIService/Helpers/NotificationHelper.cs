@@ -29,18 +29,10 @@ namespace BaseCore.APIService.Helpers
         }
 
         /// <summary>Lấy danh sách UserId của tất cả Admin trong hệ thống</summary>
-        public static async Task<List<string>> GetAdminUserIdsAsync(AppDbContext db)
-        {
-            var adminRoleIds = await db.Roles
-                .Where(r => r.Name == "Admin")
-                .Select(r => r.Id)
+        public static async Task<List<string>> GetAdminUserIdsAsync(AppDbContext db) =>
+            await db.Users
+                .Where(u => u.UserType == 1)
+                .Select(u => u.Id)
                 .ToListAsync();
-
-            return await db.UserRoles
-                .Where(ur => ur.IsActive && adminRoleIds.Contains(ur.RoleId))
-                .Select(ur => ur.UserId)
-                .Distinct()
-                .ToListAsync();
-        }
     }
 }

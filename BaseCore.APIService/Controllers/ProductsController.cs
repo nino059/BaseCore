@@ -6,6 +6,7 @@ using BaseCore.Repository.EFCore;
 using BaseCore.APIService.Helpers;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace BaseCore.APIService.Controllers
@@ -43,7 +44,7 @@ namespace BaseCore.APIService.Controllers
         // POST /api/products/upload-image
         [HttpPost("upload-image")]
         [Authorize(Roles = "Artist,Admin")]
-        public async Task<IActionResult> UploadImage(IFormFile file)
+        public async Task<IActionResult> UploadImage([FromForm] IFormFile file)
         {
             if (file == null || file.Length == 0)
                 return BadRequest(new { message = "Chưa chọn file" });
@@ -145,6 +146,10 @@ namespace BaseCore.APIService.Controllers
             if (callerRole != "Admin" && callerRole != "Artist")
                 return Forbid();
 
+            var validationError = ValidateCreateDto(dto);
+            if (validationError != null)
+                return BadRequest(new { message = validationError });
+
             var category = await _categoryRepository.GetByIdAsync(dto.CategoryId);
             if (category == null)
                 return BadRequest(new { message = "Thể loại không tồn tại" });
@@ -154,7 +159,6 @@ namespace BaseCore.APIService.Controllers
                 Name          = dto.Name,
                 ArtistName    = dto.ArtistName  ?? "",
                 Price         = dto.Price,
-                DiscountPrice = dto.DiscountPrice,
                 CategoryId    = dto.CategoryId,
                 Description   = dto.Description ?? "",
                 ImageUrl      = dto.ImageUrl    ?? "",
@@ -168,15 +172,10 @@ namespace BaseCore.APIService.Controllers
 
             await _productRepository.AddAsync(product);
 
-            // Notify Admin khi artist đăng tranh mới chờ duyệt
+            // Notify Admin khi artist đăng tranh mới chờ duyệt (lỗi thông báo không được làm fail tạo tranh)
             if (callerRole == "Artist")
             {
-                var adminIds = await NotificationHelper.GetAdminUserIdsAsync(_db);
-                foreach (var adminId in adminIds)
-                    await NotificationHelper.CreateAsync(_db, adminId,
-                        "Tranh mới chờ duyệt",
-                        $"Họa sĩ vừa đăng tranh \"{product.Name}\" — cần xét duyệt.",
-                        "product", product.Id.ToString());
+                await TryNotifyAdminsNewProductAsync(product);
             }
 
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, ToDto(product));
@@ -206,7 +205,6 @@ namespace BaseCore.APIService.Controllers
             if (dto.Name        != null) product.Name         = dto.Name;
             if (dto.ArtistName  != null) product.ArtistName   = dto.ArtistName;
             if (dto.Price       != null) product.Price        = dto.Price.Value;
-            product.DiscountPrice = dto.DiscountPrice;
             if (dto.CategoryId  != null) product.CategoryId  = dto.CategoryId.Value;
             if (dto.Description != null) product.Description = dto.Description;
             if (dto.ImageUrl    != null) product.ImageUrl    = dto.ImageUrl;
@@ -331,7 +329,7 @@ namespace BaseCore.APIService.Controllers
         // ── Helper ───────────────────────────────────────────────────────────
         private static object ToDto(Product p) => new
         {
-            p.Id, p.Name, p.ArtistName, p.Price, p.DiscountPrice,
+            p.Id, p.Name, p.ArtistName, p.Price,
             p.Description, p.ImageUrl, p.CategoryId, p.SellerId,
             p.Theme, p.Material, p.Width, p.Height,
             // Normalize legacy status values from old database records
@@ -361,6 +359,58 @@ namespace BaseCore.APIService.Controllers
                 _ => status
             };
         }
+
+        private static string? ValidateCreateDto(ProductCreateDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Name))
+                return "Vui lòng nhập tên tác phẩm";
+            if (dto.Name.Length > 200)
+                return "Tên tác phẩm tối đa 200 ký tự";
+            if (dto.CategoryId <= 0)
+                return "Vui lòng chọn thể loại";
+            if (dto.Price <= 0)
+                return "Giá bán phải lớn hơn 0";
+            if (string.IsNullOrWhiteSpace(dto.Material))
+                return "Vui lòng chọn chất liệu";
+            if (string.IsNullOrWhiteSpace(dto.Theme))
+                return "Vui lòng chọn chủ đề";
+            if (!dto.Width.HasValue || dto.Width <= 0)
+                return "Chiều rộng phải lớn hơn 0";
+            if (!dto.Height.HasValue || dto.Height <= 0)
+                return "Chiều cao phải lớn hơn 0";
+            if (string.IsNullOrWhiteSpace(dto.Description))
+                return "Vui lòng nhập mô tả tác phẩm";
+            if (dto.Description.Length > 1000)
+                return "Mô tả tối đa 1000 ký tự";
+            if (string.IsNullOrWhiteSpace(dto.ImageUrl))
+                return "Vui lòng upload ảnh tác phẩm";
+            if (dto.ImageUrl.Length > 500)
+                return "URL ảnh quá dài — vui lòng upload lại ảnh";
+            return null;
+        }
+
+        private async Task TryNotifyAdminsNewProductAsync(Product product)
+        {
+            try
+            {
+                var adminIds = await NotificationHelper.GetAdminUserIdsAsync(_db);
+                foreach (var adminId in adminIds)
+                {
+                    await NotificationHelper.CreateAsync(_db, adminId,
+                        "Tranh mới chờ duyệt",
+                        $"Họa sĩ vừa đăng tranh \"{product.Name}\" — cần xét duyệt.",
+                        "product", product.Id.ToString());
+                }
+            }
+            catch
+            {
+                foreach (var entry in _db.ChangeTracker.Entries<Notification>()
+                    .Where(e => e.State == EntityState.Added).ToList())
+                {
+                    entry.State = EntityState.Detached;
+                }
+            }
+        }
     }
 
     // ─── DTOs ───────────────────────────────────────────────────────────────
@@ -370,7 +420,6 @@ namespace BaseCore.APIService.Controllers
         public string   Name          { get; set; } = "";
         public string?  ArtistName    { get; set; }
         public decimal  Price         { get; set; }
-        public decimal? DiscountPrice { get; set; }
         public int      CategoryId    { get; set; }
         public string?  Description   { get; set; }
         public string?  ImageUrl      { get; set; }
@@ -386,7 +435,6 @@ namespace BaseCore.APIService.Controllers
         public string?  Name          { get; set; }
         public string?  ArtistName    { get; set; }
         public decimal? Price         { get; set; }
-        public decimal? DiscountPrice { get; set; }
         public int?     CategoryId    { get; set; }
         public string?  Description   { get; set; }
         public string?  ImageUrl      { get; set; }

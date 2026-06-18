@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { notificationApi } from '../../services/api';
+import NavActionIcon, { BellGlyph } from './NavActionIcon';
 
 const TYPE_META = {
   order:   { icon: 'fa-shopping-bag', color: '#3b82f6' },
@@ -43,9 +44,6 @@ const NotificationBell = ({ theme = 'dark' }) => {
   const [loading, setLoading] = useState(false);
   const dropRef  = useRef(null);
   const navigate = useNavigate();
-
-  const isDark    = theme === 'dark';
-  const iconColor = isDark ? 'rgba(255,255,255,0.85)' : '#4b5563';
 
   const fetchCount = useCallback(async () => {
     try {
@@ -101,33 +99,15 @@ const NotificationBell = ({ theme = 'dark' }) => {
 
   return (
     <div ref={dropRef} style={{ position: 'relative' }}>
-      <button
-        onClick={handleOpen}
+      <NavActionIcon
+        theme={theme}
+        count={unread}
         title="Thông báo"
-        style={{
-          position: 'relative', background: 'none', border: 'none',
-          cursor: 'pointer', padding: '6px 8px', borderRadius: 8,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: iconColor, transition: 'background 0.15s',
-        }}
-        onMouseEnter={e => { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.08)' : '#f3f4f6'; }}
-        onMouseLeave={e => { e.currentTarget.style.background = 'none'; }}
+        onClick={handleOpen}
+        showAlertRing
       >
-        <i className="fas fa-bell" style={{ fontSize: '1rem' }} />
-        {unread > 0 && (
-          <span style={{
-            position: 'absolute', top: 2, right: 2,
-            background: '#ef4444', color: 'white',
-            borderRadius: '50%', minWidth: 17, height: 17,
-            fontSize: 10, fontWeight: 700,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            padding: '0 3px', lineHeight: 1,
-            border: isDark ? '1.5px solid rgba(20,16,12,0.9)' : '1.5px solid white',
-          }}>
-            {unread > 99 ? '99+' : unread}
-          </span>
-        )}
-      </button>
+        <BellGlyph active={unread > 0} />
+      </NavActionIcon>
 
       {open && (
         <div style={{
@@ -144,7 +124,7 @@ const NotificationBell = ({ theme = 'dark' }) => {
             <span style={{ fontWeight: 800, fontSize: '0.92rem', color: '#1e293b' }}>
               Thông báo
               {unread > 0 && (
-                <span style={{ color: '#ef4444', fontSize: '0.8rem', marginLeft: 6 }}>
+                <span style={{ color: 'var(--brand-dark)', fontSize: '0.8rem', marginLeft: 6 }}>
                   ({unread} mới)
                 </span>
               )}
@@ -167,7 +147,9 @@ const NotificationBell = ({ theme = 'dark' }) => {
               </div>
             ) : items.length === 0 ? (
               <div style={{ padding: '40px 0', textAlign: 'center', color: '#94a3b8' }}>
-                <i className="fas fa-bell-slash" style={{ fontSize: '1.8rem', marginBottom: 10, display: 'block' }} />
+                <span style={{ display: 'inline-flex', marginBottom: 10, opacity: 0.45 }}>
+                  <BellGlyph size={28} color="#94a3b8" />
+                </span>
                 <div style={{ fontSize: '0.85rem' }}>Chưa có thông báo nào</div>
               </div>
             ) : (
@@ -215,7 +197,7 @@ const NotificationBell = ({ theme = 'dark' }) => {
                     {!item.isRead && (
                       <div style={{
                         width: 7, height: 7, borderRadius: '50%',
-                        background: '#ef4444', flexShrink: 0, marginTop: 6,
+                        background: 'var(--brand)', flexShrink: 0, marginTop: 6,
                       }} />
                     )}
                   </div>
@@ -228,9 +210,6 @@ const NotificationBell = ({ theme = 'dark' }) => {
             padding: '10px 16px', borderTop: '1px solid #f1f5f9',
             textAlign: 'center',
           }}>
-            <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-              Tự động cập nhật mỗi 30 giây
-            </span>
           </div>
         </div>
       )}

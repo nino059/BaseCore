@@ -143,7 +143,7 @@ namespace BaseCore.APIService.Controllers
                 if (!IsSellableProductStatus(product.Status))
                     return BadRequest(new { message = $"Tranh '{product.Name}' hien khong the dat mua (trang thai: {product.Status})" });
 
-                var salePrice = product.DiscountPrice ?? product.Price;
+                var salePrice = product.Price;
                 totalAmount += salePrice;
 
                 orderDetails.Add(new OrderDetail
@@ -154,6 +154,13 @@ namespace BaseCore.APIService.Controllers
                 });
                 productsToUpdate.Add(product);
             }
+
+            var distinctSellerIds = productsToUpdate
+                .Select(p => p.SellerId ?? string.Empty)
+                .Distinct()
+                .ToList();
+            if (distinctSellerIds.Count > 1)
+                return BadRequest(new { message = "Moi don hang chi duoc chua tranh cua mot hoa si. Vui long tach don theo tung hoa si." });
 
             var order = new Order
             {

@@ -1,0 +1,114 @@
+<mxfile host="app.diagrams.net" modified="2026-06-18T00:00:00.000Z" agent="BaseCore" version="22.1.0" type="device">
+  <diagram id="basecore-erd" name="BaseCoreSales ERD">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="BaseCoreSales — ERD (8 bảng)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#1a1a1a;" vertex="1" parent="1">
+          <mxGeometry x="500" y="20" width="600" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Users -->
+        <mxCell id="users" value="Users&#xa;─────────────&#xa;🔑 Id (PK)&#xa;   Name&#xa;   UserName (UK)&#xa;   Password, Salt&#xa;   Email, Phone&#xa;   Image, Bio&#xa;   UserType (0/1/2)&#xa;   Created" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="200" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- UserAddresses -->
+        <mxCell id="addrs" value="UserAddresses&#xa;─────────────&#xa;🔑 Id (PK)&#xa;🔗 UserId → Users&#xa;   FullName, Phone&#xa;   AddressLine&#xa;   Ward, City&#xa;   IsDefault ★&#xa;   CreatedAt" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="360" width="200" height="170" as="geometry"/>
+        </mxCell>
+
+        <!-- Categories -->
+        <mxCell id="cats" value="Categories&#xa;─────────────&#xa;🔑 Id (PK)&#xa;   Name&#xa;   Description&#xa;   Slug, Icon&#xa;   Color" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="320" y="100" width="180" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- Products -->
+        <mxCell id="prods" value="Products&#xa;─────────────&#xa;🔑 Id (PK)&#xa;🔗 CategoryId → Categories&#xa;🔗 SellerId → Users&#xa;   Name, Price&#xa;   DiscountPrice&#xa;   ImageUrl, Description&#xa;   ArtistName&#xa;   Theme, Material&#xa;   Width, Height&#xa;   Status, AdminNote" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="320" y="300" width="220" height="230" as="geometry"/>
+        </mxCell>
+
+        <!-- Orders -->
+        <mxCell id="orders" value="Orders&#xa;─────────────&#xa;🔑 Id (PK)&#xa;🔗 UserId → Users&#xa;   OrderDate&#xa;   TotalAmount&#xa;   Status&#xa;   ShippingAddress&#xa;   PaymentMethod&#xa;   Phone, Note" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="620" y="100" width="200" height="190" as="geometry"/>
+        </mxCell>
+
+        <!-- OrderDetails -->
+        <mxCell id="odetails" value="OrderDetails&#xa;─────────────&#xa;🔑 Id (PK)&#xa;🔗 OrderId → Orders&#xa;🔗 ProductId → Products&#xa;   Quantity&#xa;   UnitPrice" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="620" y="360" width="200" height="130" as="geometry"/>
+        </mxCell>
+
+        <!-- BlogPosts -->
+        <mxCell id="blogs" value="BlogPosts&#xa;─────────────&#xa;🔑 Id (PK)&#xa;🔗 AuthorId → Users&#xa;   Title, Excerpt&#xa;   Content, Category&#xa;   AuthorName&#xa;   CoverImageUrl&#xa;   Status&#xa;   CreatedAt&#xa;   PublishedAt&#xa;   ReadTime" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="900" y="100" width="200" height="220" as="geometry"/>
+        </mxCell>
+
+        <!-- Notifications -->
+        <mxCell id="notifs" value="Notifications&#xa;─────────────&#xa;🔑 Id (PK)&#xa;🔗 UserId → Users&#xa;   Title, Message&#xa;   Type, RefId&#xa;   IsRead&#xa;   CreatedAt" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="900" y="380" width="200" height="150" as="geometry"/>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="Chú thích&#xa;🔑 = Primary Key&#xa;🔗 = Foreign Key (logic hoặc DB constraint)&#xa;★ = Chỉ 1 địa chỉ mặc định / user&#xa;&#xa;FK trong DB (constraint):&#xa;• Products.CategoryId → Categories&#xa;• OrderDetails.OrderId → Orders&#xa;• OrderDetails.ProductId → Products&#xa;&#xa;UserType: 0=User, 1=Admin, 2=Artist&#xa;Product Status: Pending|ForSale|Ordered|Sold|Rejected" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;verticalAlign=top;spacingLeft=10;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="580" width="360" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- Relationships -->
+        <mxCell id="e1" style="endArrow=open;endFill=0;strokeWidth=1;strokeColor=#6c8ebf;dashed=1;" edge="1" parent="1" source="users" target="addrs">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e1l" value="1:N" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="e1">
+          <mxGeometry relative="1" x="-0.2" y="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e2" style="endArrow=open;endFill=0;strokeWidth=1;strokeColor=#6c8ebf;dashed=1;" edge="1" parent="1" source="users" target="orders">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2l" value="1:N" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="e2">
+          <mxGeometry relative="1" x="-0.1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e3" style="endArrow=open;endFill=0;strokeWidth=1;strokeColor=#6c8ebf;dashed=1;" edge="1" parent="1" source="users" target="prods">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3l" value="SellerId" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="e3">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e4" style="endArrow=open;endFill=0;strokeWidth=1;strokeColor=#6c8ebf;dashed=1;" edge="1" parent="1" source="users" target="blogs">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4l" value="AuthorId" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="e4">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e5" style="endArrow=open;endFill=0;strokeWidth=1;strokeColor=#6c8ebf;dashed=1;" edge="1" parent="1" source="users" target="notifs">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e6" style="endArrow=open;endFill=0;strokeWidth=2;strokeColor=#d6b656;" edge="1" parent="1" source="cats" target="prods">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e6l" value="FK" style="edgeLabel;html=1;fontSize=9;fontStyle=1;" vertex="1" connectable="0" parent="e6">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e7" style="endArrow=open;endFill=0;strokeWidth=2;strokeColor=#b85450;" edge="1" parent="1" source="orders" target="odetails">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e7l" value="FK" style="edgeLabel;html=1;fontSize=9;fontStyle=1;" vertex="1" connectable="0" parent="e7">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e8" style="endArrow=open;endFill=0;strokeWidth=2;strokeColor=#b85450;" edge="1" parent="1" source="prods" target="odetails">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e8l" value="FK" style="edgeLabel;html=1;fontSize=9;fontStyle=1;" vertex="1" connectable="0" parent="e8">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

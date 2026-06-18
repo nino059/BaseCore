@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#555"/>
+    </marker>
+    <marker id="arrow-fk" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#b85450"/>
+    </marker>
+    <style>
+      .title { font-size: 22px; font-weight: 700; fill: #1a1a1a; }
+      .box-title { font-size: 13px; font-weight: 700; fill: #111; }
+      .box-text { font-size: 10px; fill: #333; }
+      .line-fk { stroke: #b85450; stroke-width: 2; fill: none; marker-end: url(#arrow-fk); }
+      .line-logic { stroke: #6c8ebf; stroke-width: 1.5; stroke-dasharray: 5,4; fill: none; marker-end: url(#arrow); }
+      .legend { font-size: 10px; fill: #444; }
+    </style>
+  </defs>
+
+  <text x="600" y="35" text-anchor="middle" class="title">BaseCoreSales — ERD (8 bảng)</text>
+
+  <!-- Users -->
+  <rect x="30" y="70" width="190" height="185" rx="4" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="42" y="92" class="box-title">Users</text>
+  <text x="42" y="110" class="box-text">🔑 Id (PK)</text>
+  <text x="42" y="124" class="box-text">Name, UserName (UK), Email</text>
+  <text x="42" y="138" class="box-text">Password, Salt, Phone, Image</text>
+  <text x="42" y="152" class="box-text">UserType (0/1/2), Bio, Created</text>
+
+  <!-- UserAddresses -->
+  <rect x="30" y="310" width="190" height="155" rx="4" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5"/>
+  <text x="42" y="332" class="box-title">UserAddresses</text>
+  <text x="42" y="350" class="box-text">🔑 Id (PK)  🔗 UserId</text>
+  <text x="42" y="364" class="box-text">FullName, Phone, AddressLine</text>
+  <text x="42" y="378" class="box-text">Ward, City, IsDefault ★</text>
+  <text x="42" y="392" class="box-text">CreatedAt</text>
+
+  <!-- Categories -->
+  <rect x="280" y="70" width="170" height="125" rx="4" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5"/>
+  <text x="292" y="92" class="box-title">Categories</text>
+  <text x="292" y="110" class="box-text">🔑 Id (PK)</text>
+  <text x="292" y="124" class="box-text">Name, Description, Slug</text>
+  <text x="292" y="138" class="box-text">Icon, Color</text>
+
+  <!-- Products -->
+  <rect x="280" y="250" width="210" height="215" rx="4" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5"/>
+  <text x="292" y="272" class="box-title">Products</text>
+  <text x="292" y="290" class="box-text">🔑 Id (PK)</text>
+  <text x="292" y="304" class="box-text">🔗 CategoryId, SellerId</text>
+  <text x="292" y="318" class="box-text">Name, Price, DiscountPrice</text>
+  <text x="292" y="332" class="box-text">ImageUrl, Description</text>
+  <text x="292" y="346" class="box-text">ArtistName, Theme, Material</text>
+  <text x="292" y="360" class="box-text">Width, Height, Status</text>
+  <text x="292" y="374" class="box-text">AdminNote</text>
+
+  <!-- Orders -->
+  <rect x="560" y="70" width="190" height="175" rx="4" fill="#f8cecc" stroke="#b85450" stroke-width="1.5"/>
+  <text x="572" y="92" class="box-title">Orders</text>
+  <text x="572" y="110" class="box-text">🔑 Id (PK)  🔗 UserId</text>
+  <text x="572" y="124" class="box-text">OrderDate, TotalAmount</text>
+  <text x="572" y="138" class="box-text">Status, ShippingAddress</text>
+  <text x="572" y="152" class="box-text">PaymentMethod, Phone, Note</text>
+
+  <!-- OrderDetails -->
+  <rect x="560" y="310" width="190" height="120" rx="4" fill="#f8cecc" stroke="#b85450" stroke-width="1.5"/>
+  <text x="572" y="332" class="box-title">OrderDetails</text>
+  <text x="572" y="350" class="box-text">🔑 Id (PK)</text>
+  <text x="572" y="364" class="box-text">🔗 OrderId, ProductId</text>
+  <text x="572" y="378" class="box-text">Quantity, UnitPrice</text>
+
+  <!-- BlogPosts -->
+  <rect x="820" y="70" width="190" height="200" rx="4" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5"/>
+  <text x="832" y="92" class="box-title">BlogPosts</text>
+  <text x="832" y="110" class="box-text">🔑 Id (PK)  🔗 AuthorId</text>
+  <text x="832" y="124" class="box-text">Title, Excerpt, Content</text>
+  <text x="832" y="138" class="box-text">Category, AuthorName</text>
+  <text x="832" y="152" class="box-text">CoverImageUrl, Status</text>
+  <text x="832" y="166" class="box-text">CreatedAt, PublishedAt</text>
+  <text x="832" y="180" class="box-text">ReadTime</text>
+
+  <!-- Notifications -->
+  <rect x="820" y="330" width="190" height="135" rx="4" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5"/>
+  <text x="832" y="352" class="box-title">Notifications</text>
+  <text x="832" y="370" class="box-text">🔑 Id (PK)  🔗 UserId</text>
+  <text x="832" y="384" class="box-text">Title, Message, Type</text>
+  <text x="832" y="398" class="box-text">RefId, IsRead, CreatedAt</text>
+
+  <!-- Legend -->
+  <rect x="30" y="520" width="380" height="160" rx="6" fill="#f5f5f5" stroke="#888" stroke-width="1"/>
+  <text x="42" y="542" class="box-title">Chú thích</text>
+  <text x="42" y="562" class="legend">🔑 Primary Key  |  🔗 Foreign Key  |  ★ 1 địa chỉ mặc định/user</text>
+  <text x="42" y="580" class="legend">— Nét liền đậm = FK constraint trong SQL Server</text>
+  <text x="42" y="596" class="legend">— Nét đứt = quan hệ logic (code tham chiếu, chưa có FK DB)</text>
+  <text x="42" y="616" class="legend">FK constraint: Products→Categories, OrderDetails→Orders/Products</text>
+  <text x="42" y="632" class="legend">UserType: 0=User, 1=Admin, 2=Artist</text>
+  <text x="42" y="648" class="legend">Product Status: Pending | ForSale | Ordered | Sold | Rejected</text>
+
+  <!-- Lines -->
+  <line x1="125" y1="255" x2="125" y2="310" class="line-logic"/>
+  <line x1="220" y1="160" x2="560" y2="140" class="line-logic"/>
+  <line x1="220" y1="180" x2="280" y2="300" class="line-logic"/>
+  <line x1="220" y1="120" x2="820" y2="120" class="line-logic"/>
+  <line x1="220" y1="200" x2="820" y2="360" class="line-logic"/>
+  <line x1="365" y1="195" x2="365" y2="250" class="line-fk"/>
+  <line x1="655" y1="245" x2="655" y2="310" class="line-fk"/>
+  <line x1="490" y1="380" x2="560" y2="360" class="line-fk"/>
+</svg>

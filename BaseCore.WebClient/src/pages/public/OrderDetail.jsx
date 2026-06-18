@@ -7,6 +7,7 @@ import ArtistLayout from '../../components/layout/ArtistLayout';
 import MainLayout from '../../components/layout/MainLayout';
 import { toImg } from '../../utils/image';
 import { formatVND as fmt } from '../../utils/format';
+import { normalizeOrder } from '../../utils/orderNormalize';
 
 const fmtDate = (d) =>
   new Date(d).toLocaleDateString('vi-VN', {
@@ -73,8 +74,16 @@ const OrderDetail = () => {
     if (!silent) setLoading(true);
     try {
       const res = await orderApi.getById(orderId);
-      setOrder(res.data);
+      const normalized = normalizeOrder(res.data);
+      if (!normalized?.id) {
+        setError('Không tìm thấy đơn hàng.');
+        setOrder(null);
+        return;
+      }
+      setOrder(normalized);
+      setError(null);
     } catch {
+      setOrder(null);
       setError('Không tìm thấy đơn hàng.');
     } finally {
       if (!silent) setLoading(false);

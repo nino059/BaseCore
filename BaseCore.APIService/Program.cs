@@ -92,6 +92,7 @@ builder.Services.AddScoped<ICategoryRepositoryEF, CategoryRepositoryEF>();
 builder.Services.AddScoped<IOrderRepositoryEF, OrderRepositoryEF>();
 builder.Services.AddScoped<IOrderDetailRepositoryEF, OrderDetailRepositoryEF>();
 builder.Services.AddScoped<IUserRepositoryEF, UserRepositoryEF>();
+builder.Services.AddScoped<IUserAddressRepositoryEF, UserAddressRepositoryEF>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
 // JWT Authentication

@@ -1,0 +1,108 @@
+erDiagram
+    Users ||--o{ UserAddresses : has
+    Users ||--o{ Orders : places
+    Users ||--o{ Notifications : receives
+    Users ||--o{ Products : sells
+    Users ||--o{ BlogPosts : writes
+
+    Categories ||--o{ Products : contains
+
+    Orders ||--|{ OrderDetails : includes
+    Products ||--o{ OrderDetails : in
+
+    Users {
+        string Id PK
+        string Name
+        string UserName UK
+        string Email
+        string Phone
+        string Image
+        int UserType
+        string Bio
+        datetime Created
+    }
+
+    UserAddresses {
+        int Id PK
+        string UserId FK
+        string FullName
+        string Phone
+        string AddressLine
+        string Ward
+        string City
+        bool IsDefault
+        datetime CreatedAt
+    }
+
+    Categories {
+        int Id PK
+        string Name
+        string Description
+        string Slug
+        string Icon
+        string Color
+    }
+
+    Products {
+        int Id PK
+        string Name
+        decimal Price
+        decimal DiscountPrice
+        string ImageUrl
+        string Description
+        int CategoryId FK
+        string SellerId FK
+        string ArtistName
+        string Theme
+        string Material
+        int Width
+        int Height
+        string Status
+        string AdminNote
+    }
+
+    Orders {
+        int Id PK
+        string UserId FK
+        datetime OrderDate
+        decimal TotalAmount
+        string Status
+        string ShippingAddress
+        string PaymentMethod
+        string Phone
+        string Note
+    }
+
+    OrderDetails {
+        int Id PK
+        int OrderId FK
+        int ProductId FK
+        int Quantity
+        decimal UnitPrice
+    }
+
+    BlogPosts {
+        int Id PK
+        string Title
+        string Excerpt
+        string Content
+        string Category
+        string AuthorId FK
+        string AuthorName
+        string CoverImageUrl
+        string Status
+        datetime CreatedAt
+        datetime PublishedAt
+        string ReadTime
+    }
+
+    Notifications {
+        int Id PK
+        string UserId FK
+        string Title
+        string Message
+        string Type
+        string RefId
+        bool IsRead
+        datetime CreatedAt
+    }

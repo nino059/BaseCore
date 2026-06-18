@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { userApi } from '../../services/api';
 import PublicLayout from '../../components/layout/PublicLayout';
+import { VIETNAM_CITIES } from '../../constants/cities';
 
 const inp = {
   width: '100%', padding: '12px 16px',
@@ -25,6 +26,23 @@ const Profile = () => {
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || '');
   const [avatarLoading, setAvatarLoading] = useState(false);
   const avatarInputRef = useRef(null);
+
+  const emptyAddrForm = { fullName: '', phone: '', addressLine: '', ward: '', city: '' };
+  const [addresses, setAddresses] = useState([]);
+  const [addrLoading, setAddrLoading] = useState(false);
+  const [showAddrForm, setShowAddrForm] = useState(false);
+  const [editingAddrId, setEditingAddrId] = useState(null);
+  const [addrForm, setAddrForm] = useState(emptyAddrForm);
+  const [setAsDefault, setSetAsDefault] = useState(false);
+
+  const loadAddresses = useCallback(() => {
+    if (!userId) return;
+    userApi.getAddresses(userId)
+      .then(res => setAddresses(res.data || []))
+      .catch(() => {});
+  }, [userId]);
+
+  useEffect(() => { loadAddresses(); }, [loadAddresses]);
 
   // Fetch avatar hiện tại từ API (xử lý session cũ chưa có avatarUrl)
   useEffect(() => {
@@ -91,9 +109,98 @@ const Profile = () => {
     setLoading(false);
   };
 
+  const openAddAddress = () => {
+    setEditingAddrId(null);
+    setSetAsDefault(addresses.length === 0);
+    setAddrForm({
+      ...emptyAddrForm,
+      fullName: form.fullName || user?.name || '',
+      phone: form.phone || user?.phone || '',
+    });
+    setShowAddrForm(true);
+  };
+
+  const openEditAddress = (addr) => {
+    setEditingAddrId(addr.id);
+    setAddrForm({
+      fullName: addr.fullName || '',
+      phone: addr.phone || '',
+      addressLine: addr.addressLine || '',
+      ward: addr.ward || '',
+      city: addr.city || '',
+    });
+    setShowAddrForm(true);
+  };
+
+  const closeAddrForm = () => {
+    setShowAddrForm(false);
+    setEditingAddrId(null);
+    setSetAsDefault(false);
+    setAddrForm(emptyAddrForm);
+  };
+
+  const handleAddrSubmit = async (e) => {
+    e.preventDefault();
+    if (!addrForm.fullName || !addrForm.phone || !addrForm.addressLine || !addrForm.city)
+      return showMsg('error', 'Vui lòng điền đầy đủ thông tin bắt buộc');
+    setAddrLoading(true);
+    try {
+      const payload = {
+        fullName: addrForm.fullName,
+        phone: addrForm.phone,
+        addressLine: addrForm.addressLine,
+        ward: addrForm.ward || null,
+        city: addrForm.city,
+        isDefault: editingAddrId ? false : (addresses.length === 0 || setAsDefault),
+      };
+      if (editingAddrId) {
+        const existing = addresses.find(a => a.id === editingAddrId);
+        await userApi.updateAddress(userId, editingAddrId, {
+          ...payload,
+          isDefault: existing?.isDefault ?? false,
+        });
+        showMsg('success', 'Cập nhật địa chỉ thành công');
+      } else {
+        await userApi.createAddress(userId, payload);
+        showMsg('success', 'Thêm địa chỉ thành công');
+      }
+      loadAddresses();
+      closeAddrForm();
+    } catch {
+      showMsg('error', 'Lưu địa chỉ thất bại. Vui lòng thử lại');
+    }
+    setAddrLoading(false);
+  };
+
+  const handleSetDefault = async (addressId) => {
+    setAddrLoading(true);
+    try {
+      await userApi.setDefaultAddress(userId, addressId);
+      loadAddresses();
+      showMsg('success', 'Đã đặt làm địa chỉ mặc định');
+    } catch {
+      showMsg('error', 'Không thể đặt địa chỉ mặc định');
+    }
+    setAddrLoading(false);
+  };
+
+  const handleDeleteAddress = async (addressId) => {
+    if (!window.confirm('Bạn có chắc muốn xóa địa chỉ này?')) return;
+    setAddrLoading(true);
+    try {
+      await userApi.deleteAddress(userId, addressId);
+      loadAddresses();
+      showMsg('success', 'Đã xóa địa chỉ');
+    } catch {
+      showMsg('error', 'Xóa địa chỉ thất bại');
+    }
+    setAddrLoading(false);
+  };
+
   const TABS = [
-    { key: 'info',     label: 'Thông tin cá nhân' },
-    { key: 'password', label: 'Đổi mật khẩu' },
+    { key: 'info',      label: 'Thông tin cá nhân' },
+    { key: 'addresses', label: 'Địa chỉ giao hàng' },
+    { key: 'password',  label: 'Đổi mật khẩu' },
   ];
 
   return (
@@ -240,6 +347,153 @@ const Profile = () => {
                   </button>
                 </div>
               </form>
+            )}
+
+            {/* Tab: Địa chỉ giao hàng */}
+            {tab === 'addresses' && (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                  <p style={{ fontSize: '0.85rem', color: '#767676', margin: 0 }}>
+                    {addresses.length > 0
+                      ? `Bạn có ${addresses.length} địa chỉ. Chỉ một địa chỉ được đặt làm mặc định.`
+                      : 'Thêm địa chỉ giao hàng. Địa chỉ đầu tiên sẽ là mặc định.'}
+                  </p>
+                  {!showAddrForm && (
+                    <button type="button" onClick={openAddAddress} style={{
+                      padding: '10px 18px', background: 'var(--ink)', color: 'white', border: 'none',
+                      fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em',
+                      textTransform: 'uppercase', cursor: 'pointer',
+                    }}>
+                      + Thêm địa chỉ
+                    </button>
+                  )}
+                </div>
+
+                {showAddrForm && (
+                  <form onSubmit={handleAddrSubmit} style={{
+                    padding: '20px', background: '#faf8f5', marginBottom: 24,
+                    border: '1px solid #e8e4df',
+                  }}>
+                    <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 18 }}>
+                      {editingAddrId ? 'Chỉnh sửa địa chỉ' : 'Thêm địa chỉ mới'}
+                    </p>
+                    {[
+                      { key: 'fullName', label: 'Họ và tên *', placeholder: 'Nguyễn Văn A', required: true },
+                      { key: 'phone', label: 'Số điện thoại *', placeholder: '0901 234 567', required: true },
+                      { key: 'addressLine', label: 'Địa chỉ *', placeholder: 'Số nhà, tên đường', required: true },
+                      { key: 'ward', label: 'Xã / Phường', placeholder: 'Phường Bến Nghé', required: false },
+                    ].map(f => (
+                      <div key={f.key} style={{ marginBottom: 16 }}>
+                        <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 8 }}>
+                          {f.label}
+                        </label>
+                        <input
+                          value={addrForm[f.key]}
+                          onChange={e => setAddrForm({ ...addrForm, [f.key]: e.target.value })}
+                          placeholder={f.placeholder}
+                          required={f.required}
+                          style={inp}
+                          onFocus={e => (e.target.style.borderColor = 'var(--ink)')}
+                          onBlur={e => (e.target.style.borderColor = '#e8e4df')}
+                        />
+                      </div>
+                    ))}
+                    <div style={{ marginBottom: 16 }}>
+                      <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.13em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 8 }}>
+                        Tỉnh / Thành phố *
+                      </label>
+                      <select
+                        value={addrForm.city}
+                        onChange={e => setAddrForm({ ...addrForm, city: e.target.value })}
+                        required
+                        style={{ ...inp, cursor: 'pointer' }}
+                      >
+                        <option value="">-- Chọn tỉnh/thành --</option>
+                        {VIETNAM_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                    </div>
+                    {!editingAddrId && addresses.length > 0 && (
+                      <label style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16, cursor: 'pointer' }}>
+                        <input
+                          type="checkbox"
+                          checked={setAsDefault}
+                          onChange={e => setSetAsDefault(e.target.checked)}
+                          style={{ width: 16, height: 16, accentColor: 'var(--ink)' }}
+                        />
+                        <span style={{ fontSize: '0.85rem', color: '#767676' }}>Đặt làm địa chỉ mặc định</span>
+                      </label>
+                    )}
+                    <div style={{ display: 'flex', gap: 12 }}>
+                      <button type="submit" disabled={addrLoading} style={{
+                        padding: '11px 24px', background: addrLoading ? '#ccc' : 'var(--ink)',
+                        color: 'white', border: 'none',
+                        fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.12em',
+                        textTransform: 'uppercase', cursor: addrLoading ? 'not-allowed' : 'pointer',
+                      }}>
+                        {addrLoading ? 'Đang lưu...' : 'Lưu địa chỉ'}
+                      </button>
+                      <button type="button" onClick={closeAddrForm} style={{
+                        padding: '11px 24px', background: 'transparent', color: '#767676',
+                        border: '1.5px solid #e8e4df',
+                        fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer',
+                      }}>
+                        Hủy
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                {addresses.length === 0 && !showAddrForm ? (
+                  <div style={{ textAlign: 'center', padding: '32px 0', color: '#aaa' }}>
+                    <i className="fas fa-map-marker-alt" style={{ fontSize: '1.5rem', marginBottom: 12, display: 'block' }}></i>
+                    Chưa có địa chỉ giao hàng nào
+                  </div>
+                ) : (
+                  addresses.map(addr => (
+                    <div key={addr.id} style={{
+                      padding: '18px 20px', marginBottom: 12,
+                      border: `1.5px solid ${addr.isDefault ? 'var(--ink)' : '#e8e4df'}`,
+                      background: addr.isDefault ? '#f9f6f2' : 'white',
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                            <span style={{ fontWeight: 600, color: 'var(--ink)' }}>{addr.fullName}</span>
+                            {addr.isDefault && (
+                              <span style={{
+                                fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em',
+                                color: '#065f46', background: '#f0fdf4', padding: '2px 8px',
+                              }}>
+                                MẶC ĐỊNH
+                              </span>
+                            )}
+                          </div>
+                          <div style={{ fontSize: '0.85rem', color: '#767676', lineHeight: 1.6 }}>
+                            {addr.phone}<br />
+                            {addr.addressLine}{addr.ward ? `, ${addr.ward}` : ''}, {addr.city}
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flexShrink: 0 }}>
+                          {!addr.isDefault && (
+                            <button type="button" onClick={() => handleSetDefault(addr.id)} disabled={addrLoading}
+                              style={{ padding: '6px 12px', fontSize: '0.72rem', border: '1px solid #e8e4df', background: 'white', cursor: 'pointer', color: 'var(--ink)' }}>
+                              Đặt mặc định
+                            </button>
+                          )}
+                          <button type="button" onClick={() => openEditAddress(addr)} disabled={addrLoading}
+                            style={{ padding: '6px 12px', fontSize: '0.72rem', border: '1px solid #e8e4df', background: 'white', cursor: 'pointer', color: 'var(--ink)' }}>
+                            Sửa
+                          </button>
+                          <button type="button" onClick={() => handleDeleteAddress(addr.id)} disabled={addrLoading}
+                            style={{ padding: '6px 12px', fontSize: '0.72rem', border: '1px solid #fecaca', background: '#fef2f2', cursor: 'pointer', color: '#991b1b' }}>
+                            Xóa
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             )}
 
             {/* Tab: Đổi mật khẩu */}

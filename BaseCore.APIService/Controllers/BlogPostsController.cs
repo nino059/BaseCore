@@ -53,7 +53,8 @@ namespace BaseCore.APIService.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
-            return Ok(new { items, totalCount, page, pageSize, totalPages = (int)Math.Ceiling((double)totalCount / pageSize) });
+            var enriched = await EnrichPostsAsync(items);
+            return Ok(new { items = enriched, totalCount, page, pageSize, totalPages = (int)Math.Ceiling((double)totalCount / pageSize) });
         }
 
         // GET /api/blogposts/{id}
@@ -69,7 +70,7 @@ namespace BaseCore.APIService.Controllers
             if (post.Status != "Published" && callerId != post.AuthorId && callerRole != "Admin")
                 return NotFound(new { message = "Bài viết không tồn tại" });
 
-            return Ok(post);
+            return Ok(await ToDtoAsync(post));
         }
 
         // POST /api/blogposts — Artist or Admin
@@ -108,7 +109,6 @@ namespace BaseCore.APIService.Controllers
                 CoverImageUrl = dto.CoverImageUrl,
                 Status        = callerRole == "Admin" ? "Published" : "Pending",
                 CreatedAt     = DateTime.UtcNow,
-                ReadTime      = dto.ReadTime
             };
 
             _db.BlogPosts.Add(post);
@@ -125,7 +125,7 @@ namespace BaseCore.APIService.Controllers
                         "blog", post.Id.ToString());
             }
 
-            return CreatedAtAction(nameof(GetById), new { id = post.Id }, post);
+            return CreatedAtAction(nameof(GetById), new { id = post.Id }, await ToDtoAsync(post));
         }
 
         // PUT /api/blogposts/{id} — author or Admin
@@ -147,10 +147,9 @@ namespace BaseCore.APIService.Controllers
             if (dto.Content     != null) post.Content      = dto.Content;
             if (dto.Category    != null) post.Category     = dto.Category;
             if (dto.CoverImageUrl != null) post.CoverImageUrl = dto.CoverImageUrl;
-            if (dto.ReadTime    != null) post.ReadTime     = dto.ReadTime;
 
             await _db.SaveChangesAsync();
-            return Ok(post);
+            return Ok(await ToDtoAsync(post));
         }
 
         // PUT /api/blogposts/{id}/approve — Admin
@@ -171,7 +170,7 @@ namespace BaseCore.APIService.Controllers
                     $"Bài viết \"{post.Title}\" đã được duyệt và công khai.",
                     "blog", post.Id.ToString());
 
-            return Ok(post);
+            return Ok(await ToDtoAsync(post));
         }
 
         // PUT /api/blogposts/{id}/reject — Admin
@@ -191,7 +190,7 @@ namespace BaseCore.APIService.Controllers
                     $"Bài viết \"{post.Title}\" đã bị từ chối.",
                     "blog", post.Id.ToString());
 
-            return Ok(post);
+            return Ok(await ToDtoAsync(post));
         }
 
         // DELETE /api/blogposts/{id} — author or Admin
@@ -212,6 +211,107 @@ namespace BaseCore.APIService.Controllers
             await _db.SaveChangesAsync();
             return Ok(new { message = "Đã xóa bài viết" });
         }
+
+        private async Task<List<object>> EnrichPostsAsync(List<BlogPost> posts)
+        {
+            var authorIds = posts
+                .Select(p => p.AuthorId)
+                .Where(id => !string.IsNullOrEmpty(id))
+                .Distinct()
+                .ToList();
+
+            var authorNames = posts
+                .Where(p => string.IsNullOrEmpty(p.AuthorId) && !string.IsNullOrWhiteSpace(p.AuthorName))
+                .Select(p => p.AuthorName!)
+                .Distinct()
+                .ToList();
+
+            var avatarByAuthor = authorIds.Count == 0
+                ? new Dictionary<string, string>()
+                : await _db.Users
+                    .AsNoTracking()
+                    .Where(u => authorIds.Contains(u.Id))
+                    .ToDictionaryAsync(u => u.Id, u => u.Image ?? "");
+
+            var avatarByName = authorNames.Count == 0
+                ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                : await _db.Users
+                    .AsNoTracking()
+                    .Where(u => u.UserType == 2 && authorNames.Contains(u.Name))
+                    .ToDictionaryAsync(u => u.Name, u => u.Image ?? "", StringComparer.OrdinalIgnoreCase);
+
+            return posts.Select(p => new
+            {
+                p.Id,
+                p.Title,
+                p.Excerpt,
+                p.Content,
+                p.Category,
+                p.AuthorId,
+                p.AuthorName,
+                authorAvatarUrl = ResolveAuthorAvatar(p, avatarByAuthor, avatarByName),
+                p.CoverImageUrl,
+                p.Status,
+                p.CreatedAt,
+                p.PublishedAt,
+            }).Cast<object>().ToList();
+        }
+
+        private async Task<object> ToDtoAsync(BlogPost post)
+        {
+            var avatarUrl = await ResolveAuthorAvatarAsync(post);
+
+            return new
+            {
+                post.Id,
+                post.Title,
+                post.Excerpt,
+                post.Content,
+                post.Category,
+                post.AuthorId,
+                post.AuthorName,
+                authorAvatarUrl = avatarUrl,
+                post.CoverImageUrl,
+                post.Status,
+                post.CreatedAt,
+                post.PublishedAt,
+            };
+        }
+
+        private static string ResolveAuthorAvatar(
+            BlogPost post,
+            Dictionary<string, string> avatarByAuthor,
+            Dictionary<string, string> avatarByName)
+        {
+            if (!string.IsNullOrEmpty(post.AuthorId) && avatarByAuthor.TryGetValue(post.AuthorId, out var byId))
+                return byId;
+
+            if (!string.IsNullOrWhiteSpace(post.AuthorName) && avatarByName.TryGetValue(post.AuthorName, out var byName))
+                return byName;
+
+            return "";
+        }
+
+        private async Task<string> ResolveAuthorAvatarAsync(BlogPost post)
+        {
+            if (!string.IsNullOrEmpty(post.AuthorId))
+            {
+                var author = await _db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == post.AuthorId);
+                if (!string.IsNullOrEmpty(author?.Image))
+                    return author.Image;
+            }
+
+            if (!string.IsNullOrWhiteSpace(post.AuthorName))
+            {
+                var byName = await _db.Users.AsNoTracking()
+                    .Where(u => u.UserType == 2 && (u.Name == post.AuthorName || u.UserName == post.AuthorName))
+                    .Select(u => u.Image)
+                    .FirstOrDefaultAsync();
+                return byName ?? "";
+            }
+
+            return "";
+        }
     }
 
     public class BlogPostDto
@@ -222,6 +322,5 @@ namespace BaseCore.APIService.Controllers
         public string? Category     { get; set; }
         public string? AuthorName   { get; set; }
         public string? CoverImageUrl { get; set; }
-        public string? ReadTime     { get; set; }
     }
 }

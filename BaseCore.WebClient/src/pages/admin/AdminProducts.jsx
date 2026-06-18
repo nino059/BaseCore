@@ -129,9 +129,6 @@ const ProductReviewModal = ({ product, onApprove, onReject, onClose, fmt }) => {
             <div style={{ padding:'12px 14px', background:'#fff7ed', borderRadius:10, border:'1px solid #fed7aa' }}>
               <div style={{ fontSize:'0.68rem', color:'#94a3b8', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4 }}>Giá bán</div>
               <div style={{ fontSize:'1.4rem', fontWeight:900, color:'#dc2626' }}>{fmt(product.price)}</div>
-              {product.discountPrice && (
-                <div style={{ fontSize:'0.8rem', color:'#9ca3af', textDecoration:'line-through' }}>{fmt(product.discountPrice)}</div>
-              )}
             </div>
 
             {/* Chất liệu / chủ đề / kích thước */}
@@ -397,7 +394,7 @@ export default function AdminProducts() {
       {/* Bộ lọc */}
       <div style={{ background:"white", borderRadius:14, padding:"14px 18px", boxShadow:"0 2px 12px rgba(0,0,0,.05)", marginBottom:16 }}>
         <div style={{ display:"flex", gap:10, flexWrap:"wrap", alignItems:"center" }}>
-          <div style={{ flex:"1 1 220px", position:"relative", minWidth:180 }}>
+          <div style={{ flex:"1 1 220px", position:"relative", minWidth:10 }}>
             <i className="fas fa-search" style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", color:"#9ca3af", fontSize:"0.82rem" }}></i>
             <input className="form-control" placeholder="Tìm tên tác phẩm, nghệ sĩ..." value={keyword}
               onChange={e => { setKeyword(e.target.value); setPage(1); }}

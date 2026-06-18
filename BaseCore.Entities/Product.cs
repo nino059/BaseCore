@@ -12,8 +12,6 @@ namespace BaseCore.Entities
 
         public decimal Price { get; set; }
 
-        public decimal? DiscountPrice { get; set; }
-
         [MaxLength(500)]
         public string ImageUrl { get; set; } = "";
 

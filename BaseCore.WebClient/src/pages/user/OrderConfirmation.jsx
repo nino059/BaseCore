@@ -1,23 +1,109 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from 'react';
+import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import PublicLayout from '../../components/layout/PublicLayout';
+import { useCart } from '../../contexts/CartContext';
 import { orderApi } from '../../services/api';
 import { formatVND as fmt } from '../../utils/format';
+import { normalizeOrder } from '../../utils/orderNormalize';
+
+const linePrice = (item) => {
+  const unit = item.unitPrice ?? item.UnitPrice ?? item.price ?? item.Price ?? 0;
+  const qty = item.quantity ?? item.Quantity ?? item.qty ?? 1;
+  return Number(unit) * Number(qty);
+};
+
+const OrderCard = ({ order }) => {
+  const items = order.items || [];
+  const total = order.totalAmount ?? 0;
+
+  return (
+    <div className="bg-white px-8 py-7 mb-4 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
+      <p className="text-[0.68rem] font-bold tracking-[0.16em] text-brand-dark uppercase mb-5">
+        Đơn hàng #{order.id}
+      </p>
+
+      <div className="flex flex-col gap-3 mb-5">
+        {order.shippingAddress && (
+          <div className="flex gap-3 text-[0.88rem] text-ink">
+            <i className="fas fa-map-marker-alt text-brand mt-0.5 w-3.5"></i>
+            <span className="font-light">{order.shippingAddress}</span>
+          </div>
+        )}
+        {order.paymentMethod && (
+          <div className="flex gap-3 text-[0.88rem] text-ink">
+            <i className="fas fa-wallet text-brand mt-0.5 w-3.5"></i>
+            <span className="font-light">
+              {order.paymentMethod === 'COD' ? 'Thanh toán khi nhận hàng' : 'Chuyển khoản ngân hàng'}
+            </span>
+          </div>
+        )}
+        {order.status && (
+          <div className="flex gap-3 text-[0.88rem] text-ink">
+            <i className="fas fa-info-circle text-brand mt-0.5 w-3.5"></i>
+            <span className="font-semibold">{order.status}</span>
+          </div>
+        )}
+      </div>
+
+      {items.length > 0 && (
+        <div className="border-t-[1.5px] border-line pt-[18px] mb-3">
+          {items.map((item, idx) => (
+            <div key={idx} className="flex justify-between py-[9px] text-[0.88rem] border-b border-[#f9f6f2]">
+              <span className="text-ink font-light">
+                {item.productName || item.ProductName || item.name || item.Name}
+                <span className="text-[#aaa] ml-2">×{item.quantity ?? item.Quantity ?? item.qty ?? 1}</span>
+              </span>
+              <span className="font-semibold text-ink">
+                {fmt(linePrice(item))}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="border-t-[1.5px] border-line pt-4 flex justify-between font-semibold text-base text-ink">
+        <span>Tổng cộng</span>
+        <span className="font-bold">{fmt(total)}</span>
+      </div>
+    </div>
+  );
+};
 
 const OrderConfirmation = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
-  const [order, setOrder] = useState(null);
+  const location = useLocation();
+  const { removePurchasedFromCart } = useCart();
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const cartClearedRef = useRef(false);
   useEffect(() => {
-    if (!orderId) { navigate('/'); return; }
-    orderApi.getById(orderId)
-      .then(res => setOrder(res.data))
+    if (cartClearedRef.current) return;
+    const ids = location.state?.purchasedProductIds;
+    if (!location.state?.fromCheckout || !Array.isArray(ids) || ids.length === 0) return;
+    cartClearedRef.current = true;
+    removePurchasedFromCart(ids);
+  }, [location.state, removePurchasedFromCart]);
+
+  useEffect(() => {
+    const idsFromState = location.state?.orderIds;
+    const ids = Array.isArray(idsFromState) && idsFromState.length > 0
+      ? idsFromState
+      : (orderId && orderId !== 'undefined' ? [orderId] : []);
+
+    if (ids.length === 0) {
+      setError('Không tìm thấy mã đơn hàng.');
+      setLoading(false);
+      return;
+    }
+
+    Promise.all(ids.map((id) => orderApi.getById(id).then((res) => normalizeOrder(res.data))))
+      .then((list) => setOrders(list.filter(Boolean)))
       .catch(() => setError('Không thể tải thông tin đơn hàng.'))
       .finally(() => setLoading(false));
-  }, [orderId, navigate]);
+  }, [orderId, location.state?.orderIds, navigate]);
 
   if (loading) return (
     <PublicLayout>
@@ -30,7 +116,7 @@ const OrderConfirmation = () => {
     </PublicLayout>
   );
 
-  if (error || !order) return (
+  if (error || orders.length === 0) return (
     <PublicLayout>
       <div className="bg-cream min-h-[60vh] flex items-center justify-center">
         <div className="text-center px-5">
@@ -44,15 +130,14 @@ const OrderConfirmation = () => {
     </PublicLayout>
   );
 
-  const items = order.items || order.orderItems || [];
-  const total = order.totalAmount ?? order.total ?? 0;
+  const multi = orders.length > 1;
+  const grandTotal = orders.reduce((s, o) => s + (o.totalAmount ?? 0), 0);
 
   return (
     <PublicLayout>
       <div className="bg-cream min-h-[80vh]">
-        <div className="max-w-[640px] mx-auto px-5 py-15">
+        <div className={`mx-auto px-5 py-15 ${multi ? 'max-w-[860px]' : 'max-w-[640px]'}`}>
 
-          {/* Success banner */}
           <div className="text-center mb-12">
             <div className="w-16 h-16 mx-auto mb-6 bg-ink flex items-center justify-center">
               <i className="fas fa-check text-white text-2xl"></i>
@@ -64,65 +149,26 @@ const OrderConfirmation = () => {
               Cảm ơn bạn!
             </h2>
             <p className="text-muted text-[0.95rem] font-light">
-              Đơn hàng #{order.id} đã được tiếp nhận.<br />
-              Chúng tôi sẽ liên hệ xác nhận sớm nhất.
+              {multi
+                ? <>Đã tạo <strong>{orders.length} đơn hàng</strong> riêng theo từng họa sĩ.<br />Mỗi đơn được xử lý độc lập — hủy một đơn không ảnh hưởng các đơn khác.</>
+                : <>Đơn hàng #{orders[0].id} đã được tiếp nhận.<br />Chúng tôi sẽ liên hệ xác nhận sớm nhất.</>
+              }
             </p>
           </div>
 
-          {/* Chi tiết đơn hàng */}
-          <div className="bg-white px-8 py-7 mb-4 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
-            <p className="text-[0.68rem] font-bold tracking-[0.16em] text-brand-dark uppercase mb-5">
-              Chi tiết đơn hàng #{order.id}
-            </p>
+          {orders.map((order) => (
+            <OrderCard key={order.id} order={order} />
+          ))}
 
-            <div className="flex flex-col gap-3 mb-5">
-              {order.shippingAddress && (
-                <div className="flex gap-3 text-[0.88rem] text-ink">
-                  <i className="fas fa-map-marker-alt text-brand mt-0.5 w-3.5"></i>
-                  <span className="font-light">{order.shippingAddress}</span>
-                </div>
-              )}
-              {order.paymentMethod && (
-                <div className="flex gap-3 text-[0.88rem] text-ink">
-                  <i className="fas fa-wallet text-brand mt-0.5 w-3.5"></i>
-                  <span className="font-light">
-                    {order.paymentMethod === 'COD' ? 'Thanh toán khi nhận hàng' : 'Chuyển khoản ngân hàng'}
-                  </span>
-                </div>
-              )}
-              {order.status && (
-                <div className="flex gap-3 text-[0.88rem] text-ink">
-                  <i className="fas fa-info-circle text-brand mt-0.5 w-3.5"></i>
-                  <span className="font-semibold">{order.status}</span>
-                </div>
-              )}
+          {multi && (
+            <div className="bg-white px-8 py-5 mb-4 shadow-[0_2px_16px_rgba(0,0,0,0.04)] flex justify-between font-semibold text-base text-ink">
+              <span>Tổng thanh toán ({orders.length} đơn)</span>
+              <span className="font-bold">{fmt(grandTotal)}</span>
             </div>
+          )}
 
-            {items.length > 0 && (
-              <div className="border-t-[1.5px] border-line pt-[18px] mb-3">
-                {items.map((item, idx) => (
-                  <div key={idx} className="flex justify-between py-[9px] text-[0.88rem] border-b border-[#f9f6f2]">
-                    <span className="text-ink font-light">
-                      {item.productName || item.name}
-                      <span className="text-[#aaa] ml-2">×{item.quantity || item.qty}</span>
-                    </span>
-                    <span className="font-semibold text-ink">
-                      {fmt(item.price * (item.quantity || item.qty))}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="border-t-[1.5px] border-line pt-4 flex justify-between font-semibold text-base text-ink">
-              <span>Tổng cộng</span>
-              <span className="font-bold">{fmt(total)}</span>
-            </div>
-          </div>
-
-          {/* Actions */}
           <div className="flex gap-3 flex-wrap">
-            <Link to="/my-orders" className="flex-1 text-center py-[13px] bg-ink text-white no-underline text-[0.78rem] font-bold tracking-[0.14em] uppercase">
+            <Link to="/my-orders" state={{ fromConfirmation: true }} className="flex-1 text-center py-[13px] bg-ink text-white no-underline text-[0.78rem] font-bold tracking-[0.14em] uppercase">
               Xem đơn hàng của tôi
             </Link>
             <Link to="/shop" className="flex-1 text-center py-[13px] bg-transparent border-[1.5px] border-ink text-ink no-underline text-[0.78rem] font-bold tracking-[0.14em] uppercase">

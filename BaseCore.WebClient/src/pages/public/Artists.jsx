@@ -117,7 +117,7 @@ const Artists = () => {
 
       {/* Search bar */}
       <div className="bg-cream py-4">
-        <div className="max-w-285 mx-auto px-4 flex justify-end">
+        <div className="max-w-250 mx-auto px-4 flex justify-end">
           <div className="relative w-70">
             <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-[#aaa] text-[0.78rem]" />
             <input

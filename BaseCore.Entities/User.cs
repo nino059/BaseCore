@@ -21,6 +21,5 @@ namespace BaseCore.Entities
         public string? Bio { get; set; }
         public int UserType { get; set; }
         public DateTime Created { get; set; } = DateTime.Now;
-        public virtual ICollection<UserRole> UserRoles { get; set; }
     }
 }

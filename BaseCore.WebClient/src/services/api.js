@@ -12,6 +12,11 @@ const api = axios.create({
 // Đọc token từ localStorage (remember me) hoặc sessionStorage
 api.interceptors.request.use(
     (config) => {
+        // FormData: để trình duyệt tự gắn boundary (tránh gửi nhầm application/json → upload 500)
+        if (config.data instanceof FormData) {
+            delete config.headers['Content-Type'];
+        }
+
         let token = localStorage.getItem('token') || sessionStorage.getItem('token');
         // Bỏ qua token "undefined" (chuỗi) do session cũ lưu sai
         if (!token || token === 'undefined') {
@@ -36,9 +41,13 @@ api.interceptors.response.use(
         const url = error.config?.url || '';
         const isAuthEndpoint = url.includes('/auth/login') || url.includes('/auth/register');
         if (error.response?.status === 401 && !isAuthEndpoint) {
+            const hadSession = localStorage.getItem('token') || sessionStorage.getItem('token');
             localStorage.removeItem('token'); localStorage.removeItem('user');
             sessionStorage.removeItem('token'); sessionStorage.removeItem('user');
-            window.location.href = '/login';
+            // Tránh reload vô hạn khi đã mất phiên — chỉ chuyển login nếu trước đó có token
+            if (hadSession && hadSession !== 'undefined' && !window.location.pathname.startsWith('/login')) {
+                window.location.replace('/login');
+            }
         }
         return Promise.reject(error);
     }
@@ -61,10 +70,14 @@ export const userApi = {
     uploadAvatar: (id, file) => {
         const form = new FormData();
         form.append('file', file);
-        return api.post(`/users/${id}/avatar`, form, {
-            headers: { 'Content-Type': undefined },
-        });
+        return api.post(`/users/${id}/avatar`, form);
     },
+
+    getAddresses:    (userId)       => api.get(`/users/${userId}/addresses`),
+    createAddress:   (userId, data) => api.post(`/users/${userId}/addresses`, data),
+    updateAddress:   (userId, addressId, data) => api.put(`/users/${userId}/addresses/${addressId}`, data),
+    deleteAddress:   (userId, addressId) => api.delete(`/users/${userId}/addresses/${addressId}`),
+    setDefaultAddress: (userId, addressId) => api.put(`/users/${userId}/addresses/${addressId}/default`),
 };
 
 export const productApi = {
@@ -86,9 +99,7 @@ export const productApi = {
     uploadImage: (file) => {
         const form = new FormData();
         form.append('file', file);
-        return api.post('/products/upload-image', form, {
-            headers: { 'Content-Type': undefined },
-        });
+        return api.post('/products/upload-image', form);
     },
 };
 
@@ -125,9 +136,7 @@ export const blogApi = {
     uploadImage: (file) => {
         const form = new FormData();
         form.append('file', file);
-        return api.post('/products/upload-image', form, {
-            headers: { 'Content-Type': undefined },
-        });
+        return api.post('/products/upload-image', form);
     },
 };
 
