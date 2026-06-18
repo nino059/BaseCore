@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
 import { useAuthModal } from '../../contexts/AuthModalContext';
 import NotificationBell from '../common/NotificationBell';
-import NavActionIcon from '../common/NavActionIcon';
+import NavActionIcon, { CartGlyph } from '../common/NavActionIcon';
 
 const NAV_ITEMS = [
   { to: '/',        label: 'Trang chủ' },
@@ -129,8 +129,8 @@ const PublicLayout = ({ children }) => {
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <NotificationBell theme="dark" />
                 {!isAdmin && !isArtist && (
-                  <NavActionIcon theme="dark" count={cartCount} title="Giỏ hàng" href="/cart">
-                    <i className="fas fa-shopping-bag" style={{ fontSize: '1rem', lineHeight: 1 }} />
+                  <NavActionIcon theme="dark" count={cartCount} href="/cart" badgeBorderless>
+                    <CartGlyph active={cartCount > 0} />
                   </NavActionIcon>
                 )}
               </div>

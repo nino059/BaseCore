@@ -16,6 +16,30 @@ export const NAV_ACTION_THEME = {
   },
 };
 
+export function CartGlyph({ size = 19, active = false, color = 'currentColor' }) {
+  const stroke = active ? 'var(--brand)' : color;
+  const fill = active ? 'var(--brand)' : color;
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path
+        d="M2.4 3.8h1.7M4.1 3.8l1.9 8.6h8.2l1.7-6.8H5.8"
+        stroke={stroke}
+        strokeWidth="1.45"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M6.1 12.4h8.8"
+        stroke={stroke}
+        strokeWidth="1.45"
+        strokeLinecap="round"
+      />
+      <circle cx="7.35" cy="15.35" r="1.4" fill={fill} />
+      <circle cx="13.65" cy="15.35" r="1.4" fill={fill} />
+    </svg>
+  );
+}
+
 export function BellGlyph({ size = 17, active = false, color = 'currentColor' }) {
   const fill = active ? 'var(--brand)' : color;
   return (
@@ -41,6 +65,7 @@ const NavActionIcon = ({
   href,
   children,
   showAlertRing = false,
+  badgeBorderless = false,
 }) => {
   const t = NAV_ACTION_THEME[theme] || NAV_ACTION_THEME.dark;
   const hasBadge = count > 0;
@@ -90,8 +115,8 @@ const NavActionIcon = ({
       justifyContent: 'center',
       padding: count > maxCount ? '0 4px' : 0,
       lineHeight: 1,
-      border: t.badgeBorder,
-      boxShadow: '0 1px 4px rgba(139,108,74,0.35)',
+      border: badgeBorderless ? 'none' : t.badgeBorder,
+      boxShadow: badgeBorderless ? '0 2px 6px rgba(139,108,74,0.28)' : '0 1px 4px rgba(139,108,74,0.35)',
     }}>
       {count > 99 ? '99+' : count > maxCount ? `${maxCount}+` : count}
     </span>

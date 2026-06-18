@@ -105,17 +105,6 @@ const ProductDetail = () => {
     <PublicLayout>
       <div style={{ background: '#faf8f5', minHeight: '80vh' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 20px' }}>
-
-          <nav style={{ marginBottom: 40 }}>
-            <ol style={{ display: 'flex', gap: 8, listStyle: 'none', padding: 0, margin: 0, fontSize: '0.8rem', color: '#aaa', flexWrap: 'wrap', alignItems: 'center' }}>
-              <li><Link to="/" style={{ color: '#767676', textDecoration: 'none' }}>Trang chủ</Link></li>
-              <li style={{ color: '#ddd' }}>/</li>
-              <li><Link to="/shop" style={{ color: '#767676', textDecoration: 'none' }}>Cửa hàng</Link></li>
-              <li style={{ color: '#ddd' }}>/</li>
-              <li style={{ color: 'var(--ink)' }}>{product.name}</li>
-            </ol>
-          </nav>
-
           <div className="grid grid-cols-1 md:grid-cols-12">
             <div className="md:col-span-5" style={{ marginBottom: 32 }}>
               <div
@@ -265,8 +254,8 @@ const ProductDetail = () => {
               )}
 
               {!isArtist && (
-              <Link to="/cart" style={{ display: 'block', marginTop: 14, textAlign: 'center', fontSize: '0.82rem', color: '#aaa', textDecoration: 'none', letterSpacing: '0.04em' }}>
-                <i className="fas fa-arrow-left mr-1"></i> Xem giỏ hàng
+              <Link to="/cart" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 6, marginTop: 14, fontSize: '0.82rem', color: '#aaa', textDecoration: 'none', letterSpacing: '0.04em' }}>
+                Xem giỏ hàng <i className="fas fa-arrow-right"></i>
               </Link>
               )}
             </div>
@@ -306,12 +295,6 @@ const ProductDetail = () => {
           >
             ×
           </button>
-          <div style={{
-            position: 'absolute', bottom: 26, left: '50%', transform: 'translateX(-50%)',
-            fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.08em',
-          }}>
-            Nhấn ESC hoặc click ngoài để đóng
-          </div>
         </div>
       )}
     </PublicLayout>

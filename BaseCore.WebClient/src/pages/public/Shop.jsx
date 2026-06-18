@@ -238,59 +238,6 @@ const Shop = () => {
 
   const LeftFilters = () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-      {/* Sắp xếp - phía trên danh mục (cột bên trái) */}
-      <div style={{ padding: '14px 20px 8px' }}>
-        <div style={{ fontWeight: 700, fontSize: '0.78rem', color: 'var(--brand-dark)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>
-          <i className="fas fa-sort" style={{ color: 'var(--brand)', fontSize: '0.88rem' }} /> SẮP XẾP
-        </div>
-        <select 
-          value={sort} 
-          onChange={e => { setSort(e.target.value); reset(); }}
-          style={{ 
-            width: '100%',
-            padding: '8px 10px', 
-            border: '1.5px solid #e8e4df', 
-            fontSize: '0.82rem', 
-            background: 'white', 
-            color: 'var(--ink)', 
-            cursor: 'pointer', 
-            outline: 'none'
-          }}>
-          {SORTS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-        </select>
-      </div>
-
-      {/* Trạng thái */}
-      <div style={{ padding: '14px 20px' }}>
-        <div style={{ fontWeight: 700, fontSize: '0.78rem', color: 'var(--brand-dark)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>
-          <i className="fas fa-filter" style={{ color: 'var(--brand)', fontSize: '0.88rem' }} /> TRẠNG THÁI
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <button
-            onClick={() => { setStatus(''); patchUrl({ status: '' }); reset(); }}
-            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: !status ? 700 : 400, fontSize: '0.88rem', background: !status ? '#f0ece8' : 'transparent', color: !status ? 'var(--ink)' : '#767676' }}
-          >
-            <span>Tất cả</span>
-            <span style={{ fontSize: '0.75rem', color: !status ? 'var(--brand-dark)' : '#aaa', background: !status ? '#e8e4df' : '#f5f5f5', padding: '1px 8px', fontWeight: 600 }}>{all.length}</span>
-          </button>
-          {statusesWithCount.map(opt => (
-            <button
-              key={opt.value}
-              onClick={() => {
-                const next = status === opt.value ? '' : opt.value;
-                setStatus(next);
-                patchUrl({ status: next });
-                reset();
-              }}
-              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: status === opt.value ? 700 : 400, fontSize: '0.88rem', background: status === opt.value ? '#f0ece8' : 'transparent', color: status === opt.value ? 'var(--ink)' : '#767676' }}
-            >
-              <span>{opt.label}</span>
-              <span style={{ fontSize: '0.75rem', color: status === opt.value ? 'var(--brand-dark)' : '#aaa', background: status === opt.value ? '#e8e4df' : '#f5f5f5', padding: '1px 8px', fontWeight: 600 }}>{opt.count}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Danh mục */}
       <div style={{ padding: '14px 20px' }}>
         <div style={{ fontWeight: 700, fontSize: '0.78rem', color: 'var(--brand-dark)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>
@@ -334,6 +281,7 @@ const Shop = () => {
               style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: !theme ? 700 : 400, fontSize: '0.88rem', background: !theme ? '#f0ece8' : 'transparent', color: !theme ? 'var(--ink)' : '#767676' }}
             >
               <span>Tất cả</span>
+              <span style={{ fontSize: '0.75rem', color: !theme ? 'var(--brand-dark)' : '#aaa', background: !theme ? '#e8e4df' : '#f5f5f5', padding: '1px 8px', fontWeight: 600 }}>{all.length}</span>
             </button>
             {themesWithCount.map(t => (
               <button
@@ -358,6 +306,60 @@ const Shop = () => {
 
 const RightFilters = () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+      {/* Sắp xếp */}
+      <div style={{ padding: '14px 20px 8px' }}>
+        <div style={{ fontWeight: 700, fontSize: '0.78rem', color: 'var(--brand-dark)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>
+          <i className="fas fa-sort" style={{ color: 'var(--brand)', fontSize: '0.88rem' }} /> SẮP XẾP
+        </div>
+        <select
+          value={sort}
+          onChange={e => { setSort(e.target.value); reset(); }}
+          style={{
+            width: '100%',
+            padding: '8px 10px',
+            border: '1.5px solid #e8e4df',
+            fontSize: '0.82rem',
+            background: 'white',
+            color: 'var(--ink)',
+            cursor: 'pointer',
+            outline: 'none',
+          }}
+        >
+          {SORTS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+        </select>
+      </div>
+
+      {/* Trạng thái */}
+      <div style={{ padding: '14px 20px' }}>
+        <div style={{ fontWeight: 700, fontSize: '0.78rem', color: 'var(--brand-dark)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>
+          <i className="fas fa-filter" style={{ color: 'var(--brand)', fontSize: '0.88rem' }} /> TRẠNG THÁI
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <button
+            onClick={() => { setStatus(''); patchUrl({ status: '' }); reset(); }}
+            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: !status ? 700 : 400, fontSize: '0.88rem', background: !status ? '#f0ece8' : 'transparent', color: !status ? 'var(--ink)' : '#767676' }}
+          >
+            <span>Tất cả</span>
+            <span style={{ fontSize: '0.75rem', color: !status ? 'var(--brand-dark)' : '#aaa', background: !status ? '#e8e4df' : '#f5f5f5', padding: '1px 8px', fontWeight: 600 }}>{all.length}</span>
+          </button>
+          {statusesWithCount.map(opt => (
+            <button
+              key={opt.value}
+              onClick={() => {
+                const next = status === opt.value ? '' : opt.value;
+                setStatus(next);
+                patchUrl({ status: next });
+                reset();
+              }}
+              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: status === opt.value ? 700 : 400, fontSize: '0.88rem', background: status === opt.value ? '#f0ece8' : 'transparent', color: status === opt.value ? 'var(--ink)' : '#767676' }}
+            >
+              <span>{opt.label}</span>
+              <span style={{ fontSize: '0.75rem', color: status === opt.value ? 'var(--brand-dark)' : '#aaa', background: status === opt.value ? '#e8e4df' : '#f5f5f5', padding: '1px 8px', fontWeight: 600 }}>{opt.count}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Khoảng giá */}
       <div style={{ padding: '16px 20px' }}>
         <div style={{ fontWeight: 700, fontSize: '0.78rem', color: 'var(--brand-dark)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>
@@ -622,7 +624,7 @@ const RightFilters = () => (
 
           <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
 
-            {/* Left: Danh mục */}
+            {/* Left: Danh mục + Chủ đề */}
             <aside className="sp-sidebar-desktop" style={{ width: 200, flexShrink: 0, background: 'white', overflow: 'hidden', border: '1px solid #f0ece8', position: 'sticky', top: 84, alignSelf: 'flex-start' }}>
               {LeftFilters()}
             </aside>
@@ -763,11 +765,6 @@ const RightFilters = () => (
                                 {p.categoryName}
                               </div>
                             )}
-                            {statusLabel && (
-                              <div style={{ position: 'absolute', top: 10, right: 10, background: p.status === 'Sold' ? 'rgba(153,27,27,0.88)' : 'rgba(146,64,14,0.88)', color: 'white', padding: '3px 10px', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.04em' }}>
-                                {statusLabel}
-                              </div>
-                            )}
                             {p.stock === 0 && (
                               <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <span style={{ background: 'white', color: 'var(--ink)', padding: '6px 16px', fontWeight: 700, fontSize: '0.75rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Hết hàng</span>
@@ -834,7 +831,7 @@ const RightFilters = () => (
 
             </div>
 
-            {/* Right: Giá + Kích thước */}
+            {/* Right: Sắp xếp + Trạng thái + Giá + Kích thước */}
             <aside className="sp-sidebar-desktop" style={{ width: 220, flexShrink: 0, background: 'white', overflow: 'hidden', border: '1px solid #f0ece8', position: 'sticky', top: 84, alignSelf: 'flex-start' }}>
               {RightFilters()}
             </aside>
