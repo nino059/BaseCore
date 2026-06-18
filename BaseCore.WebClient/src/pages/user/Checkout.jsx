@@ -229,7 +229,7 @@ const Checkout = () => {
   return (
     <PublicLayout>
       <div style={{ background: '#faf8f5', minHeight: '80vh' }}>
-        <div className="max-w-[1140px] mx-auto px-4 py-5">
+        <div className="max-w-285 mx-auto px-4 py-5">
 
           <div style={{ marginBottom: 36 }}>
             <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.18em', color: 'var(--brand)', textTransform: 'uppercase', marginBottom: 8 }}>
@@ -250,8 +250,8 @@ const Checkout = () => {
           )}
 
           <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              <div className="lg:col-span-7 mb-4">
+            <div className="grid grid-cols-12 gap-6">
+              <div className="col-span-7 mb-4">
                 <div style={{ background: 'white', padding: '28px 32px', boxShadow: '0 2px 16px rgba(0,0,0,0.04)' }}>
                   <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.16em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 24 }}>
                     Thông tin giao hàng
@@ -272,7 +272,7 @@ const Checkout = () => {
                     </div>
                   )}
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                  <div className="grid grid-cols-2 gap-x-6">
                     <div className="mb-4">
                       <Label>Họ và tên *</Label>
                       <input name="fullName" value={form.fullName} onChange={handleChange} required
@@ -297,7 +297,7 @@ const Checkout = () => {
                       onBlur={e => e.target.style.borderColor = '#e8e4df'} />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                  <div className="grid grid-cols-2 gap-x-6">
                     <div className="mb-4">
                       <Label>Xã / Phường</Label>
                       <input name="ward" value={form.ward} onChange={handleChange}
@@ -364,7 +364,7 @@ const Checkout = () => {
                 </div>
               </div>
 
-              <div className="lg:col-span-5">
+              <div className="col-span-5">
                 <div style={{ background: 'white', padding: '28px 32px', boxShadow: '0 2px 16px rgba(0,0,0,0.04)', position: 'sticky', top: 80 }}>
                   <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.16em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 20 }}>
                     Đơn hàng ({selectedCount} sản phẩm{artistGroups.length > 1 ? ` · ${artistGroups.length} đơn` : ''})

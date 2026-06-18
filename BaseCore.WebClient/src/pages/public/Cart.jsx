@@ -20,7 +20,7 @@ const CartCheckbox = ({ checked, indeterminate, onChange, ariaLabel }) => {
       checked={checked}
       onChange={onChange}
       aria-label={ariaLabel}
-      className="w-[18px] h-[18px] accent-brand shrink-0 cursor-pointer"
+      className="w-4.5 h-4.5 accent-brand shrink-0 cursor-pointer"
     />
   );
 };
@@ -74,7 +74,7 @@ const Cart = () => {
     <PublicLayout>
       <div className="bg-cream min-h-[80vh]">
         <div className="bg-white border-b border-line pt-7 pb-6">
-          <div className="max-w-[1140px] mx-auto px-4">
+          <div className="max-w-285 mx-auto px-4">
             <h1
               className="text-ink font-medium text-[clamp(1.9rem,4.2vw,2.7rem)] tracking-[0.01em] m-0 leading-[1.15]"
               style={{ fontFamily: "'Playfair Display', serif" }}
@@ -84,19 +84,19 @@ const Cart = () => {
           </div>
         </div>
 
-        <div className="max-w-[1140px] mx-auto px-4 py-8">
+        <div className="max-w-285 mx-auto px-4 py-8">
           {items.length === 0 ? (
             <div className="text-center py-20 px-5 bg-white">
               <p className="text-[2.5rem] text-line mb-5">✦</p>
               <h5 className="font-light text-muted mb-2">Giỏ hàng của bạn đang trống</h5>
               <p className="text-[#aaa] mb-7 text-[0.9rem]">Khám phá các tác phẩm nghệ thuật độc đáo</p>
-              <Link to="/shop" className="inline-block px-8 py-[13px] bg-ink text-white text-[0.78rem] font-bold tracking-[0.14em] uppercase no-underline">
+              <Link to="/shop" className="inline-block px-8 py-3.25 bg-ink text-white text-[0.78rem] font-bold tracking-[0.14em] uppercase no-underline">
                 Khám phá cửa hàng
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
+            <div className="grid grid-cols-3 gap-6">
+              <div className="col-span-2">
                 <div className="bg-white overflow-hidden shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
                   <div className="flex items-center gap-3 py-3.5 px-5 border-b border-[#f3f4f6]">
                     <CartCheckbox
@@ -117,7 +117,7 @@ const Cart = () => {
 
                     return (
                       <div key={group.key} className={gIdx < artistGroups.length - 1 ? 'border-b border-[#f0f0f0]' : ''}>
-                        <div className="flex items-center gap-3 py-3 px-5 bg-[#faf8f5] border-b border-[#f3f4f6]">
+                        <div className="flex items-center gap-3 py-3 px-5 bg-cream border-b border-[#f3f4f6]">
                           <CartCheckbox
                             checked={groupAllSelected}
                             indeterminate={groupSomeSelected}
@@ -158,7 +158,7 @@ const Cart = () => {
                                 to={`/product/${item.id}`}
                                 className="flex items-center gap-4 flex-1 min-w-0 no-underline text-inherit group"
                               >
-                                <div className="w-[70px] h-[70px] bg-[#f0ece6] overflow-hidden shrink-0">
+                                <div className="w-17.5 h-17.5 bg-[#f0ece6] overflow-hidden shrink-0">
                                   {toImg(item.imageUrl)
                                     ? <img src={toImg(item.imageUrl)} alt={item.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
                                     : <div className="w-full h-full flex items-center justify-center">
@@ -182,7 +182,7 @@ const Cart = () => {
                                 </div>
                               </Link>
 
-                              <div className="font-bold text-ink min-w-[90px] text-right shrink-0">
+                              <div className="font-bold text-ink min-w-22.5 text-right shrink-0">
                                 {fmt(lineTotal)}
                               </div>
 
@@ -212,14 +212,14 @@ const Cart = () => {
                 </div>
               </div>
 
-              <div className="lg:col-span-1">
+              <div className="col-span-1">
                 <div className="bg-white p-7 shadow-[0_2px_16px_rgba(0,0,0,0.05)] sticky top-20">
                   <p className="text-[0.68rem] font-bold tracking-[0.18em] text-brand uppercase mb-5">
                     Tóm tắt đơn hàng
                   </p>
 
                   {selectedCount > 0 && selectedArtistGroups.length > 1 && (
-                    <p className="text-[0.75rem] text-brand-dark bg-[#faf8f5] px-3 py-2 mb-4 leading-relaxed">
+                    <p className="text-[0.75rem] text-brand-dark bg-cream px-3 py-2 mb-4 leading-relaxed">
                       <i className="fas fa-info-circle mr-1.5" />
                       Tranh từ nhiều họa sĩ sẽ được tách thành các đơn riêng để giao hàng độc lập.
                     </p>
@@ -242,7 +242,7 @@ const Cart = () => {
                     </p>
                   )}
 
-                  <div className="border-t-[1.5px] border-line pt-[18px] mb-6 flex justify-between font-semibold text-base">
+                  <div className="border-t-[1.5px] border-line pt-4.5 mb-6 flex justify-between font-semibold text-base">
                     <span className="text-ink">Tổng cộng</span>
                     <span className="text-ink font-bold">{fmt(grandTotal)}</span>
                   </div>
@@ -251,7 +251,7 @@ const Cart = () => {
                     type="button"
                     onClick={handleCheckout}
                     disabled={selectedCount === 0}
-                    className={`w-full py-[13px] border-none text-[0.78rem] font-bold tracking-[0.14em] uppercase ${
+                    className={`w-full py-3.25 border-none text-[0.78rem] font-bold tracking-[0.14em] uppercase ${
                       selectedCount === 0
                         ? 'bg-[#d1d5db] text-white cursor-not-allowed'
                         : 'bg-ink text-white cursor-pointer'

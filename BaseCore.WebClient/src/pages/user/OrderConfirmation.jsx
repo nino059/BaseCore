@@ -46,9 +46,9 @@ const OrderCard = ({ order }) => {
       </div>
 
       {items.length > 0 && (
-        <div className="border-t-[1.5px] border-line pt-[18px] mb-3">
+        <div className="border-t-[1.5px] border-line pt-4.5 mb-3">
           {items.map((item, idx) => (
-            <div key={idx} className="flex justify-between py-[9px] text-[0.88rem] border-b border-[#f9f6f2]">
+            <div key={idx} className="flex justify-between py-2.25 text-[0.88rem] border-b border-[#f9f6f2]">
               <span className="text-ink font-light">
                 {item.productName || item.ProductName || item.name || item.Name}
                 <span className="text-[#aaa] ml-2">×{item.quantity ?? item.Quantity ?? item.qty ?? 1}</span>
@@ -122,7 +122,7 @@ const OrderConfirmation = () => {
         <div className="text-center px-5">
           <p className="text-[2rem] text-[#ccc] mb-4">✦</p>
           <p className="text-muted mb-6 font-light">{error || 'Không tìm thấy đơn hàng.'}</p>
-          <Link to="/my-orders" className="inline-block px-8 py-[13px] bg-ink text-white no-underline text-[0.78rem] font-bold tracking-[0.14em] uppercase">
+          <Link to="/my-orders" className="inline-block px-8 py-3.25 bg-ink text-white no-underline text-[0.78rem] font-bold tracking-[0.14em] uppercase">
             Xem đơn hàng
           </Link>
         </div>
@@ -136,7 +136,7 @@ const OrderConfirmation = () => {
   return (
     <PublicLayout>
       <div className="bg-cream min-h-[80vh]">
-        <div className={`mx-auto px-5 py-15 ${multi ? 'max-w-[860px]' : 'max-w-[640px]'}`}>
+        <div className={`mx-auto px-5 py-15 ${multi ? 'max-w-215' : 'max-w-160'}`}>
 
           <div className="text-center mb-12">
             <div className="w-16 h-16 mx-auto mb-6 bg-ink flex items-center justify-center">
@@ -168,10 +168,10 @@ const OrderConfirmation = () => {
           )}
 
           <div className="flex gap-3 flex-wrap">
-            <Link to="/my-orders" state={{ fromConfirmation: true }} className="flex-1 text-center py-[13px] bg-ink text-white no-underline text-[0.78rem] font-bold tracking-[0.14em] uppercase">
+            <Link to="/my-orders" state={{ fromConfirmation: true }} className="flex-1 text-center py-3.25 bg-ink text-white no-underline text-[0.78rem] font-bold tracking-[0.14em] uppercase">
               Xem đơn hàng của tôi
             </Link>
-            <Link to="/shop" className="flex-1 text-center py-[13px] bg-transparent border-[1.5px] border-ink text-ink no-underline text-[0.78rem] font-bold tracking-[0.14em] uppercase">
+            <Link to="/shop" className="flex-1 text-center py-3.25 bg-transparent border-[1.5px] border-ink text-ink no-underline text-[0.78rem] font-bold tracking-[0.14em] uppercase">
               Tiếp tục mua sắm
             </Link>
           </div>

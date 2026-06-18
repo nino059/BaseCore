@@ -229,7 +229,7 @@ const ArtistDetail = () => {
         {/* Decorative grid */}
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(200,169,122,0.05) 40px), repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(200,169,122,0.05) 40px)', pointerEvents: 'none' }} />
 
-        <div className="max-w-[1140px] mx-auto px-4" style={{ position: 'relative', padding: '80px 0 72px', animation: 'fadeUp 0.6s ease' }}>
+        <div className="max-w-285 mx-auto px-4" style={{ position: 'relative', padding: '80px 0 72px', animation: 'fadeUp 0.6s ease' }}>
           
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: 40, flexWrap: 'wrap' }}>
             {/* Label */}
@@ -262,7 +262,7 @@ const ArtistDetail = () => {
           BIO — 2 col: portrait (left) + info (right)
       ═══════════════════════════════════════════ */}
       <div style={{ background: 'white', borderBottom: '1px solid #e8e4df' }}>
-        <div className="max-w-[1140px] mx-auto px-4" style={{ padding: '64px 0 60px' }}>
+        <div className="max-w-285 mx-auto px-4" style={{ padding: '64px 0 60px' }}>
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'minmax(0,1fr) minmax(0,2fr)',
@@ -365,7 +365,7 @@ const ArtistDetail = () => {
           WORKS — painting grid
       ═══════════════════════════════════════════ */}
       <div style={{ background: '#faf8f5', padding: '64px 0 88px' }}>
-        <div className="max-w-[1140px] mx-auto px-4">
+        <div className="max-w-285 mx-auto px-4">
 
           {/* Section header */}
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 40, flexWrap: 'wrap', gap: 12 }}>
@@ -403,7 +403,7 @@ const ArtistDetail = () => {
           Footer CTA — back to artists
       ═══════════════════════════════════════════ */}
       <div style={{ background: 'white', borderTop: '1px solid #e8e4df', padding: '40px 0' }}>
-        <div className="max-w-[1140px] mx-auto px-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+        <div className="max-w-285 mx-auto px-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
           <div>
             <p style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.2em', color: 'var(--brand)', textTransform: 'uppercase', margin: '0 0 6px' }}>Khám phá thêm</p>
             <p style={{ fontWeight: 300, color: 'var(--ink)', fontSize: '1.05rem', margin: 0 }}>Các họa sĩ khác trong gallery</p>

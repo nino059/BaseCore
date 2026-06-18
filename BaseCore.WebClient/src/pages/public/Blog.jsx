@@ -24,7 +24,7 @@ const CatBadge = ({ cat, small }) => {
   const s = CAT_STYLE[cat] || { bg: '#f0ece8', color: 'var(--brand-dark)' };
   return (
     <span
-      className={`font-bold ${small ? 'text-[0.68rem] px-2 py-0.5' : 'text-[0.72rem] px-[11px] py-[3px]'}`}
+      className={`font-bold ${small ? 'text-[0.68rem] px-2 py-0.5' : 'text-[0.72rem] px-2.75 py-0.75'}`}
       style={{ background: s.bg, color: s.color }}
     >
       {cat || 'Khác'}
@@ -120,7 +120,7 @@ const BlogPostCard = ({ post, artistMap }) => {
         <div className="w-[62%] min-w-0 h-full px-4 sm:px-5 py-3.5 flex flex-col overflow-hidden">
           <div className="flex gap-2 mb-2 flex-wrap items-center">
             <ArtistAvatar post={post} artistMap={artistMap} size={30} />
-            <span className="text-[0.76rem] text-brand-dark font-semibold truncate max-w-[120px] sm:max-w-none">{authorName}</span>
+            <span className="text-[0.76rem] text-brand-dark font-semibold truncate max-w-30 sm:max-w-none">{authorName}</span>
             <CatBadge cat={post.category || post.Category} small />
             {date && <span className="text-[0.72rem] text-[#aaa]">{fmtDate(date)}</span>}
           </div>
@@ -193,7 +193,7 @@ const Blog = () => {
       <div className="bg-cream min-h-[80vh]">
 
         <div className="bg-white border-b border-line pt-7 pb-6">
-          <div className="max-w-[1140px] mx-auto px-4">
+          <div className="max-w-285 mx-auto px-4">
             <h1
               className="text-ink font-medium text-[clamp(1.9rem,4.2vw,2.7rem)] tracking-[0.01em] m-0 leading-[1.15]"
               style={{ fontFamily: "'Playfair Display', serif" }}
@@ -204,15 +204,15 @@ const Blog = () => {
         </div>
 
         <div className="bg-cream py-4">
-          <div className="max-w-[1000px] mx-auto px-4 flex justify-end">
-            <div className="relative w-[280px]">
+          <div className="max-w-250 mx-auto px-4 flex justify-end">
+            <div className="relative w-70">
               <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-[#aaa] text-[0.78rem]" />
               <input
                 type="text"
                 placeholder="Tìm bài viết hoặc tác giả..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-[34px] pr-8 py-2 border border-line focus:border-ink text-[0.82rem] outline-none text-ink bg-white"
+                className="w-full pl-8.5 pr-8 py-2 border border-line focus:border-ink text-[0.82rem] outline-none text-ink bg-white"
               />
               {search && (
                 <button
@@ -227,7 +227,7 @@ const Blog = () => {
           </div>
         </div>
 
-        <div className="max-w-[1140px] mx-auto px-4 pt-0 pb-16">
+        <div className="max-w-285 mx-auto px-4 pt-0 pb-16">
 
           {loading && (
             <div className="text-center py-20 text-[#aaa]">

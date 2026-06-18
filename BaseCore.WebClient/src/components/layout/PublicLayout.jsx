@@ -19,7 +19,6 @@ const PublicLayout = ({ children }) => {
   const { openLogin, openRegister } = useAuthModal();
   const navigate = useNavigate();
   const location = useLocation();
-  const [navOpen, setNavOpen]   = useState(false);
   const [dropOpen, setDropOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const dropRef = useRef(null);
@@ -31,7 +30,7 @@ const PublicLayout = ({ children }) => {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  useEffect(() => { setNavOpen(false); setDropOpen(false); }, [location]);
+  useEffect(() => { setDropOpen(false); }, [location]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 4);
@@ -71,7 +70,7 @@ const PublicLayout = ({ children }) => {
         boxShadow: (isHome && !scrolled) ? 'none' : '0 2px 24px rgba(0,0,0,0.25)',
         transition: 'background 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease',
       }}>
-        <div className="max-w-[1140px] mx-auto px-4" style={{
+        <div className="max-w-285 mx-auto px-4" style={{
           display: 'flex', alignItems: 'center', height: 64,
           padding: '0 15px', position: 'relative',
         }}>
@@ -89,8 +88,7 @@ const PublicLayout = ({ children }) => {
           </Link>
 
           {/* ── Desktop nav links (absolute centered) ── */}
-          <ul className="hidden lg:flex"
-            style={{
+          <ul style={{
               listStyle: 'none', margin: 0, padding: 0,
               position: 'absolute', left: '50%', transform: 'translateX(-50%)',
               display: 'flex', alignItems: 'stretch', height: 64, gap: 0,
@@ -243,60 +241,8 @@ const PublicLayout = ({ children }) => {
                 </button>
               </div>
             )}
-
-            {/* Mobile hamburger */}
-            <button className="lg:hidden" onClick={() => setNavOpen(o => !o)}
-              style={{ background: 'none', border: 'none', color: 'white', fontSize: '1.15rem', cursor: 'pointer', padding: '4px', marginLeft: 4 }}>
-              <i className={navOpen ? 'fas fa-times' : 'fas fa-bars'}></i>
-            </button>
           </div>
         </div>
-
-        {/* Mobile menu */}
-        {navOpen && (
-          <div className="lg:hidden" style={{ background: 'rgba(20,16,12,0.98)', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-            <div className="max-w-[1140px] mx-auto px-4" style={{ paddingTop: 8, paddingBottom: 16 }}>
-              {NAV_ITEMS.map(({ to, label }) => (
-                <Link key={to} to={to} style={{
-                  display: 'block', padding: '11px 0',
-                  color: isActive(to) ? 'var(--brand)' : 'rgba(255,255,255,0.7)',
-                  fontWeight: isActive(to) ? 700 : 400,
-                  textDecoration: 'none', fontSize: '0.88rem',
-                  letterSpacing: '0.1em', textTransform: 'uppercase',
-                  borderBottom: '1px solid rgba(255,255,255,0.07)',
-                }}>
-                  {label}
-                </Link>
-              ))}
-
-              {user ? (
-                <div style={{ marginTop: 8 }}>
-                  {!isAdmin && !isArtist && (
-                    <Link to="/cart" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 0', color: 'rgba(255,255,255,0.7)', textDecoration: 'none', fontSize: '0.88rem', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-                      <span>Giỏ hàng</span>
-                      {cartCount > 0 && <span style={{ background: 'var(--brand)', color: 'white', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.72rem', fontWeight: 700 }}>{cartCount}</span>}
-                    </Link>
-                  )}
-                  <Link to={isAdmin ? '/dashboard' : isArtist ? '/artist/dashboard' : '/my-orders'} style={{ display: 'block', padding: '11px 0', color: 'rgba(255,255,255,0.7)', textDecoration: 'none', fontSize: '0.88rem', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-                    {isAdmin ? 'Quản lý hệ thống' : isArtist ? 'Trang họa sĩ' : 'Đơn hàng của tôi'}
-                  </Link>
-                  <button onClick={handleLogout} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '11px 0', color: '#ef4444', background: 'none', border: 'none', fontSize: '0.88rem', cursor: 'pointer' }}>
-                    Đăng xuất
-                  </button>
-                </div>
-              ) : (
-                <div style={{ marginTop: 14, display: 'flex', gap: 8 }}>
-                  <button onClick={openLogin} style={{ flex: 1, padding: '10px', textAlign: 'center', color: 'white', border: '1px solid rgba(255,255,255,0.35)', background: 'none', fontSize: '0.82rem', fontWeight: 500, cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                    Đăng nhập
-                  </button>
-                  <button onClick={openRegister} style={{ flex: 1, padding: '10px', textAlign: 'center', color: 'white', background: 'var(--brand)', border: '1px solid var(--brand)', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                    Đăng ký
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </nav>
 
       {/* ── CONTENT ────────────────────────────────────────── */}
@@ -304,11 +250,11 @@ const PublicLayout = ({ children }) => {
 
       {/* ── FOOTER ─────────────────────────────────────────── */}
       <footer style={{ background: 'var(--ink)' }}>
-        <div className="max-w-[1140px] mx-auto px-4 py-5">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-x-6">
+        <div className="max-w-285 mx-auto px-4 py-5">
+          <div className="grid grid-cols-12 gap-x-6">
 
             {/* Brand */}
-            <div className="md:col-span-4 mb-4">
+            <div className="col-span-4 mb-4">
               <div style={{ marginBottom: 18 }}>
                 <div style={{ fontWeight: 800, fontSize: '1rem', color: 'white', letterSpacing: '0.16em' }}>
                   ART<span style={{ color: 'var(--brand)' }}>HENTIC</span>
@@ -331,7 +277,7 @@ const PublicLayout = ({ children }) => {
             </div>
 
             {/* Explore */}
-            <div className="md:col-span-2 mb-4">
+            <div className="col-span-2 mb-4">
               <h6 style={{ color: 'white', fontWeight: 700, fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 18 }}>
                 Khám phá
               </h6>
@@ -354,7 +300,7 @@ const PublicLayout = ({ children }) => {
             </div>
 
             {/* Account */}
-            <div className="md:col-span-2 mb-4">
+            <div className="col-span-2 mb-4">
               <h6 style={{ color: 'white', fontWeight: 700, fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 18 }}>
                 Tài khoản
               </h6>
@@ -377,7 +323,7 @@ const PublicLayout = ({ children }) => {
             </div>
 
             {/* Contact */}
-            <div className="md:col-span-4 mb-4">
+            <div className="col-span-4 mb-4">
               <h6 style={{ color: 'white', fontWeight: 700, fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 18 }}>
                 Liên hệ
               </h6>

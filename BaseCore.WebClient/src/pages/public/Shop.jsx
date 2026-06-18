@@ -55,7 +55,6 @@ const Shop = () => {
   const [categories, setCats]   = useState([]);
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Applied filters
   const [search,     setSearch]     = useState('');
@@ -217,8 +216,6 @@ const Shop = () => {
     setSearchParams({}, { replace: true });
     reset();
   };
-
-  const activeCount = [search, categoryId, theme, status, minPrice || maxPrice, minSize || maxSize].filter(Boolean).length + (sort !== 'default' ? 1 : 0);
 
   const priceChipLabel = formatPriceChipLabel(minPrice, maxPrice, fmt);
   const sizeChipLabel = formatSizeChipLabel(minSize, maxSize);
@@ -558,15 +555,6 @@ const RightFilters = () => (
         .sp-add:hover { opacity: 0.85; }
         .sp-artist-link { color: var(--brand-dark); text-decoration: none; }
         .sp-artist-link:hover { text-decoration: underline; text-underline-offset: 2px; }
-        @media (max-width: 768px) {
-          .sp-sidebar-desktop { display: none !important; }
-          .sp-mobile-bar { display: flex !important; }
-        }
-        @media (min-width: 769px) {
-          .sp-sidebar-desktop { display: block !important; }
-          .sp-mobile-bar { display: none !important; }
-          .sp-mobile-drawer { display: none !important; }
-        }
 
         /* Ẩn mũi tên lên xuống ở input type=number (4 ô giá và kích thước) */
         input[type=number]::-webkit-inner-spin-button, 
@@ -580,7 +568,7 @@ const RightFilters = () => (
       `}</style>
 
       <div style={{ background: 'white', borderBottom: '1px solid #e8e4df', padding: '28px 0 24px' }}>
-        <div className="max-w-[1140px] mx-auto px-4">
+        <div className="max-w-285 mx-auto px-4">
           <h1 style={{ 
             color: 'var(--ink)', 
             fontWeight: 500, 
@@ -596,36 +584,12 @@ const RightFilters = () => (
       </div>
 
       <div style={{ background: '#faf8f5', minHeight: '70vh', paddingBottom: 60 }}>
-        <div className="max-w-[1140px] mx-auto px-4" style={{ paddingTop: 16 }}>
-
-          <div className="sp-mobile-bar" style={{ display: 'none', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, gap: 10 }}>
-            <button onClick={() => setSidebarOpen(o => !o)}
-              style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 18px', border: '1.5px solid #e8e4df', background: 'white', cursor: 'pointer', fontWeight: 700, fontSize: '0.88rem', color: 'var(--ink)', letterSpacing: '0.06em' }}>
-              <i className="fas fa-sliders-h" style={{ color: 'var(--brand)' }} />
-              Bộ lọc {activeCount > 0 && <span style={{ background: 'var(--ink)', color: 'white', width: 18, height: 18, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 700 }}>{activeCount}</span>}
-            </button>
-            <select value={sort} onChange={e => { setSort(e.target.value); reset(); }}
-              style={{ flex: 1, padding: '9px 12px', border: '1.5px solid #e8e4df', background: 'white', fontSize: '0.88rem', cursor: 'pointer', outline: 'none', color: 'var(--ink)' }}>
-              {SORTS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-            </select>
-          </div>
-
-          {sidebarOpen && (
-            <div className="sp-mobile-drawer" style={{ display: 'block', background: 'white', boxShadow: '0 8px 32px rgba(0,0,0,0.08)', marginBottom: 20, overflow: 'hidden', border: '1px solid #f0ece8' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #f0ece8' }}>
-                <span style={{ fontWeight: 700, fontSize: '0.88rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--brand-dark)' }}>Bộ lọc</span>
-                <button onClick={() => setSidebarOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: '#aaa' }}>×</button>
-              </div>
-              {LeftFilters()}
-              <div style={{ height: 1, background: '#f0ece8', margin: '8px 16px' }} />
-              {RightFilters()}
-            </div>
-          )}
+        <div className="max-w-285 mx-auto px-4" style={{ paddingTop: 16 }}>
 
           <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
 
             {/* Left: Danh mục + Chủ đề */}
-            <aside className="sp-sidebar-desktop" style={{ width: 200, flexShrink: 0, background: 'white', overflow: 'hidden', border: '1px solid #f0ece8', position: 'sticky', top: 84, alignSelf: 'flex-start' }}>
+            <aside style={{ width: 200, flexShrink: 0, background: 'white', overflow: 'hidden', border: '1px solid #f0ece8', position: 'sticky', top: 84, alignSelf: 'flex-start' }}>
               {LeftFilters()}
             </aside>
 
@@ -832,7 +796,7 @@ const RightFilters = () => (
             </div>
 
             {/* Right: Sắp xếp + Trạng thái + Giá + Kích thước */}
-            <aside className="sp-sidebar-desktop" style={{ width: 220, flexShrink: 0, background: 'white', overflow: 'hidden', border: '1px solid #f0ece8', position: 'sticky', top: 84, alignSelf: 'flex-start' }}>
+            <aside style={{ width: 220, flexShrink: 0, background: 'white', overflow: 'hidden', border: '1px solid #f0ece8', position: 'sticky', top: 84, alignSelf: 'flex-start' }}>
               {RightFilters()}
             </aside>
 

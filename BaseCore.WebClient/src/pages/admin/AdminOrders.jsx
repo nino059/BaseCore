@@ -154,9 +154,6 @@ const Orders = () => {
           box-sizing: border-box;
         }
         .admin-order-clear-filter { flex: 0 0 auto; }
-        @media (max-width: 520px) {
-          .admin-order-filter-select { flex: 1 1 100%; }
-        }
       `}</style>
 
       <Toaster toasts={toasts} />
@@ -251,9 +248,16 @@ const Orders = () => {
           </div>
         ) : orders.length === 0 ? (
           <div style={{ textAlign:'center', padding:'60px 0', color:'#94a3b8' }}>
+            <i className="fas fa-inbox" style={{ fontSize:'2.8rem', display:'block', marginBottom:12, color:'#e2e8f0' }}></i>
             <div style={{ fontWeight:600, color:'#64748b', marginBottom:6 }}>
               {hasFilter ? 'Không tìm thấy đơn hàng phù hợp' : 'Chưa có đơn hàng nào'}
             </div>
+            {hasFilter && (
+              <button onClick={() => { setSearch(''); setFilterStatus(''); setPage(1); }}
+                style={{ marginTop:10, padding:'7px 18px', borderRadius:8, border:'none', background:'#fef3c7', color:'#d97706', fontWeight:600, cursor:'pointer' }}>
+                Xóa bộ lọc
+              </button>
+            )}
           </div>
         ) : (
           <div className="table-responsive">

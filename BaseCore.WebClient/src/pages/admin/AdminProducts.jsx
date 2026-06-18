@@ -372,9 +372,6 @@ export default function AdminProducts() {
           box-sizing: border-box;
         }
         .admin-prod-clear-filter { flex: 0 0 auto; }
-        @media (max-width: 520px) {
-          .admin-prod-filter-select { flex: 1 1 100%; }
-        }
       `}</style>
 
       <Toaster toasts={toasts} />
@@ -475,9 +472,15 @@ export default function AdminProducts() {
           </div>
         ) : displayList.length === 0 ? (
           <div style={{ textAlign:"center", padding:"60px 0", animation:"fadeUp .3s ease" }}>
+            <div style={{ fontSize:"3rem", marginBottom:12 }}>🎨</div>
             <div style={{ fontWeight:700, color:"#475569", marginBottom:8 }}>
               {hasFilter ? "Không tìm thấy tác phẩm phù hợp" : "Chưa có tác phẩm nào"}
             </div>
+            {hasFilter && (
+              <button onClick={clearFilters} style={{ padding:"8px 20px", borderRadius:9, border:"none", background:"#f5edd6", color:"var(--brand)", fontWeight:700, cursor:"pointer" }}>
+                Xóa bộ lọc
+              </button>
+            )}
           </div>
         ) : (
           <div className="table-responsive">

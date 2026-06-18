@@ -251,21 +251,9 @@ const Home = () => {
         .art-artist-avatar img { transition: transform .5s ease; display: block; width: 100%; height: 100%; object-fit: cover; }
         .art-artist:hover .art-artist-avatar img { transform: scale(1.06); }
         .art-artist-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
-        @media (max-width: 992px) {
-          .art-artist-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 520px) {
-          .art-artist-grid { grid-template-columns: 1fr; }
-        }
         .about-title-row { margin-bottom: 48px; }
         .about-title-row h2 { white-space: nowrap; }
         .about-features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; align-items: start; }
-        @media (max-width: 992px) {
-          .about-title-row h2 { white-space: normal; }
-        }
-        @media (max-width: 768px) {
-          .about-features-grid { grid-template-columns: 1fr; gap: 36px; }
-        }
       `}</style>
 
       {/* ══════════════════════════════ HERO ══════════════════════════════ */}
@@ -350,7 +338,7 @@ const Home = () => {
       ════════════════════════════════════════════════════════════════════════ */}
       <section style={{ background: 'white', padding: '30px 0' }}>
         <div className="container">
-          <SecHead title="Tranh Theo Thể Loại" linkTo="/shop" />
+          <SecHead label="Danh mục" title="Tranh Theo Thể Loại" linkTo="/shop" />
 
           {loading ? (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 28 }}>
@@ -472,7 +460,7 @@ const Home = () => {
       {!loading && artists.length > 0 && (
         <section style={{ background: 'white', padding: '72px 0' }}>
           <div className="container">
-            <SecHead label="Nghệ sĩ" title="Vẽ Nên Kiệt Tác" linkTo="/artists" linkText="Tất cả họa sĩ" />
+            <SecHead label="Nghệ sĩ" title="Họa Sĩ Nổi Bật" linkTo="/artists" linkText="Tất cả họa sĩ" />
             <div className="art-artist-grid">
               {artists.map(artist => (
                 <Link key={artist.sellerId || artist.name} to={artist.sellerId ? `/artists/${artist.sellerId}` : '/artists'} className="art-artist" style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -504,8 +492,8 @@ const Home = () => {
       <section style={{ padding: '80px 0', background: '#1a1a1a', color: 'white' }}>
         <div className="container" style={{ paddingInline: 32 }}>
           <div className="about-title-row">
-            <p style={{ color: '#c8a97a', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 16, textAlign: 'center' }}>Về chúng tôi</p>
-            <h2 style={{ fontWeight: 200, fontSize: 'clamp(1.7rem, 3.8vw, 2.4rem)', textAlign: 'center', color: 'white', margin: 0, lineHeight: 1.3, letterSpacing: '0.02em', fontFamily: "'Playfair Display', serif" }}>
+            <p style={{ textAlign: 'center', color: '#c8a97a', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 16 }}>Về chúng tôi</p>
+            <h2 style={{ textAlign: 'center', fontWeight: 200, fontSize: 'clamp(1.7rem, 3.8vw, 2.4rem)', color: 'white', margin: 0, lineHeight: 1.3, letterSpacing: '0.02em', fontFamily: "'Playfair Display', serif" }}>
               <em style={{ fontStyle: 'italic' }}>Arthentic</em> — nơi nghệ thuật có giá trị thật
             </h2>
           </div>
@@ -526,8 +514,11 @@ const Home = () => {
             ))}
           </div>
 
-          <div style={{ marginTop: 48, maxWidth: 520 }}>
-            <Link to="/artists" style={{ color: '#c8a97a', textDecoration: 'none', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', borderBottom: '1px solid #c8a97a', paddingBottom: 2,textAlign: 'right'}}>
+          <div style={{ marginTop: 48, maxWidth: 920 }}>
+            <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.88rem', lineHeight: 1.85, marginBottom: 28 }}>
+              Chúng tôi tin rằng nghệ thuật không phải xa xỉ mà đó là ngôn ngữ chữa lành, kết nối con người với nhau
+            </p>
+            <Link to="/artists" style={{ color: '#c8a97a', textDecoration: 'none', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase',  paddingBottom: 2 }}>
               Gặp gỡ họa sĩ →
             </Link>
           </div>
@@ -537,12 +528,12 @@ const Home = () => {
       {/* ════════════════════ CTA ══════════════════════ */}
       <section style={{ padding: '80px 0', background: '#f9f6f2', textAlign: 'center' }}>
         <div className="container">
-          <p style={{ color: '#c8a97a', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 16, textAlign: 'center' }}>Dành cho họa sĩ</p>
-            <h2 style={{ fontWeight: 200, fontSize: 'clamp(1.7rem, 3.8vw, 2.4rem)', textAlign: 'center', color: '#1a1a1a', margin: 0, lineHeight: 1.3, letterSpacing: '0.02em', fontFamily: "'Playfair Display', serif" }}>
-              Hãy đưa tác phẩm của bạn đến với những người yêu nghệ thuật
-            </h2>
-          <p style={{ color: '#767676', maxWidth: 920, margin: '0 auto 15px', lineHeight: 1.85, fontSize: '1.15rem' }}>
-            <em style={{ fontStyle: 'italic' }}>Tham gia cùng hàng chục họa sĩ đang bán tác phẩm trực tiếp trên Arthentic không qua trung gian, không ẩn phí</em>
+          <p style={{ color: '#8b6c4a', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 16 }}>Dành cho họa sĩ</p>
+          <h2 style={{ fontWeight: 200, fontSize: 'clamp(1.8rem,4vw,2.8rem)', color: '#1a1a1a', marginBottom: 16, lineHeight: 1.2, letterSpacing: '0.02em' }}>
+            <em style={{ fontStyle: 'italic', fontWeight: 400 }}>Hãy đưa tác phẩm ra thế giới.</em>
+          </h2>
+          <p style={{ color: '#767676', maxWidth: 520, margin: '0 auto 40px', lineHeight: 1.85, fontSize: '0.95rem' }}>
+            Tham gia cùng Arthentic không qua trung gian, không ẩn phí.
           </p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
             <button onClick={openRegister} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#1a1a1a', color: 'white', border: 'none', cursor: 'pointer', padding: '13px 32px', fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>

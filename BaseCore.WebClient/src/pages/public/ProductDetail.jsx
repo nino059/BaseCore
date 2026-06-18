@@ -105,8 +105,8 @@ const ProductDetail = () => {
     <PublicLayout>
       <div style={{ background: '#faf8f5', minHeight: '80vh' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 20px' }}>
-          <div className="grid grid-cols-1 md:grid-cols-12">
-            <div className="md:col-span-5" style={{ marginBottom: 32 }}>
+          <div className="grid grid-cols-12">
+            <div className="col-span-5" style={{ marginBottom: 32 }}>
               <div
                 role={imgSrc ? 'button' : undefined}
                 tabIndex={imgSrc ? 0 : undefined}
@@ -138,7 +138,7 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            <div className="md:col-span-7" style={{ paddingLeft: 40 }}>
+            <div className="col-span-7" style={{ paddingLeft: 40 }}>
 
               <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
                 {product.categoryName && (

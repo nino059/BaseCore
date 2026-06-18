@@ -25,7 +25,7 @@ const StatusBadge = ({ status }) => {
   const s = STATUS_MAP[status] || { label: status, color: '#6b7280', bg: '#f3f4f6', dot: '#9ca3af' };
   return (
     <span
-      className="inline-flex items-center gap-[5px] px-3 py-1 text-[0.72rem] font-bold tracking-[0.06em]"
+      className="inline-flex items-center gap-1.25 px-3 py-1 text-[0.72rem] font-bold tracking-[0.06em]"
       style={{ background: s.bg, color: s.color }}
     >
       <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: s.dot }}></span>
@@ -73,7 +73,7 @@ const MyOrders = () => {
   return (
     <PublicLayout>
       <div className="bg-cream min-h-[80vh]">
-        <div className="max-w-[960px] mx-auto px-5 py-12">
+        <div className="max-w-240 mx-auto px-5 py-12">
 
           <div className="flex items-end justify-between mb-10 flex-wrap gap-4">
             <div>
@@ -84,7 +84,7 @@ const MyOrders = () => {
                 Đơn hàng của tôi
               </h1>
             </div>
-            <Link to="/shop" className="px-6 py-[11px] bg-transparent border-[1.5px] border-ink text-ink text-[0.75rem] font-bold tracking-[0.12em] uppercase no-underline inline-block">
+            <Link to="/shop" className="px-6 py-2.75 bg-transparent border-[1.5px] border-ink text-ink text-[0.75rem] font-bold tracking-[0.12em] uppercase no-underline inline-block">
               Tiếp tục mua sắm
             </Link>
           </div>
@@ -110,7 +110,7 @@ const MyOrders = () => {
                 <button
                   key={t.key}
                   onClick={() => setActiveTab(t.key)}
-                  className={`px-[18px] py-[11px] border-none cursor-pointer text-[0.82rem] tracking-[0.06em] bg-transparent whitespace-nowrap -mb-[1.5px] border-b-2 transition-all ${active ? 'font-bold text-ink border-ink' : 'font-normal text-muted border-transparent'}`}
+                  className={`px-4.5 py-2.75 border-none cursor-pointer text-[0.82rem] tracking-[0.06em] bg-transparent whitespace-nowrap mb-[-1.5px] border-b-2 transition-all ${active ? 'font-bold text-ink border-ink' : 'font-normal text-muted border-transparent'}`}
                 >
                   {t.label}
                   {t.key !== 'all' && cnt > 0 && (
@@ -134,14 +134,14 @@ const MyOrders = () => {
               <p className="text-[2rem] text-line mb-5">✦</p>
               <p className="font-light text-[1.1rem] text-muted mb-2">Bạn chưa có đơn hàng nào</p>
               <p className="text-[0.85rem] text-[#aaa] mb-7">Khám phá bộ sưu tập nghệ thuật của chúng tôi</p>
-              <Link to="/shop" className="inline-block px-8 py-[13px] bg-ink text-white text-[0.78rem] font-bold tracking-[0.14em] uppercase no-underline">
+              <Link to="/shop" className="inline-block px-8 py-3.25 bg-ink text-white text-[0.78rem] font-bold tracking-[0.14em] uppercase no-underline">
                 Khám phá ngay
               </Link>
             </div>
           )}
 
           {!loading && orders.length > 0 && filtered.length === 0 && (
-            <div className="text-center py-[60px] text-[#aaa]">
+            <div className="text-center py-15 text-[#aaa]">
               <p className="text-[2rem] mb-3">✦</p>
               <p className="font-light">Không có đơn hàng nào ở trạng thái này.</p>
             </div>
@@ -158,7 +158,7 @@ const MyOrders = () => {
                   <div className="flex justify-between items-start mb-2.5">
                     <div>
                       <span className="font-semibold text-[0.92rem] text-ink">Đơn #{order.id}</span>
-                      <div className="text-[#aaa] text-[0.78rem] mt-[3px]">
+                      <div className="text-[#aaa] text-[0.78rem] mt-0.75">
                         {fmtDate(order.createdAt || order.orderDate)}
                       </div>
                     </div>

@@ -38,8 +38,8 @@ const Pagination = ({ page, totalPages, onChange }) => {
         <button
           key={n}
           onClick={() => onChange(n)}
-          className={`w-[38px] h-[38px] border-none cursor-pointer font-bold text-[0.85rem] ${
-            page === n ? 'bg-ink text-white' : 'bg-white text-ink outline outline-[1.5px] outline-line'
+          className={`w-9.5 h-9.5 border-none cursor-pointer font-bold text-[0.85rem] ${
+            page === n ? 'bg-ink text-white' : 'bg-white text-ink outline outline-line'
           }`}
         >
           {n}

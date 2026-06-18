@@ -270,11 +270,6 @@ const ArtistProducts = () => {
         .ap-stepper-btn:hover { border-color:var(--brand); color:var(--brand-dark); background:#fffbf4; }
         .ap-size-grid { display:grid; grid-template-columns:minmax(0,1fr) 20px minmax(0,1fr); gap:10px; align-items:center; }
         .ap-size-col { min-width:0; }
-        @media (max-width: 768px) {
-          .ap-modal-body { flex-direction:column; }
-          .ap-modal-side { width:100%; }
-          .ap-form-grid-2 { grid-template-columns:1fr; }
-        }
       `}</style>
 
       <Toaster toasts={toasts} />
