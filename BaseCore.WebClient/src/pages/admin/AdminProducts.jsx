@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { productApi, categoryApi } from "../../services/api";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -6,51 +6,11 @@ const STATUSES = ["Pending","ForSale","Ordered","Sold","Rejected"];
 import { getProductStatus } from "../../utils/orderStatus";
 
 import { formatVNDCompact as fmt } from "../../utils/format";
+import { useToast } from "../../hooks/useToast";
+import Toaster from "../../components/ui/Toaster";
+import ConfirmDialog from "../../components/ui/ConfirmDialog";
 
 // ─── UI Components ────────────────────────────────────────────────────────────
-const Toast = ({ toasts }) => (
-  <div style={{ position:"fixed", top:20, right:20, zIndex:9999, display:"flex", flexDirection:"column", gap:8 }}>
-    {toasts.map(t => (
-      <div key={t.id} style={{
-        padding:"11px 18px", borderRadius:10, color:"white", fontWeight:600, fontSize:"0.88rem",
-        background: t.type==="success" ? "#10b981" : t.type==="error" ? "#ef4444" : "#3b82f6",
-        boxShadow:"0 4px 20px rgba(0,0,0,0.15)", minWidth:260, animation:"slideIn .25s ease",
-      }}>
-        <i className={`fas ${t.type==="success"?"fa-check-circle":t.type==="error"?"fa-times-circle":"fa-info-circle"} mr-2`}></i>
-        {t.message}
-      </div>
-    ))}
-  </div>
-);
-
-const ConfirmDialog = ({ open, title, message, onConfirm, onCancel }) => {
-  if (!open) return null;
-  return (
-    <>
-      <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.45)", zIndex:2000 }} />
-      <div style={{
-        position:"fixed", top:"50%", left:"50%", transform:"translate(-50%,-50%)",
-        background:"white", borderRadius:16, padding:"28px 32px", zIndex:2001,
-        minWidth:340, boxShadow:"0 20px 60px rgba(0,0,0,0.2)", textAlign:"center",
-      }}>
-        <div style={{ fontSize:"2.2rem", marginBottom:10 }}>⚠️</div>
-        <h5 style={{ fontWeight:800, marginBottom:8, color:"#1f2937" }}>{title}</h5>
-        <p style={{ color:"#6b7280", marginBottom:24, fontSize:"0.9rem" }}>{message}</p>
-        <div style={{ display:"flex", gap:10, justifyContent:"center" }}>
-          <button onClick={onCancel}
-            style={{ padding:"9px 24px", borderRadius:9, border:"1.5px solid #e5e7eb", background:"white", color:"#374151", fontWeight:600, cursor:"pointer" }}>
-            Hủy bỏ
-          </button>
-          <button onClick={onConfirm}
-            style={{ padding:"9px 24px", borderRadius:9, border:"none", background:"#ef4444", color:"white", fontWeight:700, cursor:"pointer" }}>
-            Xác nhận xóa
-          </button>
-        </div>
-      </div>
-    </>
-  );
-};
-
 const NoteModal = ({ open, title, placeholder, onConfirm, onCancel, color = "#ef4444", btnLabel = "Xác nhận" }) => {
   const [note, setNote] = useState("");
   const [err,  setErr]  = useState("");
@@ -254,17 +214,10 @@ export default function AdminProducts() {
   const [page,         setPage]         = useState(1);
   const PAGE_SIZE = 10;
 
-  const [toasts,  setToasts]  = useState([]);
-  const toastId = useRef(0);
+  const { toasts, showToast } = useToast();
   const [confirm, setConfirm] = useState({ open:false, title:"", message:"", onConfirm:null });
   const [noteModal, setNoteModal] = useState({ open:false, title:"", placeholder:"", color:"#ef4444", btnLabel:"", onConfirm:null });
   const [reviewProduct, setReviewProduct] = useState(null);
-
-  const showToast = useCallback((message, type="success") => {
-    const id = ++toastId.current;
-    setToasts(p => [...p, { id, message, type }]);
-    setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 3500);
-  }, []);
 
   const openConfirm  = (title, message, cb) => setConfirm({ open:true, title, message, onConfirm:cb });
   const closeConfirm = () => setConfirm(p => ({ ...p, open:false }));
@@ -394,8 +347,8 @@ export default function AdminProducts() {
         .kpi-card:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(0,0,0,.10); }
       `}</style>
 
-      <Toast toasts={toasts} />
-      <ConfirmDialog {...confirm} onCancel={closeConfirm} />
+      <Toaster toasts={toasts} />
+      <ConfirmDialog {...confirm} confirmLabel="Xác nhận xóa" danger onCancel={closeConfirm} />
       <NoteModal
         open={noteModal.open}
         title={noteModal.title}

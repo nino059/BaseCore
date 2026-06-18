@@ -215,13 +215,10 @@ const Home = () => {
       <section style={{ backgroundImage: `url(${heroBg})`, backgroundSize:'cover', backgroundPosition:'center', transition: 'background-image 0.8s ease-in-out', minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '80px 0 60px', position: 'relative', overflow: 'hidden', marginTop: -64 }}>
         {/* Dark overlay để chữ dễ đọc */}
         <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.52)', zIndex: 1 }} />
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', fontSize: 'clamp(8rem,20vw,18rem)', fontWeight: 800, color: 'rgba(255,255,255,0.04)', letterSpacing: '-0.04em', whiteSpace: 'nowrap', userSelect: 'none', pointerEvents: 'none', zIndex: 1 }}>
-          ARTHENTIC
-        </div>
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-          <div style={{ maxWidth: 420, margin: '0 auto', textAlign: 'center' }} className="art-fade">
+          <div style={{ maxWidth: '100%', margin: '0 auto', textAlign: 'center' }} className="art-fade">
 
-              <h1 style={{ margin: '0 0 32px', lineHeight: 1.15, textAlign: 'center' }}>
+              <h1 style={{ margin: '-100px 0 32px', lineHeight: 1.15, textAlign: 'center' }}>
                 <span style={{
                   display: 'block',
                   fontSize: 'clamp(3rem,9vw,100px)',
@@ -231,19 +228,20 @@ const Home = () => {
                   marginBottom: 14,
                   fontFamily: "'Playfair Display', serif",
                   fontStyle: 'italic',
+                  whiteSpace: 'nowrap',
                 }}>Nơi</span>
-                {/* Dòng chính — co giãn theo màn hình, tự xuống hàng & luôn căn giữa */}
-                <span style={{ display: 'block', fontWeight: 200, fontSize: 'clamp(1.4rem,3.8vw,4rem)', color: 'white', letterSpacing: '0.04em', fontFamily: "'Playfair Display', serif", lineHeight: 1.15, textAlign: 'center', textWrap: 'balance' }}>
+                {/* Dòng chính — luôn 1 dòng, căn giữa */}
+                <span style={{ display: 'block', whiteSpace: 'nowrap', fontWeight: 200, fontSize: 'clamp(1.2rem,3.5vw,4rem)', color: 'white', letterSpacing: '0.04em', fontFamily: "'Playfair Display', serif", lineHeight: 1.15, textAlign: 'center' }}>
                   Nghệ Thuật{' '}<em style={{ fontWeight: 700, color: '#c8a97a', fontStyle: 'italic' }}>Gặp Gỡ</em>{' '}Tâm Hồn
                 </span>
               </h1>
 
-              {/* 2 dòng phụ — cùng kiểu serif italic, opacity khác nhau */}
+              {/* 2 dòng phụ — luôn 1 dòng, căn giữa */}
               <div style={{ marginBottom: 36 }}>
-                <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontWeight: 400, fontSize: 'clamp(0.92rem,1.8vw,1.08rem)', color: 'rgba(255,255,255,0.78)', letterSpacing: '0.02em', margin: '0 0 8px' }}>
+                <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontWeight: 400, fontSize: 'clamp(0.72rem,1.5vw,1.08rem)', color: 'rgba(255,255,255,0.78)', letterSpacing: '0.02em', margin: '0 0 8px', whiteSpace: 'nowrap', textAlign: 'center' }}>
                   Khám phá bộ sưu tập tranh gốc từ các họa sĩ tài năng Việt Nam
                 </p>
-                <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontWeight: 400, fontSize: 'clamp(0.82rem,1.5vw,0.95rem)', color: 'rgba(255,255,255,0.42)', letterSpacing: '0.02em', margin: 0 }}>
+                <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontWeight: 400, fontSize: 'clamp(0.65rem,1.3vw,0.95rem)', color: 'rgba(255,255,255,0.42)', letterSpacing: '0.02em', margin: 0, whiteSpace: 'nowrap', textAlign: 'center' }}>
                   Nơi mỗi tác phẩm là một khung cảm xúc, một câu chuyện riêng
                 </p>
               </div>
