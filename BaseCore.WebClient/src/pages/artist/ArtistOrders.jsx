@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ArtistLayout from '../../components/layout/ArtistLayout';
 import { orderApi } from '../../services/api';
+import { normalizeOrderList, getCustomerDisplayName } from '../../utils/orderNormalize';
 import { formatVND as fmt } from '../../utils/format';
 
 import { getOrderStatus, getProductStatus, ORDER_NEXT, ORDER_CAN_CANCEL } from '../../utils/orderStatus';
@@ -46,7 +47,7 @@ const ArtistOrders = () => {
   const loadOrders = (silent = false) => {
     if (!silent) setLoading(true);
     orderApi.getArtistOrders()
-      .then(res => setOrders(res.data || []))
+      .then(res => setOrders(normalizeOrderList(res)))
       .catch(() => {})
       .finally(() => { if (!silent) setLoading(false); });
   };
@@ -181,12 +182,10 @@ const ArtistOrders = () => {
                       <span style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--ink)' }}>Đơn #{o.id}</span>
                       <OrderStatusBadge status={o.status} />
                     </div>
-                    {o.customerName && (
-                      <div style={{ fontSize: '0.78rem', color: '#555', marginTop: 3 }}>
-                        <i className="fas fa-user" style={{ color: 'var(--brand)', marginRight: 5, fontSize: '0.7rem' }} />
-                        {o.customerName}
-                      </div>
-                    )}
+                    <div style={{ fontSize: '0.78rem', color: '#555', marginTop: 3 }}>
+                      <i className="fas fa-user" style={{ color: 'var(--brand)', marginRight: 5, fontSize: '0.7rem' }} />
+                      {getCustomerDisplayName(o)}
+                    </div>
                   </div>
                   <div style={{ fontSize: '0.82rem', color: '#767676', minWidth: 120 }}>{new Date(o.orderDate).toLocaleDateString('vi-VN')}</div>
                   <div style={{ fontSize: '0.82rem', color: 'var(--brand-dark)', fontWeight: 600, minWidth: 100 }}>

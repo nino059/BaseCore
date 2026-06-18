@@ -29,6 +29,9 @@ namespace BaseCore.Entities
         [MaxLength(20)]
         public string? Phone { get; set; }
 
+        [MaxLength(100)]
+        public string? CustomerName { get; set; }
+
         public List<OrderDetail> OrderDetails { get; set; }
     }
 }

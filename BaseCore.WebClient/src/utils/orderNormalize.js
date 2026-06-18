@@ -20,6 +20,10 @@ export function normalizeOrder(raw) {
     ? itemsRaw.map(normalizeOrderItem).filter(Boolean)
     : [];
 
+  const legacyName = raw.userName ?? raw.UserName ?? raw.buyerName ?? raw.BuyerName ?? '';
+  const customerName = raw.customerName ?? raw.CustomerName ?? pickRealPersonName(legacyName) ?? '';
+  const userPhone = raw.userPhone ?? raw.UserPhone ?? raw.phone ?? raw.Phone ?? '';
+
   return {
     id: raw.id ?? raw.Id,
     userId: raw.userId ?? raw.UserId,
@@ -29,10 +33,31 @@ export function normalizeOrder(raw) {
     totalAmount: raw.totalAmount ?? raw.TotalAmount ?? raw.total ?? raw.Total ?? 0,
     shippingAddress: raw.shippingAddress ?? raw.ShippingAddress ?? '',
     paymentMethod: raw.paymentMethod ?? raw.PaymentMethod ?? '',
-    phone: raw.phone ?? raw.Phone ?? '',
+    phone: raw.phone ?? raw.Phone ?? userPhone,
+    userPhone,
+    customerName,
     note: raw.note ?? raw.Note ?? '',
     items,
   };
+}
+
+/** Bỏ qua chuỗi giống username đăng nhập (không dấu, không khoảng trắng) */
+function pickRealPersonName(value) {
+  const s = value && String(value).trim();
+  if (!s) return '';
+  if (s.includes(' ') || /[^\u0000-\u007f]/.test(s)) return s;
+  if (/^[a-z0-9._-]+$/i.test(s)) return '';
+  return s;
+}
+
+/** Tên hiển thị khách hàng — ưu tiên tên người nhận, không dùng username đăng nhập */
+export function getCustomerDisplayName(order) {
+  if (!order) return '—';
+  const direct = order.customerName ?? order.CustomerName;
+  if (direct && String(direct).trim()) return String(direct).trim();
+  const legacy = pickRealPersonName(order.userName ?? order.UserName ?? order.buyerName ?? order.BuyerName);
+  if (legacy) return legacy;
+  return '—';
 }
 
 /** Trích danh sách đơn từ response axios — luôn trả về mảng */

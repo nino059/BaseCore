@@ -42,6 +42,12 @@ const SIZE_PRESETS = [
 
 const PER_PAGE = 12;
 
+const STATUS_OPTIONS = [
+  { value: 'ForSale', label: 'Đang bán' },
+  { value: 'Ordered', label: 'Đã đặt'   },
+  { value: 'Sold',    label: 'Đã bán'   },
+];
+
 const Shop = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -55,6 +61,7 @@ const Shop = () => {
   const [search,     setSearch]     = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [theme,      setTheme]      = useState('');
+  const [status,     setStatus]     = useState('');
   const [minPrice,   setMinPrice]   = useState('');
   const [maxPrice,   setMaxPrice]   = useState('');
   const [minSize,    setMinSize]    = useState('');
@@ -74,10 +81,12 @@ const Shop = () => {
     const c  = searchParams.get('category') || '';
     const kw = searchParams.get('q') || '';
     const th = searchParams.get('theme') || '';
+    const st = searchParams.get('status') || '';
     setCategoryId(c);
     setSearch(kw);
     setSearchDraft(kw);
     setTheme(th);
+    setStatus(st);
   }, [searchParams]);
 
   const patchUrl = (patch) => {
@@ -132,6 +141,7 @@ const Shop = () => {
           matchesSearch &&
           (!categoryId || String(p.categoryId) === String(categoryId)) &&
           (!theme || p.theme === theme) &&
+          (!status || p.status === status) &&
           (effMinPrice == null || price >= effMinPrice) &&
           (effMaxPrice == null || price <= effMaxPrice) &&
           (effMinSize == null || maxDim >= effMinSize) &&
@@ -151,7 +161,7 @@ const Shop = () => {
         if (sort === 'name_desc')   return nameB.localeCompare(nameA, 'vi');
         return 0;
       });
-  }, [all, search, categoryId, theme, effMinPrice, effMaxPrice, effMinSize, effMaxSize, sort]);
+  }, [all, search, categoryId, theme, status, effMinPrice, effMaxPrice, effMinSize, effMaxSize, sort]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
   const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
@@ -171,8 +181,16 @@ const Shop = () => {
       .sort((a, b) => b.count - a.count);
   }, [all]);
 
+  const statusesWithCount = useMemo(() =>
+    STATUS_OPTIONS.map(opt => ({
+      ...opt,
+      count: all.filter(p => p.status === opt.value).length,
+    })),
+  [all]);
+
   const handleAdd = (e, product) => {
     e.preventDefault(); e.stopPropagation();
+    if (product?.status !== 'ForSale') return;
     if (!user) { navigate('/login'); return; }
 
     // Kiểm tra xem tranh đã có trong giỏ hàng chưa (dựa trên dữ liệu thực)
@@ -192,6 +210,7 @@ const Shop = () => {
     setSearch(''); setSearchDraft('');
     setCategoryId('');
     setTheme('');
+    setStatus('');
     setMinPrice(''); setMaxPrice('');
     setMinSize(''); setMaxSize('');
     setSort('default');
@@ -199,7 +218,7 @@ const Shop = () => {
     reset();
   };
 
-  const activeCount = [search, categoryId, theme, minPrice || maxPrice, minSize || maxSize].filter(Boolean).length + (sort !== 'default' ? 1 : 0);
+  const activeCount = [search, categoryId, theme, status, minPrice || maxPrice, minSize || maxSize].filter(Boolean).length + (sort !== 'default' ? 1 : 0);
 
   const priceChipLabel = formatPriceChipLabel(minPrice, maxPrice, fmt);
   const sizeChipLabel = formatSizeChipLabel(minSize, maxSize);
@@ -208,6 +227,7 @@ const Shop = () => {
     search     && { key: 'search', icon: 'fa-search',      label: `"${search}"`,        clear: () => { setSearch(''); setSearchDraft(''); patchUrl({ q: '' }); reset(); } },
     categoryId && { key: 'cat',    icon: 'fa-layer-group', label: catsWithCount.find(c => String(c.id) === String(categoryId))?.name || 'Danh mục', clear: () => { setCategoryId(''); patchUrl({ category: '' }); reset(); } },
     theme      && { key: 'theme',  icon: 'fa-palette',     label: theme, clear: () => { setTheme(''); patchUrl({ theme: '' }); reset(); } },
+    status     && { key: 'status', icon: 'fa-bookmark',    label: STATUS_OPTIONS.find(s => s.value === status)?.label || status, clear: () => { setStatus(''); patchUrl({ status: '' }); reset(); } },
     priceChipLabel && { key: 'price', icon: 'fa-tag',   label: priceChipLabel, clear: () => { setMinPrice(''); setMaxPrice(''); reset(); } },
     sizeChipLabel  && { key: 'size',  icon: 'fa-ruler', label: sizeChipLabel, clear: () => { setMinSize(''); setMaxSize(''); reset(); } },
     sort !== 'default' && { key: 'sort', icon: 'fa-sort', label: SORTS.find(s => s.value === sort)?.label, clear: () => { setSort('default'); reset(); } },
@@ -238,6 +258,37 @@ const Shop = () => {
           }}>
           {SORTS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
         </select>
+      </div>
+
+      {/* Trạng thái */}
+      <div style={{ padding: '14px 20px' }}>
+        <div style={{ fontWeight: 700, fontSize: '0.78rem', color: 'var(--brand-dark)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>
+          <i className="fas fa-filter" style={{ color: 'var(--brand)', fontSize: '0.88rem' }} /> TRẠNG THÁI
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <button
+            onClick={() => { setStatus(''); patchUrl({ status: '' }); reset(); }}
+            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: !status ? 700 : 400, fontSize: '0.88rem', background: !status ? '#f0ece8' : 'transparent', color: !status ? 'var(--ink)' : '#767676' }}
+          >
+            <span>Tất cả</span>
+            <span style={{ fontSize: '0.75rem', color: !status ? 'var(--brand-dark)' : '#aaa', background: !status ? '#e8e4df' : '#f5f5f5', padding: '1px 8px', fontWeight: 600 }}>{all.length}</span>
+          </button>
+          {statusesWithCount.map(opt => (
+            <button
+              key={opt.value}
+              onClick={() => {
+                const next = status === opt.value ? '' : opt.value;
+                setStatus(next);
+                patchUrl({ status: next });
+                reset();
+              }}
+              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: status === opt.value ? 700 : 400, fontSize: '0.88rem', background: status === opt.value ? '#f0ece8' : 'transparent', color: status === opt.value ? 'var(--ink)' : '#767676' }}
+            >
+              <span>{opt.label}</span>
+              <span style={{ fontSize: '0.75rem', color: status === opt.value ? 'var(--brand-dark)' : '#aaa', background: status === opt.value ? '#e8e4df' : '#f5f5f5', padding: '1px 8px', fontWeight: 600 }}>{opt.count}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Danh mục */}
@@ -273,7 +324,7 @@ const Shop = () => {
 
       {/* Chủ đề */}
       {themesWithCount.length > 0 && (
-        <div style={{ padding: '14px 20px', borderTop: '1px solid #f0ece8' }}>
+        <div style={{ padding: '14px 20px' }}>
           <div style={{ fontWeight: 700, fontSize: '0.78rem', color: 'var(--brand-dark)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>
             <i className="fas fa-palette" style={{ color: 'var(--brand)', fontSize: '0.88rem' }} /> CHỦ ĐỀ
           </div>
@@ -688,6 +739,8 @@ const RightFilters = () => (
                     const imgUrl  = toImgUrl(p.imageUrl);
                     const inCart  = addedId === p.id;
                     const price   = p.price ?? 0;
+                    const canBuy  = p.status === 'ForSale';
+                    const statusLabel = p.status === 'Sold' ? 'Đã bán' : p.status === 'Ordered' ? 'Đã đặt' : null;
                     return (
                       <Link key={p.id} to={`/product/${p.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                         <div className="sp-card" style={{ background: 'white', overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -708,6 +761,11 @@ const RightFilters = () => (
                             {p.categoryName && (
                               <div style={{ position: 'absolute', top: 10, left: 10, background: 'rgba(26,26,26,0.6)', color: 'white', padding: '3px 10px', fontSize: '0.68rem', fontWeight: 700, backdropFilter: 'blur(4px)', letterSpacing: '0.04em' }}>
                                 {p.categoryName}
+                              </div>
+                            )}
+                            {statusLabel && (
+                              <div style={{ position: 'absolute', top: 10, right: 10, background: p.status === 'Sold' ? 'rgba(153,27,27,0.88)' : 'rgba(146,64,14,0.88)', color: 'white', padding: '3px 10px', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.04em' }}>
+                                {statusLabel}
                               </div>
                             )}
                             {p.stock === 0 && (
@@ -748,17 +806,17 @@ const RightFilters = () => (
                                 </div>
                               </div>
                               {!isArtist && (
-                              <button className="sp-add"
+                              <button type="button" className="sp-add"
                                 onClick={e => handleAdd(e, p)}
-                                onMouseEnter={e => {
-                                  e.currentTarget.style.cursor = 'pointer';
-                                  e.currentTarget.style.setProperty('cursor', 'pointer', 'important');
-                                }}
-                                style={{ padding: '7px 12px', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: '0.72rem', whiteSpace: 'nowrap', letterSpacing: '0.06em',
-                                  background: inCart ? '#2d6a4f' : 'var(--ink)',
-                                  color: 'white',
+                                disabled={!canBuy}
+                                style={{ padding: '7px 12px', border: 'none', fontWeight: 700, fontSize: '0.72rem', whiteSpace: 'nowrap', letterSpacing: '0.06em',
+                                  background: !canBuy ? '#e5e7eb' : inCart ? '#2d6a4f' : 'var(--ink)',
+                                  color: !canBuy ? '#9ca3af' : 'white',
+                                  cursor: canBuy ? 'pointer' : 'not-allowed',
                                 }}>
-                                {inCart ? <><i className="fas fa-check mr-1" />Đã thêm</> : <><i className="fas fa-cart-plus mr-1" />Thêm</>}
+                                {!canBuy
+                                  ? <><i className="fas fa-ban mr-1" />{statusLabel || 'Hết'}</>
+                                  : inCart ? <><i className="fas fa-check mr-1" />Đã thêm</> : <><i className="fas fa-cart-plus mr-1" />Thêm</>}
                               </button>
                               )}
                             </div>

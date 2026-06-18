@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { productApi, categoryApi } from "../../services/api";
+import { productApi } from "../../services/api";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const STATUSES = ["Pending","ForSale","Ordered","Sold","Rejected"];
@@ -202,11 +202,9 @@ const ProductReviewModal = ({ product, onApprove, onReject, onClose, fmt }) => {
 // ═══════════════════════════════════════════════════════════════════════════════
 export default function AdminProducts() {
   const [allProducts,  setAllProducts]  = useState([]);
-  const [categories,   setCategories]   = useState([]);
   const [loading,      setLoading]      = useState(true);
 
   const [keyword,      setKeyword]      = useState("");
-  const [catFilter,    setCatFilter]    = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [page,         setPage]         = useState(1);
   const PAGE_SIZE = 10;
@@ -223,11 +221,6 @@ export default function AdminProducts() {
     setNoteModal({ open:true, title, placeholder, color, btnLabel, onConfirm:cb });
   const closeNoteModal = () => setNoteModal(p => ({ ...p, open:false }));
 
-  const loadCats = useCallback(async () => {
-    try { const r = await categoryApi.getAll(); setCategories(r.data || []); }
-    catch(e) { console.error(e); }
-  }, []);
-
   const loadAllProducts = useCallback(async () => {
     setLoading(true);
     try {
@@ -237,7 +230,7 @@ export default function AdminProducts() {
     finally { setLoading(false); }
   }, []);
 
-  useEffect(() => { loadCats(); loadAllProducts(); }, [loadCats, loadAllProducts]);
+  useEffect(() => { loadAllProducts(); }, [loadAllProducts]);
 
   const filteredProducts = useMemo(() => {
     let list = allProducts;
@@ -248,10 +241,9 @@ export default function AdminProducts() {
         p.artistName?.toLowerCase().includes(kw)
       );
     }
-    if (catFilter)    list = list.filter(p => String(p.categoryId) === String(catFilter));
     if (statusFilter) list = list.filter(p => p.status === statusFilter);
     return list;
-  }, [allProducts, keyword, catFilter, statusFilter]);
+  }, [allProducts, keyword, statusFilter]);
 
   const totalCount  = filteredProducts.length;
   const totalPages  = Math.ceil(totalCount / PAGE_SIZE) || 0;
@@ -311,8 +303,8 @@ export default function AdminProducts() {
     );
   };
 
-  const clearFilters = () => { setKeyword(""); setCatFilter(""); setStatusFilter(""); setPage(1); };
-  const hasFilter = keyword || catFilter || statusFilter;
+  const clearFilters = () => { setKeyword(""); setStatusFilter(""); setPage(1); };
+  const hasFilter = keyword || statusFilter;
 
   const openReview = (p) => setReviewProduct(p);
   const closeReview = () => setReviewProduct(null);
@@ -342,6 +334,47 @@ export default function AdminProducts() {
         .kpi-card { background:white; border-radius:14px; padding:20px; cursor:pointer;
           transition:all .2s; border-top:3px solid #f1f5f9; box-shadow:0 2px 12px rgba(0,0,0,.06); }
         .kpi-card:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(0,0,0,.10); }
+        .admin-prod-filters {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          width: 100%;
+        }
+        .admin-prod-search {
+          position: relative;
+          width: 100%;
+          min-width: 0;
+        }
+        .admin-prod-search-input {
+          display: block;
+          width: 100%;
+          box-sizing: border-box;
+          padding: 9px 12px 9px 34px;
+          border-radius: 9px;
+          border: 1.5px solid #e5e7eb;
+          font-size: 0.87rem;
+          outline: none;
+        }
+        .admin-prod-search-input:focus {
+          border-color: var(--brand);
+          box-shadow: 0 0 0 3px rgba(200, 169, 122, 0.18);
+        }
+        .admin-prod-filter-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          align-items: center;
+        }
+        .admin-prod-filter-select {
+          flex: 1 1 160px;
+          min-width: 0;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+        .admin-prod-clear-filter { flex: 0 0 auto; }
+        @media (max-width: 520px) {
+          .admin-prod-filter-select { flex: 1 1 100%; }
+        }
       `}</style>
 
       <Toaster toasts={toasts} />
@@ -393,29 +426,26 @@ export default function AdminProducts() {
 
       {/* Bộ lọc */}
       <div style={{ background:"white", borderRadius:14, padding:"14px 18px", boxShadow:"0 2px 12px rgba(0,0,0,.05)", marginBottom:16 }}>
-        <div style={{ display:"flex", gap:10, flexWrap:"wrap", alignItems:"center" }}>
-          <div style={{ flex:"1 1 220px", position:"relative", minWidth:10 }}>
-            <i className="fas fa-search" style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", color:"#9ca3af", fontSize:"0.82rem" }}></i>
-            <input className="form-control" placeholder="Tìm tên tác phẩm, nghệ sĩ..." value={keyword}
-              onChange={e => { setKeyword(e.target.value); setPage(1); }}
-              style={{ paddingLeft:34, borderRadius:9, border:"1.5px solid #e5e7eb", fontSize:"0.87rem" }} />
+        <div className="admin-prod-filters">
+          <div className="admin-prod-search">
+            <i className="fas fa-search" style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", color:"#9ca3af", fontSize:"0.82rem", pointerEvents:"none" }}></i>
+            <input className="admin-prod-search-input" placeholder="Tìm tên tác phẩm, nghệ sĩ..." value={keyword}
+              onChange={e => { setKeyword(e.target.value); setPage(1); }} />
           </div>
-          <select className="form-control" value={catFilter} onChange={e => { setCatFilter(e.target.value); setPage(1); }}
-            style={{ flex:"0 0 auto", width:190, borderRadius:9, border:"1.5px solid #e5e7eb", fontSize:"0.87rem" }}>
-            <option value="">Tất cả thể loại</option>
-            {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-          </select>
-          <select className="form-control" value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
-            style={{ flex:"0 0 auto", width:165, borderRadius:9, border:"1.5px solid #e5e7eb", fontSize:"0.87rem" }}>
-            <option value="">Tất cả trạng thái</option>
-            {STATUSES.map(s => <option key={s} value={s}>{getProductStatus(s).label}</option>)}
-          </select>
-          {hasFilter && (
-            <button onClick={clearFilters} style={{ padding:"7px 14px", borderRadius:9, border:"1.5px solid #fecaca",
-              background:"#fef2f2", color:"#ef4444", fontWeight:600, cursor:"pointer", fontSize:"0.83rem" }}>
-              <i className="fas fa-times-circle mr-1"></i> Xóa lọc
-            </button>
-          )}
+          <div className="admin-prod-filter-row">
+            <select className="form-control admin-prod-filter-select" value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
+              style={{ borderRadius:9, border:"1.5px solid #e5e7eb", fontSize:"0.87rem" }}>
+              <option value="">Tất cả trạng thái</option>
+              {STATUSES.map(s => <option key={s} value={s}>{getProductStatus(s).label}</option>)}
+            </select>
+            {hasFilter && (
+              <button type="button" onClick={clearFilters} className="admin-prod-clear-filter"
+                style={{ padding:"7px 14px", borderRadius:9, border:"1.5px solid #fecaca",
+                background:"#fef2f2", color:"#ef4444", fontWeight:600, cursor:"pointer", fontSize:"0.83rem", whiteSpace:"nowrap" }}>
+                <i className="fas fa-times-circle mr-1"></i> Xóa lọc
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -445,15 +475,9 @@ export default function AdminProducts() {
           </div>
         ) : displayList.length === 0 ? (
           <div style={{ textAlign:"center", padding:"60px 0", animation:"fadeUp .3s ease" }}>
-            <div style={{ fontSize:"3rem", marginBottom:12 }}>🎨</div>
             <div style={{ fontWeight:700, color:"#475569", marginBottom:8 }}>
               {hasFilter ? "Không tìm thấy tác phẩm phù hợp" : "Chưa có tác phẩm nào"}
             </div>
-            {hasFilter && (
-              <button onClick={clearFilters} style={{ padding:"8px 20px", borderRadius:9, border:"none", background:"#f5edd6", color:"var(--brand)", fontWeight:700, cursor:"pointer" }}>
-                Xóa bộ lọc
-              </button>
-            )}
           </div>
         ) : (
           <div className="table-responsive">

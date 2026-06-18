@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import PublicLayout from '../../components/layout/PublicLayout';
 import { productApi } from '../../services/api';
@@ -27,6 +27,7 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [addedMsg, setAddedMsg] = useState('');
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const { addToCart, items } = useCart();
   const { user, isArtist } = useAuth();
   const { openLogin } = useAuthModal();
@@ -44,8 +45,18 @@ const ProductDetail = () => {
     fetchProduct();
   }, [id]);
 
+  const closeLightbox = useCallback(() => setLightboxOpen(false), []);
+
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const onKey = (e) => { if (e.key === 'Escape') closeLightbox(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [lightboxOpen, closeLightbox]);
+
   const handleAddToCart = () => {
     if (!user) { openLogin(); return; }
+    if (product?.status !== 'ForSale') return;
 
     const alreadyInCart = items.some(i => normCartId(i.id) === normCartId(product.id));
     if (alreadyInCart) {
@@ -87,6 +98,8 @@ const ProductDetail = () => {
   const imgSrc = toImg(product.imageUrl);
 
   const inStock = product.status === 'ForSale';
+  const isSold = product.status === 'Sold';
+  const isOrdered = product.status === 'Ordered';
 
   return (
     <PublicLayout>
@@ -105,9 +118,29 @@ const ProductDetail = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-12">
             <div className="md:col-span-5" style={{ marginBottom: 32 }}>
-              <div style={{ background: '#f0ede8', display: 'flex', alignItems: 'center', justifyContent: 'center', aspectRatio: '3/4', overflow: 'hidden' }}>
+              <div
+                role={imgSrc ? 'button' : undefined}
+                tabIndex={imgSrc ? 0 : undefined}
+                onClick={imgSrc ? () => setLightboxOpen(true) : undefined}
+                onKeyDown={imgSrc ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setLightboxOpen(true); } } : undefined}
+                title={imgSrc ? 'Nhấn để xem toàn màn hình' : undefined}
+                style={{
+                  background: '#f0ede8', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  aspectRatio: '3/4', overflow: 'hidden', position: 'relative',
+                  cursor: imgSrc ? 'zoom-in' : 'default',
+                }}
+              >
                 {imgSrc
-                  ? <img src={imgSrc} alt={product.name} onError={e => { e.target.style.display = 'none'; }} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ? <>
+                      <img src={imgSrc} alt={product.name} onError={e => { e.target.style.display = 'none'; }}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} />
+                      <div style={{
+                        position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end',
+                        padding: 12, background: 'linear-gradient(to top, rgba(0,0,0,0.18) 0%, transparent 45%)',
+                        pointerEvents: 'none',
+                      }}>
+                      </div>
+                    </>
                   : <div style={{ textAlign: 'center', color: '#ccc' }}>
                       <i className="fas fa-image" style={{ fontSize: '3rem', display: 'block', marginBottom: 8 }}></i>
                       <span style={{ fontSize: '0.8rem' }}>Chưa có ảnh</span>
@@ -217,13 +250,15 @@ const ProductDetail = () => {
 
               {!isArtist && (
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                <button onClick={handleAddToCart} disabled={!inStock} style={{ ...sqBtn(inStock), flex: 1, minWidth: 160, padding: '14px 0' }}>
-                  <i className="fas fa-cart-plus mr-2"></i>Thêm vào giỏ
+                <button type="button" onClick={handleAddToCart} disabled={!inStock}
+                  style={{ ...sqBtn(inStock), flex: 1, minWidth: 160, padding: '14px 0', cursor: inStock ? 'pointer' : 'not-allowed' }}>
+                  <i className={`fas ${inStock ? 'fa-cart-plus' : 'fa-ban'} mr-2`}></i>
+                  {inStock ? 'Thêm vào giỏ' : isSold ? 'Đã bán' : isOrdered ? 'Đã có người đặt' : 'Không thể mua'}
                 </button>
-                <button
+                <button type="button"
                   onClick={() => { if (inStock) { handleAddToCart(); navigate('/checkout'); } }}
                   disabled={!inStock}
-                  style={{ ...sqBtn(inStock), flex: 1, minWidth: 160, padding: '14px 0', background: inStock ? 'transparent' : '#e5e7eb', border: inStock ? '1.5px solid var(--ink)' : 'none', color: inStock ? 'var(--ink)' : '#9ca3af' }}>
+                  style={{ ...sqBtn(inStock), flex: 1, minWidth: 160, padding: '14px 0', background: inStock ? 'transparent' : '#e5e7eb', border: inStock ? '1.5px solid var(--ink)' : 'none', color: inStock ? 'var(--ink)' : '#9ca3af', cursor: inStock ? 'pointer' : 'not-allowed' }}>
                   Mua ngay
                 </button>
               </div>
@@ -238,6 +273,47 @@ const ProductDetail = () => {
           </div>
         </div>
       </div>
+
+      {lightboxOpen && imgSrc && (
+        <div
+          onClick={closeLightbox}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(10,8,6,0.96)',
+            zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'zoom-out', padding: 24,
+          }}
+        >
+          <img
+            src={imgSrc}
+            alt={product.name}
+            style={{
+              maxWidth: '94%', maxHeight: '92vh', objectFit: 'contain',
+              borderRadius: 4, boxShadow: '0 30px 80px rgba(0,0,0,0.6)',
+            }}
+            onClick={e => e.stopPropagation()}
+          />
+          <button
+            type="button"
+            onClick={closeLightbox}
+            aria-label="Đóng"
+            style={{
+              position: 'absolute', top: 28, right: 32,
+              background: 'rgba(255,255,255,0.08)', color: '#ddd',
+              border: '1px solid rgba(255,255,255,0.25)', width: 46, height: 46,
+              borderRadius: '50%', fontSize: '1.55rem', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
+          >
+            ×
+          </button>
+          <div style={{
+            position: 'absolute', bottom: 26, left: '50%', transform: 'translateX(-50%)',
+            fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.08em',
+          }}>
+            Nhấn ESC hoặc click ngoài để đóng
+          </div>
+        </div>
+      )}
     </PublicLayout>
   );
 };

@@ -72,6 +72,7 @@ namespace BaseCore.Repository
                 entity.Property(e => e.PaymentMethod).HasMaxLength(20).HasDefaultValue("COD");
                 entity.Property(e => e.Note).HasMaxLength(500);
                 entity.Property(e => e.Phone).HasMaxLength(20);
+                entity.Property(e => e.CustomerName).HasMaxLength(100);
                 entity.HasMany(e => e.OrderDetails)
                       .WithOne(d => d.Order)
                       .HasForeignKey(d => d.OrderId)

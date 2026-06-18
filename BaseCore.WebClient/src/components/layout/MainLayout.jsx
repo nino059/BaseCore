@@ -3,11 +3,10 @@ import { useAuth } from '../../contexts/AuthContext';
 import DashboardLayout from './DashboardLayout';
 
 const NAV = [
-  { path: '/dashboard',  icon: 'fa-chart-bar',   label: 'Tổng quan' },
+  { path: '/dashboard',  icon: 'fa-chart-bar',    label: 'Tổng quan' },
   { path: '/products',   icon: 'fa-palette',      label: 'Tác phẩm' },
-  { path: '/categories', icon: 'fa-layer-group',  label: 'Thể loại' },
-  { path: '/orders',     icon: 'fa-shopping-bag', label: 'Đơn hàng' },
   { path: '/admin/blog', icon: 'fa-pen-fancy',    label: 'Bài viết' },
+  { path: '/orders',     icon: 'fa-shopping-bag', label: 'Đơn hàng' },
   { path: '/users',      icon: 'fa-users',        label: 'Người dùng', adminOnly: true },
 ];
 

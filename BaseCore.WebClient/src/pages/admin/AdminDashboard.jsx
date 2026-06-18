@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { productApi, userApi, categoryApi, orderApi, blogApi } from "../../services/api";
+import { productApi, userApi, orderApi, blogApi } from "../../services/api";
 
 // ─── Constants ────────────────────────────────────────────────
 import { ORDER_STATUS as STATUS_CFG } from "../../utils/orderStatus";
@@ -111,7 +111,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   const [loading,       setLoading]       = useState(true);
-  const [stats,         setStats]         = useState({ products: 0, activeProducts: 0, hiddenProducts: 0, categories: 0, users: 0, orders: 0, blogs: 0, revenue: 0 });
+  const [stats,         setStats]         = useState({ products: 0, activeProducts: 0, hiddenProducts: 0, users: 0, orders: 0, blogs: 0, revenue: 0 });
   const [monthlyOrders, setMonthlyOrders] = useState([]);
   const [monthlyRev,    setMonthlyRev]    = useState([]);
   const [statusDist,    setStatusDist]    = useState([]);
@@ -136,10 +136,9 @@ const Dashboard = () => {
       };
       const last6 = getLast6Months();
 
-      const [prodRes, prodActiveRes, catRes, usersRes, ordersRes, blogsRes] = await Promise.all([
+      const [prodRes, prodActiveRes, usersRes, ordersRes, blogsRes] = await Promise.all([
         productApi.getAll({ pageSize: 1, admin: true }),
         productApi.getAll({ pageSize: 1 }),
-        categoryApi.getAll(),
         userApi.getAll({ pageSize: 1 }),
         orderApi.getAll({ pageSize: 200 }),
         blogApi.getAll({ pageSize: 1 }),
@@ -163,7 +162,6 @@ const Dashboard = () => {
         products:       totalProducts,
         activeProducts,
         hiddenProducts: totalProducts - activeProducts,
-        categories: catRes.data?.length || 0,
         users:      usersCount,
         orders:     orders.length,
         blogs:      blogsCount,
@@ -244,10 +242,10 @@ const Dashboard = () => {
           }}>
             {[
               { label: "Tác phẩm",   value: stats.activeProducts, color: "var(--brand)", icon: "fa-palette",      href: "/products",   sub: stats.hiddenProducts > 0 ? `${stats.hiddenProducts} ẩn/hết` : null },
-              { label: "Thể loại",   value: stats.categories,     color: "var(--brand-dark)", icon: "fa-layer-group",   href: "/categories", sub: null },
-              { label: "Đơn hàng",   value: stats.orders,         color: "#f59e0b", icon: "fa-shopping-bag",  href: "/orders",     sub: null },
               { label: "Bài viết",   value: stats.blogs,          color: "#7c3aed", icon: "fa-pen-fancy",     href: "/admin/blog", sub: null },
-              { label: "Người dùng", value: stats.users,          color: "#10b981", icon: "fa-users",         href: "/users",      sub: null },
+              { label: "Đơn hàng",   value: stats.orders,         color: "#f59e0b", icon: "fa-shopping-bag",  href: "/orders",     sub: null },
+              { label: "Doanh thu",  value: fmt(stats.revenue),   color: "#10b981", icon: "fa-coins",         href: "/orders",     sub: "đã hoàn thành" },
+              { label: "Người dùng", value: stats.users,          color: "#3b82f6", icon: "fa-users",         href: "/users",      sub: null },
             ].map((k, i) => (
               <div key={i}
                 style={{

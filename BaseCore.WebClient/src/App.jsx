@@ -33,7 +33,6 @@ const OrderDetail       = lazy(() => import('./pages/public/OrderDetail'));
 // Admin pages
 const Dashboard      = lazy(() => import('./pages/admin/AdminDashboard'));
 const Products       = lazy(() => import('./pages/admin/AdminProducts'));
-const Categories     = lazy(() => import('./pages/admin/AdminCategories'));
 const Orders         = lazy(() => import('./pages/admin/AdminOrders'));
 const Users          = lazy(() => import('./pages/admin/UserManagement'));
 const AdminBlogPosts = lazy(() => import('./pages/admin/AdminBlogPosts'));
@@ -121,11 +120,6 @@ function AppRoutes() {
       <Route path="/products" element={
         <ProtectedRoute adminOnly>
           <MainLayout><Products /></MainLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/categories" element={
-        <ProtectedRoute adminOnly>
-          <MainLayout><Categories /></MainLayout>
         </ProtectedRoute>
       } />
       <Route path="/orders" element={

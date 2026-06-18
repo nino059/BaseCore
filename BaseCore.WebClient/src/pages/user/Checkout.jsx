@@ -150,6 +150,7 @@ const Checkout = () => {
       }
 
       const baseOrder = {
+        customerName: form.fullName?.trim(),
         shippingAddress: shippingParts.join(', '),
         phone: form.phone,
         note: form.note,
@@ -410,6 +411,7 @@ const Checkout = () => {
                               </div>
                               <div>
                                 <div style={{ fontWeight: 500, fontSize: '0.85rem', color: 'var(--ink)' }}>{item.name}</div>
+                                <div style={{ color: '#aaa', fontSize: '0.78rem' }}>×{item.qty || 1}</div>
                               </div>
                             </div>
                             <span style={{ fontWeight: 600, fontSize: '0.88rem', color: 'var(--ink)' }}>

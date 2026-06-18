@@ -472,7 +472,7 @@ const Home = () => {
       {!loading && artists.length > 0 && (
         <section style={{ background: 'white', padding: '72px 0' }}>
           <div className="container">
-            <SecHead label="Nghệ sĩ" title="Vẽ nên kiệt tác" linkTo="/artists" linkText="Tất cả họa sĩ" />
+            <SecHead label="Nghệ sĩ" title="Vẽ Nên Kiệt Tác" linkTo="/artists" linkText="Tất cả họa sĩ" />
             <div className="art-artist-grid">
               {artists.map(artist => (
                 <Link key={artist.sellerId || artist.name} to={artist.sellerId ? `/artists/${artist.sellerId}` : '/artists'} className="art-artist" style={{ textDecoration: 'none', color: 'inherit' }}>

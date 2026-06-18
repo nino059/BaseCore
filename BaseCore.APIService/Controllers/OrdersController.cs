@@ -60,7 +60,15 @@ namespace BaseCore.APIService.Controllers
 
             var users = await _db.Users
                 .Where(u => userIds.Contains(u.Id))
-                .ToDictionaryAsync(u => u.Id, u => new { u.Name, u.Phone });
+                .ToDictionaryAsync(u => u.Id);
+
+            var addressNames = (await _db.UserAddresses
+                .Where(a => userIds.Contains(a.UserId))
+                .ToListAsync())
+                .GroupBy(a => a.UserId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.OrderByDescending(a => a.IsDefault).ThenByDescending(a => a.Id).First().FullName);
 
             var allDetails = await _db.OrderDetails
                 .Include(d => d.Product)
@@ -72,13 +80,17 @@ namespace BaseCore.APIService.Controllers
                 .ToDictionary(g => g.Key, g => g.ToList());
 
             var result = orders.Select(o => {
-                var u = users.GetValueOrDefault(o.UserId);
+                users.TryGetValue(o.UserId, out var u);
+                addressNames.TryGetValue(o.UserId, out var addressName);
                 var details = detailsByOrder.GetValueOrDefault(o.Id, new List<OrderDetail>());
+                var customerName = ResolveCustomerName(o, u, addressName);
+                var phone = !string.IsNullOrWhiteSpace(o.Phone) ? o.Phone : u?.Phone ?? "";
                 return new {
                     o.Id, o.UserId, o.OrderDate, o.TotalAmount, o.Status,
-                    o.ShippingAddress, o.PaymentMethod, o.Note, o.Phone,
-                    userName  = u?.Name  ?? "",
-                    userPhone = u?.Phone ?? "",
+                    o.ShippingAddress, o.PaymentMethod, o.Note,
+                    Phone = phone,
+                    customerName,
+                    userPhone = phone,
                     items = details.Select(d => new {
                         d.ProductId,
                         productName = d.Product?.Name ?? "",
@@ -109,7 +121,13 @@ namespace BaseCore.APIService.Controllers
                 return Forbid();
 
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == order.UserId);
-            return Ok(ToOrderDto(order, details, user));
+            var addressName = await _db.UserAddresses
+                .Where(a => a.UserId == order.UserId)
+                .OrderByDescending(a => a.IsDefault)
+                .ThenByDescending(a => a.Id)
+                .Select(a => a.FullName)
+                .FirstOrDefaultAsync();
+            return Ok(ToOrderDto(order, details, user, addressName));
         }
 
         [HttpPost]
@@ -171,7 +189,8 @@ namespace BaseCore.APIService.Controllers
                 ShippingAddress = dto.ShippingAddress ?? "",
                 PaymentMethod = dto.PaymentMethod ?? "COD",
                 Note = dto.Note,
-                Phone = dto.Phone
+                Phone = dto.Phone,
+                CustomerName = dto.CustomerName?.Trim()
             };
 
             await _orderRepository.AddAsync(order);
@@ -306,9 +325,17 @@ namespace BaseCore.APIService.Controllers
             var result = new List<object>();
 
             var userIds = allOrders.Select(o => o.UserId).Distinct().ToList();
-            var userNames = await _db.Users
+            var users = await _db.Users
                 .Where(u => userIds.Contains(u.Id))
-                .ToDictionaryAsync(u => u.Id, u => u.Name ?? u.UserName);
+                .ToDictionaryAsync(u => u.Id);
+
+            var addressNames = (await _db.UserAddresses
+                .Where(a => userIds.Contains(a.UserId))
+                .ToListAsync())
+                .GroupBy(a => a.UserId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.OrderByDescending(a => a.IsDefault).ThenByDescending(a => a.Id).First().FullName);
 
             foreach (var order in allOrders)
             {
@@ -317,11 +344,13 @@ namespace BaseCore.APIService.Controllers
                 if (!artistDetails.Any())
                     continue;
 
+                users.TryGetValue(order.UserId, out var buyer);
+                addressNames.TryGetValue(order.UserId, out var addressName);
                 result.Add(new
                 {
                     order.Id,
                     order.UserId,
-                    customerName = userNames.TryGetValue(order.UserId, out var n) ? n : "",
+                    customerName = ResolveCustomerName(order, buyer, addressName),
                     order.OrderDate,
                     order.Status,
                     order.ShippingAddress,
@@ -407,8 +436,10 @@ namespace BaseCore.APIService.Controllers
             return Ok(new { message = "Da huy don hang thanh cong", order });
         }
 
-        private static object ToOrderDto(Order order, List<OrderDetail> details, User? user = null)
+        private static object ToOrderDto(Order order, List<OrderDetail> details, User? user = null, string? addressFullName = null)
         {
+            var customerName = ResolveCustomerName(order, user, addressFullName);
+            var phone = !string.IsNullOrWhiteSpace(order.Phone) ? order.Phone : user?.Phone ?? "";
             return new
             {
                 order.Id,
@@ -419,11 +450,33 @@ namespace BaseCore.APIService.Controllers
                 order.ShippingAddress,
                 order.PaymentMethod,
                 order.Note,
-                order.Phone,
-                userName  = user?.Name  ?? "",
-                userPhone = user?.Phone ?? "",
+                Phone = phone,
+                customerName,
+                userPhone = phone,
                 items = details.Select(ToItemDto),
             };
+        }
+
+        private static string ResolveCustomerName(Order order, User? user, string? addressFullName = null)
+        {
+            if (!string.IsNullOrWhiteSpace(order.CustomerName))
+                return order.CustomerName.Trim();
+
+            if (!string.IsNullOrWhiteSpace(addressFullName))
+                return addressFullName.Trim();
+
+            if (user == null || string.IsNullOrWhiteSpace(user.Name))
+                return "";
+
+            var displayName = user.Name.Trim();
+            var login = user.UserName?.Trim() ?? "";
+
+            // Không dùng username đăng nhập làm tên khách (vd: "user", "nguyenphuongtay")
+            if (!string.IsNullOrEmpty(login) &&
+                string.Equals(displayName, login, StringComparison.OrdinalIgnoreCase))
+                return "";
+
+            return displayName;
         }
 
         private static object ToItemDto(OrderDetail detail) => new
@@ -465,6 +518,7 @@ namespace BaseCore.APIService.Controllers
         public string? PaymentMethod { get; set; } = "COD";
         public string? Note { get; set; }
         public string? Phone { get; set; }
+        public string? CustomerName { get; set; }
     }
 
     public class OrderItemDto

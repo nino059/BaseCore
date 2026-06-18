@@ -22,14 +22,19 @@ namespace BaseCore.Repository.EFCore
         {
             var query = _dbSet.Include(p => p.Category).AsQueryable();
 
-            // Filter by seller (artist view) — overrides publicOnly
             if (!string.IsNullOrEmpty(sellerId))
             {
                 query = query.Where(p => p.SellerId == sellerId);
+                if (publicOnly)
+                    query = query.Where(p =>
+                        p.Status == "ForSale" || p.Status == "Available"
+                        || p.Status == "Ordered" || p.Status == "Sold" || p.Status == "OutOfStock");
             }
             else if (publicOnly)
             {
-                query = query.Where(p => p.Status == "ForSale" || p.Status == "Available");
+                query = query.Where(p =>
+                    p.Status == "ForSale" || p.Status == "Available"
+                    || p.Status == "Ordered" || p.Status == "Sold" || p.Status == "OutOfStock");
             }
 
             if (!string.IsNullOrEmpty(keyword))

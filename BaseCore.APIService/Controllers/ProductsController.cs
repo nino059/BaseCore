@@ -100,7 +100,7 @@ namespace BaseCore.APIService.Controllers
             var canViewAllPrivate = admin && isAdmin;
             var canViewSellerPrivate = canViewAllPrivate || (!string.IsNullOrEmpty(sellerId) && sellerId == callerId);
 
-            var effectiveSellerId = canViewSellerPrivate ? sellerId : null;
+            var effectiveSellerId = sellerId;
             var publicOnly = !canViewAllPrivate && !canViewSellerPrivate;
 
             var (products, totalCount) = await _productRepository.SearchAsync(keyword, categoryId, page, pageSize, publicOnly, effectiveSellerId);
@@ -127,8 +127,8 @@ namespace BaseCore.APIService.Controllers
             var callerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var canViewPrivate = (admin && callerRole == "Admin") || (!string.IsNullOrEmpty(callerId) && product.SellerId == callerId);
 
-            if (!canViewPrivate && !IsSellable(product.Status))
-                return NotFound(new { message = "Sản phẩm không còn bán" });
+            if (!canViewPrivate && !IsPubliclyViewable(product.Status))
+                return NotFound(new { message = "Sản phẩm không khả dụng" });
 
             return Ok(ToDto(product));
         }
@@ -322,8 +322,7 @@ namespace BaseCore.APIService.Controllers
         public async Task<IActionResult> GetByCategory(int categoryId)
         {
             var products = await _productRepository.GetByCategoryAsync(categoryId);
-            // Chỉ trả về tranh đang ForSale cho public
-            return Ok(products.Where(p => IsSellable(p.Status)).Select(p => ToDto(p)).ToList());
+            return Ok(products.Where(p => IsPubliclyViewable(p.Status)).Select(p => ToDto(p)).ToList());
         }
 
         // ── Helper ───────────────────────────────────────────────────────────
@@ -342,6 +341,12 @@ namespace BaseCore.APIService.Controllers
         {
             var normalized = NormalizeProductStatus(status);
             return normalized == "ForSale";
+        }
+
+        private static bool IsPubliclyViewable(string? status)
+        {
+            var normalized = NormalizeProductStatus(status);
+            return normalized is "ForSale" or "Ordered" or "Sold";
         }
 
         /// <summary>

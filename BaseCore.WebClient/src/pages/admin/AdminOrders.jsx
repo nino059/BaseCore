@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { orderApi } from '../../services/api';
+import { normalizeOrder, normalizeOrderList, getCustomerDisplayName } from '../../utils/orderNormalize';
 
 // ─── Config trạng thái ────────────────────────────────────────
 import { ORDER_STATUS as STATUS_CFG, ORDER_STEPS as STATUS_STEPS } from '../../utils/orderStatus';
@@ -48,9 +49,7 @@ const Orders = () => {
     setLoading(true);
     try {
       const res  = await orderApi.getAll({});
-      const raw  = res.data;
-      const list = raw?.items || raw?.data || (Array.isArray(raw) ? raw : []);
-      setAllOrders(list);
+      setAllOrders(normalizeOrderList(res));
     } catch (e) { console.error(e); }
     finally { setLoading(false); }
   }, []);
@@ -65,7 +64,7 @@ const Orders = () => {
       const kw = search.toLowerCase();
       list = list.filter(o =>
         String(o.id).includes(kw) ||
-        (o.customerName || o.userName || '').toLowerCase().includes(kw)
+        getCustomerDisplayName(o).toLowerCase().includes(kw)
       );
     }
     return list;
@@ -88,11 +87,8 @@ const Orders = () => {
   const handleViewDetail = async (id) => {
     try {
       const res = await orderApi.getById(id);
-      const data = res.data;
-      const order = {
-        ...(data.order || data),
-        items: data.details || data.items || [],
-      };
+      const order = normalizeOrder(res.data?.order || res.data);
+      if (!order) throw new Error('empty');
       setSelectedOrder(order);
       setShowModal(true);
     } catch { showToast('Không lấy được chi tiết đơn hàng', 'error'); }
@@ -120,6 +116,47 @@ const Orders = () => {
         .chip-close { background:none; border:none; cursor:pointer; color:#94a3b8;
           font-size:0.9rem; line-height:1; padding:0 1px; margin-left:1px; }
         .chip-close:hover { color:#ef4444; }
+        .admin-order-filters {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          width: 100%;
+        }
+        .admin-order-search {
+          position: relative;
+          width: 100%;
+          min-width: 0;
+        }
+        .admin-order-search-input {
+          display: block;
+          width: 100%;
+          box-sizing: border-box;
+          padding: 9px 12px 9px 34px;
+          border-radius: 9px;
+          border: 1.5px solid #e5e7eb;
+          font-size: 0.88rem;
+          outline: none;
+        }
+        .admin-order-search-input:focus {
+          border-color: var(--brand);
+          box-shadow: 0 0 0 3px rgba(200, 169, 122, 0.18);
+        }
+        .admin-order-filter-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          align-items: center;
+        }
+        .admin-order-filter-select {
+          flex: 1 1 200px;
+          min-width: 0;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+        .admin-order-clear-filter { flex: 0 0 auto; }
+        @media (max-width: 520px) {
+          .admin-order-filter-select { flex: 1 1 100%; }
+        }
       `}</style>
 
       <Toaster toasts={toasts} />
@@ -155,19 +192,29 @@ const Orders = () => {
 
       {/* ── Bộ lọc ── */}
       <div style={{ background:'white', borderRadius:14, padding:'14px 18px', boxShadow:'0 2px 12px rgba(0,0,0,.06)', marginBottom:18 }}>
-        <div style={{ display:'flex', gap:10, flexWrap:'wrap', alignItems:'center' }}>
-          <div style={{ flex:'1 1 200px', position:'relative', minWidth:160 }}>
-            <i className="fas fa-search" style={{ position:'absolute', left:11, top:'50%', transform:'translateY(-50%)', color:'#9ca3af', fontSize:'0.82rem' }}></i>
-            <input className="form-control" placeholder="Tìm mã đơn, tên khách hàng..."
-              value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
-              style={{ paddingLeft:32, borderRadius:9, border:'1.5px solid #e5e7eb', fontSize:'0.88rem' }} />
+        <div className="admin-order-filters">
+          <div className="admin-order-search">
+            <i className="fas fa-search" style={{ position:'absolute', left:12, top:'50%', transform:'translateY(-50%)', color:'#9ca3af', fontSize:'0.82rem', pointerEvents:'none' }}></i>
+            <input className="admin-order-search-input" placeholder="Tìm mã đơn, tên khách hàng..."
+              value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} />
           </div>
-          {hasFilter && (
-            <button onClick={() => { setSearch(''); setFilterStatus(''); setPage(1); }}
-              style={{ padding:'7px 14px', borderRadius:9, border:'1.5px solid #fecaca', background:'#fef2f2', color:'#ef4444', fontWeight:600, cursor:'pointer', fontSize:'0.83rem' }}>
-              <i className="fas fa-times-circle mr-1"></i> Xóa lọc
-            </button>
-          )}
+          <div className="admin-order-filter-row">
+            <select className="form-control admin-order-filter-select" value={filterStatus}
+              onChange={e => { setFilterStatus(e.target.value); setPage(1); }}
+              style={{ borderRadius:9, border:'1.5px solid #e5e7eb', fontSize:'0.87rem' }}>
+              <option value="">Tất cả trạng thái</option>
+              {Object.keys(STATUS_CFG).map(s => (
+                <option key={s} value={s}>{STATUS_CFG[s].label}</option>
+              ))}
+            </select>
+            {hasFilter && (
+              <button type="button" onClick={() => { setSearch(''); setFilterStatus(''); setPage(1); }}
+                className="admin-order-clear-filter"
+                style={{ padding:'7px 14px', borderRadius:9, border:'1.5px solid #fecaca', background:'#fef2f2', color:'#ef4444', fontWeight:600, cursor:'pointer', fontSize:'0.83rem', whiteSpace:'nowrap' }}>
+                <i className="fas fa-times-circle mr-1"></i> Xóa lọc
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -204,16 +251,9 @@ const Orders = () => {
           </div>
         ) : orders.length === 0 ? (
           <div style={{ textAlign:'center', padding:'60px 0', color:'#94a3b8' }}>
-            <i className="fas fa-inbox" style={{ fontSize:'2.8rem', display:'block', marginBottom:12, color:'#e2e8f0' }}></i>
             <div style={{ fontWeight:600, color:'#64748b', marginBottom:6 }}>
               {hasFilter ? 'Không tìm thấy đơn hàng phù hợp' : 'Chưa có đơn hàng nào'}
             </div>
-            {hasFilter && (
-              <button onClick={() => { setSearch(''); setFilterStatus(''); setPage(1); }}
-                style={{ marginTop:10, padding:'7px 18px', borderRadius:8, border:'none', background:'#fef3c7', color:'#d97706', fontWeight:600, cursor:'pointer' }}>
-                Xóa bộ lọc
-              </button>
-            )}
           </div>
         ) : (
           <div className="table-responsive">
@@ -252,7 +292,7 @@ const Orders = () => {
                     {/* Khách hàng */}
                     <td style={{ padding:'12px 14px' }}>
                       <div style={{ fontWeight:600, fontSize:'0.86rem', color:'#1e293b' }}>
-                        {o.userName || `User #${o.userId}`}
+                        {getCustomerDisplayName(o)}
                       </div>
                       {o.userPhone && (
                         <div style={{ fontSize:'0.76rem', color:'#94a3b8' }}>
@@ -418,7 +458,7 @@ const Orders = () => {
                   <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px 16px' }}>
                     <div style={{ fontSize:'0.85rem' }}>
                       <span style={{ color:'#6b7280' }}>Khách hàng: </span>
-                      <strong>{selectedOrder.userName || '—'}</strong>
+                      <strong>{getCustomerDisplayName(selectedOrder)}</strong>
                     </div>
                     <div style={{ fontSize:'0.85rem' }}>
                       <span style={{ color:'#6b7280' }}>Số điện thoại: </span>

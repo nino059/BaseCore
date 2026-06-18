@@ -7,7 +7,7 @@ import ArtistLayout from '../../components/layout/ArtistLayout';
 import MainLayout from '../../components/layout/MainLayout';
 import { toImg } from '../../utils/image';
 import { formatVND as fmt } from '../../utils/format';
-import { normalizeOrder } from '../../utils/orderNormalize';
+import { normalizeOrder, getCustomerDisplayName } from '../../utils/orderNormalize';
 
 const fmtDate = (d) =>
   new Date(d).toLocaleDateString('vi-VN', {
@@ -55,6 +55,7 @@ const OrderDetail = () => {
   const navigate = useNavigate();
   const role = user?.role;
   const isArtist = role === 'Artist';
+  const isAdmin = role === 'Admin';
 
   const [order, setOrder]         = useState(null);
   const [loading, setLoading]     = useState(true);
@@ -304,6 +305,7 @@ const OrderDetail = () => {
               {[
                 ['Mã đơn',     `#${order.id}`],
                 ['Ngày đặt',   fmtDate(order.createdAt || order.orderDate)],
+                ...((isArtist || isAdmin) ? [['Khách hàng', getCustomerDisplayName(order)]] : []),
                 ['Thanh toán', order.paymentMethod || '—'],
                 ...(order.phone ? [['Điện thoại', order.phone]] : []),
               ].map(([label, val]) => (

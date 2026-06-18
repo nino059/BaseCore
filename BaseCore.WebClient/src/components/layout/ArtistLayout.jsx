@@ -2,7 +2,7 @@ import React from 'react';
 import DashboardLayout from './DashboardLayout';
 
 const NAV = [
-  { path: '/artist/dashboard', icon: 'fa-tachometer-alt', label: 'Tổng quan' },
+  { path: '/artist/dashboard', icon: 'fa-chart-bar',      label: 'Tổng quan' },
   { path: '/artist/products',  icon: 'fa-palette',        label: 'Tác phẩm' },
   { path: '/artist/blog',      icon: 'fa-pen-fancy',      label: 'Bài viết' },
   { path: '/artist/orders',    icon: 'fa-shopping-bag',   label: 'Đơn hàng' },

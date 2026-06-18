@@ -79,7 +79,7 @@ const ArtistDetail = () => {
     setLoading(true);
     Promise.allSettled([
       userApi.getArtists(),
-      productApi.getAll({ pageSize: 999 }),
+      productApi.getAll({ pageSize: 999, sellerId: id }),
     ]).then(([aRes, pRes]) => {
       if (aRes.status === 'fulfilled') {
         const found = (aRes.value.data || []).find(a => a.id === id);
@@ -92,7 +92,7 @@ const ArtistDetail = () => {
       }
       if (pRes.status === 'fulfilled') {
         const all = pRes.value.data?.items || pRes.value.data?.data || pRes.value.data || [];
-        setProducts((Array.isArray(all) ? all : []).filter(p => p.sellerId === id));
+        setProducts(Array.isArray(all) ? all : []);
       }
     }).finally(() => setLoading(false));
   }, [id]);
