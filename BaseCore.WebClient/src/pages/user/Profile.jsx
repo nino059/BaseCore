@@ -352,12 +352,8 @@ const Profile = () => {
             {/* Tab: Địa chỉ giao hàng */}
             {tab === 'addresses' && (
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                  <p style={{ fontSize: '0.85rem', color: '#767676', margin: 0 }}>
-                    {addresses.length > 0
-                      ? `Bạn có ${addresses.length} địa chỉ. Chỉ một địa chỉ được đặt làm mặc định.`
-                      : 'Thêm địa chỉ giao hàng. Địa chỉ đầu tiên sẽ là mặc định.'}
-                  </p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  
                   {!showAddrForm && (
                     <button type="button" onClick={openAddAddress} style={{
                       padding: '10px 18px', background: 'var(--ink)', color: 'white', border: 'none',
@@ -374,7 +370,7 @@ const Profile = () => {
                     padding: '20px', background: '#faf8f5', marginBottom: 24,
                     border: '1px solid #e8e4df',
                   }}>
-                    <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 18 }}>
+                    <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--brand-dark)', textTransform: 'uppercase', marginBottom: 18, textAlign: 'center' }}>
                       {editingAddrId ? 'Chỉnh sửa địa chỉ' : 'Thêm địa chỉ mới'}
                     </p>
                     {[

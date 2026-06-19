@@ -241,11 +241,11 @@ const Dashboard = () => {
             gap: 16, marginBottom: 24,
           }}>
             {[
-              { label: "Tác phẩm",   value: stats.activeProducts, color: "var(--brand)", icon: "fa-palette",      href: "/products",   sub: stats.hiddenProducts > 0 ? `${stats.hiddenProducts} ẩn/hết` : null },
-              { label: "Bài viết",   value: stats.blogs,          color: "#7c3aed", icon: "fa-pen-fancy",     href: "/admin/blog", sub: null },
-              { label: "Đơn hàng",   value: stats.orders,         color: "#f59e0b", icon: "fa-shopping-bag",  href: "/orders",     sub: null },
-              { label: "Doanh thu",  value: fmt(stats.revenue),   color: "#10b981", icon: "fa-coins",         href: "/orders",     sub: "đã hoàn thành" },
-              { label: "Người dùng", value: stats.users,          color: "#3b82f6", icon: "fa-users",         href: "/users",      sub: null },
+              { label: "Tác phẩm",   value: stats.products,       color: "var(--brand)", icon: "fa-palette",      href: "/products"   },
+              { label: "Bài viết",   value: stats.blogs,          color: "#7c3aed", icon: "fa-pen-fancy",     href: "/admin/blog" },
+              { label: "Đơn hàng",   value: stats.orders,         color: "#f59e0b", icon: "fa-shopping-bag",  href: "/orders"     },
+              { label: "Doanh thu",  value: fmt(stats.revenue),   color: "#10b981", icon: "fa-coins",         href: "/orders"     },
+              { label: "Người dùng", value: stats.users,          color: "#3b82f6", icon: "fa-users",         href: "/users"      },
             ].map((k, i) => (
               <div key={i}
                 style={{
@@ -273,8 +273,7 @@ const Dashboard = () => {
                       {k.value}
                     </div>
                     <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "#374151", marginTop: 5 }}>{k.label}</div>
-                    {k.sub && <div style={{ fontSize: "0.72rem", color: "#ef4444", fontWeight: 600, marginTop: 3 }}>⚠ {k.sub}</div>}
-                    {!k.sub && k.href && <div style={{ fontSize: "0.72rem", color: "#94a3b8", marginTop: 3 }}>Nhấn để xem →</div>}
+                    {k.href && <div style={{ fontSize: "0.72rem", color: "#94a3b8", marginTop: 3 }}>Nhấn để xem →</div>}
                   </div>
                   <div style={{
                     width: 44, height: 44, borderRadius: 12,

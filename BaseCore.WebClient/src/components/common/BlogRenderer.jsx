@@ -317,15 +317,9 @@ const BlogRenderer = ({ post, compact = false }) => {
                   <figcaption style={{
                     marginTop: 14, fontSize: '0.85rem', color: '#6b6358',
                     fontStyle: 'italic', maxWidth: '640px', marginLeft: 'auto', marginRight: 'auto',
-                    position: 'relative',
+                    textAlign: 'center',
                   }}>
-                    <span style={{ position: 'relative', paddingLeft: 18 }}>
-                      {block.caption}
-                      <span style={{
-                        position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)',
-                        width: 9, height: 1, background: 'var(--brand)',
-                      }} />
-                    </span>
+                    {block.caption}
                   </figcaption>
                 )}
               </figure>
