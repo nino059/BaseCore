@@ -92,7 +92,9 @@ namespace BaseCore.APIService.Controllers
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 12,
             [FromQuery] bool admin = false,
-            [FromQuery] string? sellerId = null)
+            [FromQuery] string? sellerId = null,
+            [FromQuery] string? status = null,
+            [FromQuery] string? sortBy = null)
         {
             var callerRole = User.FindFirst(ClaimTypes.Role)?.Value;
             var callerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -103,7 +105,10 @@ namespace BaseCore.APIService.Controllers
             var effectiveSellerId = sellerId;
             var publicOnly = !canViewAllPrivate && !canViewSellerPrivate;
 
-            var (products, totalCount) = await _productRepository.SearchAsync(keyword, categoryId, page, pageSize, publicOnly, effectiveSellerId);
+            var effectiveSort = sortBy is "price_asc" or "price_desc" ? sortBy : null;
+
+            var (products, totalCount) = await _productRepository.SearchAsync(
+                keyword, categoryId, page, pageSize, publicOnly, effectiveSellerId, status, effectiveSort);
 
             return Ok(new
             {
@@ -112,6 +117,44 @@ namespace BaseCore.APIService.Controllers
                 page,
                 pageSize,
                 totalPages = (int)Math.Ceiling((double)totalCount / pageSize)
+            });
+        }
+
+        // GET /api/products/price-stats?admin=1 | ?sellerId=xxx
+        // Trả về giá TB toàn bộ + giá TB tranh Đang bán (ForSale)
+        [HttpGet("price-stats")]
+        [Authorize(Roles = "Artist,Admin")]
+        public async Task<IActionResult> GetPriceStats(
+            [FromQuery] bool admin = false,
+            [FromQuery] string? sellerId = null)
+        {
+            var callerRole = User.FindFirst(ClaimTypes.Role)?.Value;
+            var callerId   = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var isAdmin    = callerRole == "Admin";
+            var canViewAllPrivate = admin && isAdmin;
+            var canViewSellerPrivate = canViewAllPrivate || (!string.IsNullOrEmpty(sellerId) && sellerId == callerId);
+
+            if (!canViewAllPrivate && !canViewSellerPrivate)
+                return Forbid();
+
+            var stats = await _productRepository.GetPriceStatsAsync(
+                publicOnly: !canViewAllPrivate && !canViewSellerPrivate,
+                sellerId: sellerId);
+
+            return Ok(new
+            {
+                all = new
+                {
+                    count = stats.All.Count,
+                    totalPrice = stats.All.TotalPrice,
+                    averagePrice = stats.All.AveragePrice,
+                },
+                forSale = new
+                {
+                    count = stats.ForSale.Count,
+                    totalPrice = stats.ForSale.TotalPrice,
+                    averagePrice = stats.ForSale.AveragePrice,
+                },
             });
         }
 
@@ -218,14 +261,25 @@ namespace BaseCore.APIService.Controllers
         }
 
         // ── Xóa tranh ────────────────────────────────────────────────────────
-        // DELETE /api/products/{id} — Admin only
+        // DELETE /api/products/{id}
+        // Admin: xóa bất kỳ tranh nào
+        // Artist: chỉ xóa tranh của mình khi Status = Pending hoặc Rejected
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Artist,Admin")]
         public async Task<IActionResult> Delete(int id)
         {
+            var callerRole = User.FindFirst(ClaimTypes.Role)?.Value;
+            var callerId   = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             var product = await _productRepository.GetByIdAsync(id);
             if (product == null)
                 return NotFound(new { message = "Không tìm thấy sản phẩm" });
+
+            if (callerRole != "Admin" && (callerRole != "Artist" || product.SellerId != callerId))
+                return Forbid();
+
+            if (callerRole == "Artist" && !new[] { "Pending", "Rejected" }.Contains(product.Status))
+                return BadRequest(new { message = "Chỉ có thể xóa tranh đang chờ duyệt hoặc bị từ chối" });
 
             try
             {

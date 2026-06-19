@@ -82,6 +82,7 @@ export const userApi = {
 
 export const productApi = {
     getAll:  (params) => api.get('/products', { params }),
+    getPriceStats: (params) => api.get('/products/price-stats', { params }),
     search:  (params) => api.get('/products', { params }),
     getById: (id)     => api.get(`/products/${id}`),
     create:  (data)   => api.post('/products', data),
@@ -115,7 +116,7 @@ export const categoryApi = {
 export const orderApi = {
     getAll:        (params) => api.get('/orders/all', { params }),
     getMyOrders:   (params) => api.get('/orders', { params }),
-    getArtistOrders: ()     => api.get('/orders/artist'),
+    getArtistOrders: (params) => api.get('/orders/artist', { params }),
     create:        (data)   => api.post('/orders', data),
     getById:       (id)     => api.get(`/orders/${id}`),
     update:        (id, data) => api.put(`/orders/${id}`, data),

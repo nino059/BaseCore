@@ -11,26 +11,16 @@ import Toaster from "../../components/ui/Toaster";
 import ConfirmDialog from "../../components/ui/ConfirmDialog";
 import {
   ADMIN_PRODUCT_AVG_PRICE,
-  ADMIN_PRODUCT_DATE_FILTER,
+  ADMIN_PRODUCT_AVG_PRICE_FOR_SALE,
   ADMIN_PRODUCT_SORT,
 } from "../../constants/adminFeatures";
-import VnDatePicker, { VN_DATE_PICKER_STYLES } from "../../components/common/VnDatePicker";
-import { isoToDayStart, recordDayStart } from "../../utils/dateFilter";
+
+const NEED_PRICE_STATS = ADMIN_PRODUCT_AVG_PRICE || ADMIN_PRODUCT_AVG_PRICE_FOR_SALE;
 
 const PRODUCT_SORT_OPTIONS = [
-  { value: "date_desc", label: "Ngày đăng: mới nhất" },
-  { value: "date_asc", label: "Ngày đăng: cũ nhất" },
   { value: "price_desc", label: "Giá bán: cao → thấp" },
   { value: "price_asc", label: "Giá bán: thấp → cao" },
 ];
-
-const productTimestamp = (p) => {
-  const d = p.createdAt || p.CreatedAt;
-  const t = d ? new Date(d).getTime() : 0;
-  return Number.isFinite(t) ? t : 0;
-};
-
-const productPrice = (p) => Number(p.price ?? p.Price ?? 0) || 0;
 
 // ─── UI Components ────────────────────────────────────────────────────────────
 const NoteModal = ({ open, title, placeholder, onConfirm, onCancel, color = "#ef4444", btnLabel = "Xác nhận" }) => {
@@ -224,13 +214,12 @@ const ProductReviewModal = ({ product, onApprove, onReject, onClose, fmt }) => {
 // ═══════════════════════════════════════════════════════════════════════════════
 export default function AdminProducts() {
   const [allProducts,  setAllProducts]  = useState([]);
+  const [priceStats,   setPriceStats]   = useState(null);
   const [loading,      setLoading]      = useState(true);
 
   const [keyword,      setKeyword]      = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [dateFrom,     setDateFrom]     = useState("");
-  const [dateTo,       setDateTo]       = useState("");
-  const [sortBy,       setSortBy]       = useState("date_desc");
+  const [sortBy,       setSortBy]       = useState("price_desc");
   const [page,         setPage]         = useState(1);
   const PAGE_SIZE = 10;
 
@@ -249,11 +238,18 @@ export default function AdminProducts() {
   const loadAllProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const r = await productApi.getAll({ pageSize: 999, admin: true });
-      setAllProducts(r.data?.items || []);
+      const params = { pageSize: 999, admin: true };
+      if (ADMIN_PRODUCT_SORT) params.sortBy = sortBy;
+
+      const requests = [productApi.getAll(params)];
+      if (NEED_PRICE_STATS) requests.push(productApi.getPriceStats({ admin: true }));
+
+      const [productsRes, statsRes] = await Promise.all(requests);
+      setAllProducts(productsRes.data?.items || []);
+      if (NEED_PRICE_STATS) setPriceStats(statsRes?.data || null);
     } catch(e) { console.error(e); }
     finally { setLoading(false); }
-  }, []);
+  }, [sortBy]);
 
   useEffect(() => { loadAllProducts(); }, [loadAllProducts]);
 
@@ -268,45 +264,8 @@ export default function AdminProducts() {
     }
     if (statusFilter) list = list.filter(p => p.status === statusFilter);
 
-    if (ADMIN_PRODUCT_DATE_FILTER) {
-      const fromTs = isoToDayStart(dateFrom);
-      const toTs = isoToDayStart(dateTo);
-      if (fromTs != null) {
-        list = list.filter(p => {
-          const day = recordDayStart(p, "createdAt", "CreatedAt");
-          return day != null && day >= fromTs;
-        });
-      }
-      if (toTs != null) {
-        list = list.filter(p => {
-          const day = recordDayStart(p, "createdAt", "CreatedAt");
-          return day != null && day <= toTs;
-        });
-      }
-    }
-
-    if (ADMIN_PRODUCT_SORT) {
-      const sorted = [...list];
-      switch (sortBy) {
-        case "date_asc":
-          sorted.sort((a, b) => productTimestamp(a) - productTimestamp(b));
-          break;
-        case "price_desc":
-          sorted.sort((a, b) => productPrice(b) - productPrice(a));
-          break;
-        case "price_asc":
-          sorted.sort((a, b) => productPrice(a) - productPrice(b));
-          break;
-        case "date_desc":
-        default:
-          sorted.sort((a, b) => productTimestamp(b) - productTimestamp(a));
-          break;
-      }
-      return sorted;
-    }
-
     return list;
-  }, [allProducts, keyword, statusFilter, dateFrom, dateTo, sortBy]);
+  }, [allProducts, keyword, statusFilter]);
 
   const totalCount  = filteredProducts.length;
   const totalPages  = Math.ceil(totalCount / PAGE_SIZE) || 0;
@@ -322,13 +281,6 @@ export default function AdminProducts() {
     ordered:  allProducts.filter(p => p.status === "Ordered").length,
     sold:     allProducts.filter(p => p.status === "Sold").length,
   }), [allProducts]);
-
-  const priceStats = useMemo(() => {
-    const count = allProducts.length;
-    if (!ADMIN_PRODUCT_AVG_PRICE || count === 0) return { avg: 0, total: 0, count: 0 };
-    const total = allProducts.reduce((sum, p) => sum + (Number(p.price) || 0), 0);
-    return { avg: total / count, total, count };
-  }, [allProducts]);
 
   const handleDelete = (id, name) => openConfirm(
     "Xóa tác phẩm",
@@ -376,12 +328,9 @@ export default function AdminProducts() {
   const clearFilters = () => {
     setKeyword("");
     setStatusFilter("");
-    setDateFrom("");
-    setDateTo("");
     setPage(1);
   };
-  const hasFilter = keyword || statusFilter
-    || (ADMIN_PRODUCT_DATE_FILTER && (dateFrom || dateTo));
+  const hasFilter = keyword || statusFilter;
 
   const openReview = (p) => setReviewProduct(p);
   const closeReview = () => setReviewProduct(null);
@@ -449,7 +398,6 @@ export default function AdminProducts() {
           box-sizing: border-box;
         }
         .admin-prod-clear-filter { flex: 0 0 auto; }
-        ${VN_DATE_PICKER_STYLES}
       `}</style>
 
       <Toaster toasts={toasts} />
@@ -534,22 +482,6 @@ export default function AdminProducts() {
               </button>
             )}
           </div>
-          {ADMIN_PRODUCT_DATE_FILTER && (
-            <div className="admin-prod-filter-row vn-date-row">
-              <VnDatePicker
-                label="Từ ngày"
-                value={dateFrom}
-                max={dateTo || undefined}
-                onChange={(v) => { setDateFrom(v); setPage(1); }}
-              />
-              <VnDatePicker
-                label="Đến ngày"
-                value={dateTo}
-                min={dateFrom || undefined}
-                onChange={(v) => { setDateTo(v); setPage(1); }}
-              />
-            </div>
-          )}
         </div>
       </div>
 
@@ -725,38 +657,58 @@ export default function AdminProducts() {
         )}
       </div>
 
-      {ADMIN_PRODUCT_AVG_PRICE && !loading && allProducts.length > 0 && (
-        <div style={{
-          marginTop: 16,
-          padding: '14px 20px',
-          background: 'white',
-          borderRadius: 14,
-          boxShadow: '0 2px 12px rgba(0,0,0,.06)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: 10,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      {NEED_PRICE_STATS && !loading && priceStats && (
+        <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {ADMIN_PRODUCT_AVG_PRICE && priceStats.all?.count > 0 && (
             <div style={{
-              width: 36, height: 36, borderRadius: 10, background: '#fff7ed',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              padding: '14px 20px', background: 'white', borderRadius: 14,
+              boxShadow: '0 2px 12px rgba(0,0,0,.06)',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10,
             }}>
-              <i className="fas fa-chart-line" style={{ color: '#dc2626', fontSize: '0.9rem' }} />
-            </div>
-            <div>
-              <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                Giá tranh trung bình
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: '#fff7ed', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <i className="fas fa-chart-line" style={{ color: '#dc2626', fontSize: '0.9rem' }} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                    Giá tranh trung bình (toàn bộ)
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: 2 }}>
+                    Tổng giá {fmt(priceStats.all.totalPrice)} ÷ {priceStats.all.count} tranh
+                  </div>
+                </div>
               </div>
-              <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: 2 }}>
-                Tổng giá {fmt(priceStats.total)} ÷ {priceStats.count} tranh
+              <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#dc2626' }}>
+                {fmt(priceStats.all.averagePrice)}
               </div>
             </div>
-          </div>
-          <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#dc2626' }}>
-            {fmt(priceStats.avg)}
-          </div>
+          )}
+          {ADMIN_PRODUCT_AVG_PRICE_FOR_SALE && (
+            <div style={{
+              padding: '14px 20px', background: 'white', borderRadius: 14,
+              boxShadow: '0 2px 12px rgba(0,0,0,.06)',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: '#d1fae5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <i className="fas fa-tags" style={{ color: '#10b981', fontSize: '0.9rem' }} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                    Giá tranh trung bình (đang bán)
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: 2 }}>
+                    {priceStats.forSale?.count > 0
+                      ? <>Tổng giá {fmt(priceStats.forSale.totalPrice)} ÷ {priceStats.forSale.count} tranh đang bán</>
+                      : 'Chưa có tranh đang bán'}
+                  </div>
+                </div>
+              </div>
+              <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#10b981' }}>
+                {priceStats.forSale?.count > 0 ? fmt(priceStats.forSale.averagePrice) : '—'}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

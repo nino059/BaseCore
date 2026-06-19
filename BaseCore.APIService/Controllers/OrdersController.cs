@@ -315,14 +315,18 @@ namespace BaseCore.APIService.Controllers
 
         [HttpGet("artist")]
         [Authorize(Roles = "Artist")]
-        public async Task<IActionResult> GetArtistOrders()
+        public async Task<IActionResult> GetArtistOrders(
+            [FromQuery] string? status = null,
+            [FromQuery] string? dateFrom = null,
+            [FromQuery] string? dateTo = null,
+            [FromQuery] string? sortBy = null)
         {
             var artistId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(artistId))
                 return Unauthorized();
 
             var allOrders = await _orderRepository.GetAllAsync();
-            var result = new List<object>();
+            var rows = new List<ArtistOrderRow>();
 
             var userIds = allOrders.Select(o => o.UserId).Distinct().ToList();
             var users = await _db.Users
@@ -346,26 +350,89 @@ namespace BaseCore.APIService.Controllers
 
                 users.TryGetValue(order.UserId, out var buyer);
                 addressNames.TryGetValue(order.UserId, out var addressName);
-                result.Add(new
+                var artistAmount = artistDetails.Sum(d => d.UnitPrice);
+
+                rows.Add(new ArtistOrderRow
                 {
-                    order.Id,
-                    order.UserId,
-                    customerName = ResolveCustomerName(order, buyer, addressName),
-                    order.OrderDate,
-                    order.Status,
-                    order.ShippingAddress,
-                    order.Phone,
-                    items = artistDetails.Select(d => new
+                    Id = order.Id,
+                    UserId = order.UserId,
+                    CustomerName = ResolveCustomerName(order, buyer, addressName),
+                    OrderDate = order.OrderDate,
+                    Status = order.Status,
+                    ShippingAddress = order.ShippingAddress,
+                    Phone = order.Phone,
+                    ArtistAmount = artistAmount,
+                    Items = artistDetails.Select(d => new ArtistOrderItemRow
                     {
-                        d.ProductId,
-                        productName = d.Product?.Name ?? "",
-                        productStatus = NormalizeProductStatus(d.Product?.Status),
-                        d.UnitPrice
-                    })
+                        ProductId = d.ProductId,
+                        ProductName = d.Product?.Name ?? "",
+                        ProductStatus = NormalizeProductStatus(d.Product?.Status),
+                        UnitPrice = d.UnitPrice,
+                    }).ToList(),
                 });
             }
 
+            IEnumerable<ArtistOrderRow> query = rows;
+
+            if (!string.IsNullOrEmpty(status))
+                query = query.Where(r => r.Status == status);
+
+            if (DateTime.TryParse(dateFrom, out var fromDate))
+                query = query.Where(r => r.OrderDate.Date >= fromDate.Date);
+
+            if (DateTime.TryParse(dateTo, out var toDate))
+                query = query.Where(r => r.OrderDate.Date <= toDate.Date);
+
+            query = sortBy switch
+            {
+                "date_asc"    => query.OrderBy(r => r.OrderDate).ThenByDescending(r => r.Id),
+                "amount_desc" => query.OrderByDescending(r => r.ArtistAmount).ThenByDescending(r => r.OrderDate),
+                "amount_asc"  => query.OrderBy(r => r.ArtistAmount).ThenByDescending(r => r.OrderDate),
+                "date_desc"   => query.OrderByDescending(r => r.OrderDate).ThenByDescending(r => r.Id),
+                _             => query.OrderByDescending(r => r.OrderDate).ThenByDescending(r => r.Id),
+            };
+
+            var result = query.Select(r => new
+            {
+                r.Id,
+                r.UserId,
+                customerName = r.CustomerName,
+                orderDate = r.OrderDate,
+                r.Status,
+                r.ShippingAddress,
+                r.Phone,
+                artistAmount = r.ArtistAmount,
+                items = r.Items.Select(i => new
+                {
+                    i.ProductId,
+                    productName = i.ProductName,
+                    productStatus = i.ProductStatus,
+                    i.UnitPrice,
+                }),
+            });
+
             return Ok(result);
+        }
+
+        private sealed class ArtistOrderRow
+        {
+            public int Id { get; set; }
+            public string UserId { get; set; } = "";
+            public string CustomerName { get; set; } = "";
+            public DateTime OrderDate { get; set; }
+            public string Status { get; set; } = "";
+            public string? ShippingAddress { get; set; }
+            public string? Phone { get; set; }
+            public decimal ArtistAmount { get; set; }
+            public List<ArtistOrderItemRow> Items { get; set; } = new();
+        }
+
+        private sealed class ArtistOrderItemRow
+        {
+            public int ProductId { get; set; }
+            public string ProductName { get; set; } = "";
+            public string ProductStatus { get; set; } = "";
+            public decimal UnitPrice { get; set; }
         }
 
         [HttpPut("{id}/cancel")]

@@ -1,11 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ArtistLayout from '../../components/layout/ArtistLayout';
 import { orderApi } from '../../services/api';
 import { normalizeOrderList, getCustomerDisplayName } from '../../utils/orderNormalize';
 import { formatVND as fmt } from '../../utils/format';
-
 import { getOrderStatus, getProductStatus, ORDER_NEXT, ORDER_CAN_CANCEL } from '../../utils/orderStatus';
+import {
+  ARTIST_ORDER_DATE_FILTER,
+  ARTIST_ORDER_SORT,
+} from '../../constants/artistFeatures';
+import VnDatePicker, { VN_DATE_PICKER_STYLES } from '../../components/common/VnDatePicker';
+
+const USE_ORDER_PIPELINE = ARTIST_ORDER_DATE_FILTER || ARTIST_ORDER_SORT;
+
+const SORT_OPTIONS = [
+  { value: 'date_desc',   label: 'Ngày đặt: mới nhất' },
+  { value: 'date_asc',    label: 'Ngày đặt: cũ nhất' },
+  { value: 'amount_desc', label: 'Tổng tiền: cao → thấp' },
+  { value: 'amount_asc',  label: 'Tổng tiền: thấp → cao' },
+];
+
+const artistOrderAmount = (o) => {
+  const fromApi = Number(o.artistAmount ?? o.ArtistAmount);
+  if (fromApi > 0) return fromApi;
+  return o.items?.reduce((s, it) => s + (Number(it.unitPrice) || 0), 0) || 0;
+};
 
 const OrderStatusBadge = ({ status }) => {
   const s = getOrderStatus(status);
@@ -37,33 +56,65 @@ const STATUS_FILTERS = [
 const ArtistOrders = () => {
   const navigate = useNavigate();
 
-  const [orders, setOrders]     = useState([]);
-  const [loading, setLoading]   = useState(true);
-  const [expanded, setExpanded] = useState(null);
-  const [filter, setFilter]     = useState('all');
-  const [updating, setUpdating] = useState(null);
-  const [toast, setToast]       = useState(null);
+  const [allOrders, setAllOrders]     = useState([]);
+  const [listOrders, setListOrders]   = useState([]);
+  const [loading, setLoading]         = useState(true);
+  const [expanded, setExpanded]       = useState(null);
+  const [filter, setFilter]           = useState('all');
+  const [dateFrom, setDateFrom]       = useState('');
+  const [dateTo, setDateTo]           = useState('');
+  const [sortBy, setSortBy]           = useState('date_desc');
+  const [updating, setUpdating]       = useState(null);
+  const [toast, setToast]             = useState(null);
 
-  const loadOrders = (silent = false) => {
+  const buildParams = useCallback(() => {
+    const params = {};
+    if (filter !== 'all') params.status = filter;
+    if (ARTIST_ORDER_DATE_FILTER && dateFrom) params.dateFrom = dateFrom;
+    if (ARTIST_ORDER_DATE_FILTER && dateTo) params.dateTo = dateTo;
+    if (ARTIST_ORDER_SORT) params.sortBy = sortBy;
+    return params;
+  }, [filter, dateFrom, dateTo, sortBy]);
+
+  const loadOrders = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
-    orderApi.getArtistOrders()
-      .then(res => setOrders(normalizeOrderList(res)))
-      .catch(() => {})
-      .finally(() => { if (!silent) setLoading(false); });
-  };
+    try {
+      const allRes = await orderApi.getArtistOrders();
+      const normalized = normalizeOrderList(allRes);
+      setAllOrders(normalized);
+
+      if (USE_ORDER_PIPELINE) {
+        const listRes = await orderApi.getArtistOrders(buildParams());
+        setListOrders(normalizeOrderList(listRes));
+      }
+    } catch { /* ignore */ }
+    finally { if (!silent) setLoading(false); }
+  }, [buildParams]);
 
   useEffect(() => {
     loadOrders();
     const interval = setInterval(() => loadOrders(true), 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [loadOrders]);
 
-  const filteredOrders = filter === 'all' ? orders : orders.filter(o => o.status === filter);
+  const filteredOrders = useMemo(() => {
+    if (USE_ORDER_PIPELINE) return listOrders;
+    return filter === 'all' ? allOrders : allOrders.filter(o => o.status === filter);
+  }, [allOrders, listOrders, filter]);
 
   const countByStatus = STATUS_FILTERS.slice(1).reduce((acc, f) => {
-    acc[f.key] = orders.filter(o => o.status === f.key).length;
+    acc[f.key] = allOrders.filter(o => o.status === f.key).length;
     return acc;
   }, {});
+
+  const hasFilter = filter !== 'all'
+    || (ARTIST_ORDER_DATE_FILTER && (dateFrom || dateTo));
+
+  const handleClearFilters = () => {
+    setFilter('all');
+    setDateFrom('');
+    setDateTo('');
+  };
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });
@@ -74,7 +125,9 @@ const ArtistOrders = () => {
     setUpdating(orderId + newStatus);
     try {
       await orderApi.updateStatus(orderId, newStatus);
-      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+      const patch = (o) => o.id === orderId ? { ...o, status: newStatus } : o;
+      setAllOrders(prev => prev.map(patch));
+      setListOrders(prev => prev.map(patch));
       showToast(`Đã cập nhật trạng thái: ${getOrderStatus(newStatus).label}`);
     } catch (err) {
       showToast(err.response?.data?.message || 'Không thể cập nhật trạng thái', 'error');
@@ -85,6 +138,28 @@ const ArtistOrders = () => {
 
   return (
     <ArtistLayout>
+      <style>{VN_DATE_PICKER_STYLES}{`
+        .artist-order-filters {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          width: 100%;
+        }
+        .artist-order-filter-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          align-items: center;
+        }
+        .artist-order-filter-select {
+          flex: 1 1 160px;
+          min-width: 0;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+        .vn-date-row { align-items: flex-end; }
+      `}</style>
+
       {toast && (
         <div style={{
           position: 'fixed', top: 20, right: 20, zIndex: 9999,
@@ -99,10 +174,10 @@ const ArtistOrders = () => {
         </div>
       )}
 
-      {/* ── KPI Boxes giống Admin ── */}
+      {/* ── KPI Boxes ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12, marginBottom: 18 }}>
         {[
-          { label: 'Tổng đơn',     value: orders.length,                 icon: 'fa-list',         color: 'var(--brand)', bg: '#f5edd6', key: 'all'       },
+          { label: 'Tổng đơn',     value: allOrders.length,                 icon: 'fa-list',         color: 'var(--brand)', bg: '#f5edd6', key: 'all'       },
           { label: 'Chờ xác nhận', value: countByStatus['Pending'] || 0, icon: 'fa-clock',        color: '#f59e0b', bg: '#fef3c7', key: 'Pending'   },
           { label: 'Đang xử lý',   value: countByStatus['Processing'] || 0, icon: 'fa-cog',       color: '#3b82f6', bg: '#dbeafe', key: 'Processing'},
           { label: 'Đang giao',    value: countByStatus['Shipping'] || 0, icon: 'fa-truck',       color: 'var(--brand-dark)', bg: '#f5edd6', key: 'Shipping'  },
@@ -134,9 +209,9 @@ const ArtistOrders = () => {
                     {s.label}
                   </div>
                 </div>
-                <div style={{ 
-                  width: 34, height: 34, borderRadius: 10, 
-                  background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' 
+                <div style={{
+                  width: 34, height: 34, borderRadius: 10,
+                  background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center'
                 }}>
                   <i className={`fas ${s.icon}`} style={{ color: s.color, fontSize: '0.95rem' }}></i>
                 </div>
@@ -146,11 +221,59 @@ const ArtistOrders = () => {
         })}
       </div>
 
+      {/* ── Bộ lọc (bật qua constants/artistFeatures.js) ── */}
+      {USE_ORDER_PIPELINE && (
+        <div style={{ background: 'white', borderRadius: 14, padding: '14px 18px', boxShadow: '0 2px 12px rgba(0,0,0,.06)', marginBottom: 18 }}>
+          <div className="artist-order-filters">
+            <div className="artist-order-filter-row">
+              {ARTIST_ORDER_SORT && (
+                <select
+                  className="form-control artist-order-filter-select"
+                  value={sortBy}
+                  onChange={e => setSortBy(e.target.value)}
+                  style={{ borderRadius: 9, border: '1.5px solid #e5e7eb', fontSize: '0.87rem' }}
+                  aria-label="Sắp xếp đơn hàng"
+                >
+                  {SORT_OPTIONS.map(opt => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              )}
+              {hasFilter && (
+                <button type="button" onClick={handleClearFilters}
+                  style={{ padding: '7px 14px', borderRadius: 9, border: '1.5px solid #fecaca', background: '#fef2f2', color: '#ef4444', fontWeight: 600, cursor: 'pointer', fontSize: '0.83rem', whiteSpace: 'nowrap' }}>
+                  <i className="fas fa-times-circle mr-1"></i> Xóa lọc
+                </button>
+              )}
+            </div>
+            {ARTIST_ORDER_DATE_FILTER && (
+              <div className="artist-order-filter-row vn-date-row">
+                <VnDatePicker
+                  label="Từ ngày"
+                  value={dateFrom}
+                  max={dateTo || undefined}
+                  onChange={setDateFrom}
+                />
+                <VnDatePicker
+                  label="Đến ngày"
+                  value={dateTo}
+                  min={dateFrom || undefined}
+                  onChange={setDateTo}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Status guide */}
       <div style={{ background: '#faf8f5', border: '1px solid #e8e4df', padding: '12px 18px', marginBottom: 20, fontSize: '0.8rem', color: '#767676', borderRadius: 8 }}>
         <i className="fas fa-info-circle mr-2" style={{ color: 'var(--brand)' }}></i>
         Quy trình: <strong>Chờ xác nhận</strong> → <strong>Đang xử lý</strong> → <strong>Đang giao</strong> → <strong>Đã giao</strong>
         &nbsp;·&nbsp; Khi đã giao, tranh sẽ chuyển sang trạng thái <strong>Đã bán</strong>.
+        {USE_ORDER_PIPELINE && hasFilter && (
+          <span style={{ marginLeft: 8, color: '#ca8a04', fontWeight: 700 }}>· đã lọc ({filteredOrders.length} đơn)</span>
+        )}
       </div>
 
       {loading ? (
@@ -159,7 +282,9 @@ const ArtistOrders = () => {
         <div style={{ textAlign: 'center', padding: 80 }}>
           <p style={{ fontSize: '2rem', color: '#e8e4df', marginBottom: 12 }}>✦</p>
           <p style={{ color: '#aaa', fontWeight: 300 }}>
-            {filter === 'all' ? 'Chưa có đơn hàng nào chứa tranh của bạn' : `Không có đơn hàng nào ở trạng thái "${STATUS_FILTERS.find(f => f.key === filter)?.label}"`}
+            {filter === 'all' && !hasFilter
+              ? 'Chưa có đơn hàng nào chứa tranh của bạn'
+              : `Không có đơn hàng phù hợp bộ lọc hiện tại`}
           </p>
         </div>
       ) : (
@@ -167,7 +292,7 @@ const ArtistOrders = () => {
           {filteredOrders.map((o, i) => {
             const nextSteps   = ORDER_NEXT[o.status] || [];
             const canCancel   = ORDER_CAN_CANCEL.includes(o.status);
-            const totalAmount = o.items?.reduce((s, it) => s + (it.unitPrice || 0), 0) || 0;
+            const totalAmount = artistOrderAmount(o);
             return (
               <div
                 key={o.id}
@@ -234,7 +359,6 @@ const ArtistOrders = () => {
                       </tbody>
                     </table>
 
-                    {/* Status action buttons */}
                     {(nextSteps.length > 0 || canCancel) && (
                       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', paddingTop: 12, borderTop: '1px solid #e8e4df' }}>
                         <span style={{ fontSize: '0.75rem', color: '#aaa', alignSelf: 'center', marginRight: 4 }}>Chuyển sang:</span>

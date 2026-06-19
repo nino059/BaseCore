@@ -6,6 +6,18 @@ import { toImg } from '../../utils/image';
 import { useToast } from '../../hooks/useToast';
 import Toaster from '../../components/ui/Toaster';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
+import {
+  ARTIST_PRODUCT_AVG_PRICE,
+  ARTIST_PRODUCT_AVG_PRICE_FOR_SALE,
+  ARTIST_PRODUCT_SORT,
+} from '../../constants/artistFeatures';
+
+const NEED_PRICE_STATS = ARTIST_PRODUCT_AVG_PRICE || ARTIST_PRODUCT_AVG_PRICE_FOR_SALE;
+
+const ARTIST_SORT_OPTIONS = [
+  { value: 'price_desc', label: 'Giá bán: cao → thấp' },
+  { value: 'price_asc', label: 'Giá bán: thấp → cao' },
+];
 
 // ─── Constants ──────────────────────────────────────────────
 const THEMES    = ['Phong cảnh','Chân dung','Tĩnh vật','Trừu tượng','Động vật','Đô thị','Lịch sử','Tâm linh','Khác'];
@@ -60,9 +72,11 @@ const ArtistProducts = () => {
   const sellerId = user?.userId || user?.id;
 
   const [allProducts, setAllProducts] = useState([]);
+  const [priceStats,  setPriceStats]  = useState(null);
   const [categories,  setCategories]  = useState([]);
   const [loading,     setLoading]     = useState(true);
   const [tabStatus,   setTabStatus]   = useState('all');
+  const [sortBy,      setSortBy]      = useState('price_desc');
 
   const [showModal, setShowModal] = useState(false);
   const [editing,   setEditing]   = useState(null);
@@ -83,15 +97,22 @@ const ArtistProducts = () => {
     if (!sellerId) return;
     setLoading(true);
     try {
-      const [pRes, cRes] = await Promise.all([
-        productApi.getAll({ sellerId, pageSize:999 }),
+      const params = { sellerId, pageSize: 999 };
+      if (ARTIST_PRODUCT_SORT) params.sortBy = sortBy;
+
+      const requests = [
+        productApi.getAll(params),
         categoryApi.getAll(),
-      ]);
+      ];
+      if (NEED_PRICE_STATS) requests.push(productApi.getPriceStats({ sellerId }));
+
+      const [pRes, cRes, statsRes] = await Promise.all(requests);
       setAllProducts(pRes.data?.items || []);
       setCategories(cRes.data || []);
+      if (NEED_PRICE_STATS) setPriceStats(statsRes?.data || null);
     } catch { showToast('Không thể tải dữ liệu', 'error'); }
     finally { setLoading(false); }
-  }, [sellerId, showToast]);
+  }, [sellerId, sortBy, showToast]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -114,7 +135,10 @@ const ArtistProducts = () => {
     { key:'Sold',     label:'Đã bán',    count: stats.sold },
     { key:'Rejected', label:'Từ chối',   count: stats.rejected },
   ];
-  const filtered = tabStatus === 'all' ? allProducts : allProducts.filter(p => p.status === tabStatus);
+  // Pipeline: Lọc tab → Sắp xếp giá (bật/tắt qua constants/artistFeatures.js)
+  const filtered = useMemo(() => (
+    tabStatus === 'all' ? allProducts : allProducts.filter(p => p.status === tabStatus)
+  ), [allProducts, tabStatus]);
 
   // ── Modal helpers ─────────────────────────────────────────
   const ch  = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }));
@@ -270,6 +294,25 @@ const ArtistProducts = () => {
         .ap-stepper-btn:hover { border-color:var(--brand); color:var(--brand-dark); background:#fffbf4; }
         .ap-size-grid { display:grid; grid-template-columns:minmax(0,1fr) 20px minmax(0,1fr); gap:10px; align-items:center; }
         .ap-size-col { min-width:0; }
+        .artist-prod-filters {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          width: 100%;
+        }
+        .artist-prod-filter-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          align-items: center;
+        }
+        .artist-prod-filter-select {
+          flex: 1 1 200px;
+          min-width: 0;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+        .artist-prod-clear-filter { flex: 0 0 auto; }
       `}</style>
 
       <Toaster toasts={toasts} />
@@ -323,11 +366,31 @@ const ArtistProducts = () => {
         })}
       </div>
 
+      {ARTIST_PRODUCT_SORT && (
+        <div style={{ background:'white', borderRadius:14, padding:'14px 18px', boxShadow:'0 2px 12px rgba(0,0,0,.05)', marginBottom:16 }}>
+          <div className="artist-prod-filters">
+            <div className="artist-prod-filter-row">
+              <select
+                className="form-control artist-prod-filter-select"
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value)}
+                style={{ borderRadius:9, border:'1.5px solid #e5e7eb', fontSize:'0.87rem' }}
+                aria-label="Sắp xếp tác phẩm theo giá"
+              >
+                {ARTIST_SORT_OPTIONS.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Table ── */}
       <div style={{ background:'white', borderRadius:14, boxShadow:'0 2px 16px rgba(0,0,0,.07)', overflow:'hidden' }}>
         {/* Tab bar */}
         <div style={{ padding:'12px 18px', borderBottom:'1px solid #f1f5f9', display:'flex', gap:8, flexWrap:'wrap', alignItems:'center', justifyContent:'space-between' }}>
-          <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
+          <div style={{ display:'flex', gap:6, flexWrap:'wrap', alignItems:'center' }}>
             {tabs.map(t => (
               <button key={t.key} className={`tab-btn${tabStatus === t.key ? ' active' : ''}`}
                 onClick={() => setTabStatus(t.key)}>
@@ -476,6 +539,61 @@ const ArtistProducts = () => {
           </div>
         )}
       </div>
+
+      {NEED_PRICE_STATS && !loading && priceStats && (
+        <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {ARTIST_PRODUCT_AVG_PRICE && priceStats.all?.count > 0 && (
+            <div style={{
+              padding: '14px 20px', background: 'white', borderRadius: 14,
+              boxShadow: '0 2px 12px rgba(0,0,0,.06)',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: '#fdf6ec', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <i className="fas fa-chart-line" style={{ color: 'var(--brand-dark)', fontSize: '0.9rem' }} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                    Giá tranh trung bình (toàn bộ)
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: 2 }}>
+                    Tổng giá {fmt(priceStats.all.totalPrice)} ÷ {priceStats.all.count} tranh
+                  </div>
+                </div>
+              </div>
+              <div style={{ fontSize: '1.35rem', fontWeight: 900, color: 'var(--brand-dark)' }}>
+                {fmt(priceStats.all.averagePrice)}
+              </div>
+            </div>
+          )}
+          {ARTIST_PRODUCT_AVG_PRICE_FOR_SALE && (
+            <div style={{
+              padding: '14px 20px', background: 'white', borderRadius: 14,
+              boxShadow: '0 2px 12px rgba(0,0,0,.06)',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: '#d1fae5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <i className="fas fa-tags" style={{ color: '#10b981', fontSize: '0.9rem' }} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                    Giá tranh trung bình (đang bán)
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: 2 }}>
+                    {priceStats.forSale?.count > 0
+                      ? <>Tổng giá {fmt(priceStats.forSale.totalPrice)} ÷ {priceStats.forSale.count} tranh đang bán</>
+                      : 'Chưa có tranh đang bán'}
+                  </div>
+                </div>
+              </div>
+              <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#10b981' }}>
+                {priceStats.forSale?.count > 0 ? fmt(priceStats.forSale.averagePrice) : '—'}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ════ MODAL THÊM / SỬA ════ */}
       {showModal && (
