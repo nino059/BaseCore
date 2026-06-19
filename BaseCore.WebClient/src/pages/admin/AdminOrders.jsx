@@ -7,6 +7,9 @@ import { ORDER_STATUS as STATUS_CFG, ORDER_STEPS as STATUS_STEPS } from '../../u
 import { formatVNDCompact as fmt } from '../../utils/format';
 import { useToast } from '../../hooks/useToast';
 import Toaster from '../../components/ui/Toaster';
+import { ADMIN_ORDER_DATE_FILTER, ADMIN_ORDER_SORT } from '../../constants/adminFeatures';
+import VnDatePicker, { VN_DATE_PICKER_STYLES } from '../../components/common/VnDatePicker';
+import { isoToDayStart, recordDayStart } from '../../utils/dateFilter';
 
 // ─── Status Badge ─────────────────────────────────────────────
 const StatusBadge = ({ status }) => {
@@ -23,6 +26,14 @@ const StatusBadge = ({ status }) => {
   );
 };
 
+const clearAllFilters = (setters) => {
+  setters.setSearch('');
+  setters.setFilterStatus('');
+  setters.setDateFrom('');
+  setters.setDateTo('');
+  setters.setPage(1);
+};
+
 // ─── Smart Pagination ─────────────────────────────────────────
 const pageNums = (page, total) => {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
@@ -30,6 +41,21 @@ const pageNums = (page, total) => {
   if (page >= total - 3) return [1,'…',...Array.from({length:7},(_,i)=>total-6+i)];
   return [1,'…',page-1,page,page+1,'…',total];
 };
+
+const SORT_OPTIONS = [
+  { value: 'date_desc',   label: 'Ngày đặt: mới nhất' },
+  { value: 'date_asc',    label: 'Ngày đặt: cũ nhất' },
+  { value: 'amount_desc', label: 'Tổng tiền: cao → thấp' },
+  { value: 'amount_asc',  label: 'Tổng tiền: thấp → cao' },
+];
+
+const orderTimestamp = (o) => {
+  const d = o.orderDate || o.createdAt;
+  const t = d ? new Date(d).getTime() : 0;
+  return Number.isFinite(t) ? t : 0;
+};
+
+const orderAmount = (o) => Number(o.totalAmount ?? o.TotalAmount ?? 0) || 0;
 
 // ═══════════════════════════════════════════════════════════════
 // MAIN COMPONENT
@@ -39,6 +65,9 @@ const Orders = () => {
   const [loading,       setLoading]       = useState(true);
   const [search,        setSearch]        = useState('');
   const [filterStatus,  setFilterStatus]  = useState('');
+  const [dateFrom,      setDateFrom]      = useState('');
+  const [dateTo,        setDateTo]        = useState('');
+  const [sortBy,        setSortBy]        = useState('date_desc');
   const [page,          setPage]          = useState(1);
   const PAGE_SIZE = 10;
   const [showModal,     setShowModal]     = useState(false);
@@ -56,7 +85,7 @@ const Orders = () => {
 
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
 
-  // ── Client-side filter + paginate ──
+  // Pipeline: Lọc → Sắp xếp → Phân trang (bật/tắt qua constants/adminFeatures.js)
   const filtered = useMemo(() => {
     let list = allOrders;
     if (filterStatus) list = list.filter(o => o.status === filterStatus);
@@ -67,8 +96,45 @@ const Orders = () => {
         getCustomerDisplayName(o).toLowerCase().includes(kw)
       );
     }
+    if (ADMIN_ORDER_DATE_FILTER) {
+      const fromTs = isoToDayStart(dateFrom);
+      const toTs = isoToDayStart(dateTo);
+      if (fromTs != null) {
+        list = list.filter(o => {
+          const day = recordDayStart(o, 'orderDate', 'createdAt');
+          return day != null && day >= fromTs;
+        });
+      }
+      if (toTs != null) {
+        list = list.filter(o => {
+          const day = recordDayStart(o, 'orderDate', 'createdAt');
+          return day != null && day <= toTs;
+        });
+      }
+    }
+
+    if (ADMIN_ORDER_SORT) {
+      const sorted = [...list];
+      switch (sortBy) {
+        case 'date_asc':
+          sorted.sort((a, b) => orderTimestamp(a) - orderTimestamp(b));
+          break;
+        case 'amount_desc':
+          sorted.sort((a, b) => orderAmount(b) - orderAmount(a));
+          break;
+        case 'amount_asc':
+          sorted.sort((a, b) => orderAmount(a) - orderAmount(b));
+          break;
+        case 'date_desc':
+        default:
+          sorted.sort((a, b) => orderTimestamp(b) - orderTimestamp(a));
+          break;
+      }
+      return sorted;
+    }
+
     return list;
-  }, [allOrders, filterStatus, search]);
+  }, [allOrders, filterStatus, search, dateFrom, dateTo, sortBy]);
 
   const totalCount = filtered.length;
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
@@ -94,7 +160,9 @@ const Orders = () => {
     } catch { showToast('Không lấy được chi tiết đơn hàng', 'error'); }
   };
 
-  const hasFilter = search || filterStatus;
+  const hasFilter = search || filterStatus
+    || (ADMIN_ORDER_DATE_FILTER && (dateFrom || dateTo));
+  const handleClearFilters = () => clearAllFilters({ setSearch, setFilterStatus, setDateFrom, setDateTo, setPage });
 
   // ══════════════════════════════════════════════════════════
   // RENDER
@@ -154,6 +222,7 @@ const Orders = () => {
           box-sizing: border-box;
         }
         .admin-order-clear-filter { flex: 0 0 auto; }
+        ${VN_DATE_PICKER_STYLES}
       `}</style>
 
       <Toaster toasts={toasts} />
@@ -204,14 +273,43 @@ const Orders = () => {
                 <option key={s} value={s}>{STATUS_CFG[s].label}</option>
               ))}
             </select>
+            {ADMIN_ORDER_SORT && (
+              <select
+                className="form-control admin-order-filter-select"
+                value={sortBy}
+                onChange={e => { setSortBy(e.target.value); setPage(1); }}
+                style={{ borderRadius:9, border:'1.5px solid #e5e7eb', fontSize:'0.87rem' }}
+                aria-label="Sắp xếp đơn hàng"
+              >
+                {SORT_OPTIONS.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            )}
             {hasFilter && (
-              <button type="button" onClick={() => { setSearch(''); setFilterStatus(''); setPage(1); }}
+              <button type="button" onClick={handleClearFilters}
                 className="admin-order-clear-filter"
                 style={{ padding:'7px 14px', borderRadius:9, border:'1.5px solid #fecaca', background:'#fef2f2', color:'#ef4444', fontWeight:600, cursor:'pointer', fontSize:'0.83rem', whiteSpace:'nowrap' }}>
                 <i className="fas fa-times-circle mr-1"></i> Xóa lọc
               </button>
             )}
           </div>
+          {ADMIN_ORDER_DATE_FILTER && (
+            <div className="admin-order-filter-row vn-date-row">
+              <VnDatePicker
+                label="Từ ngày"
+                value={dateFrom}
+                max={dateTo || undefined}
+                onChange={(v) => { setDateFrom(v); setPage(1); }}
+              />
+              <VnDatePicker
+                label="Đến ngày"
+                value={dateTo}
+                min={dateFrom || undefined}
+                onChange={(v) => { setDateTo(v); setPage(1); }}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -253,7 +351,7 @@ const Orders = () => {
               {hasFilter ? 'Không tìm thấy đơn hàng phù hợp' : 'Chưa có đơn hàng nào'}
             </div>
             {hasFilter && (
-              <button onClick={() => { setSearch(''); setFilterStatus(''); setPage(1); }}
+              <button onClick={handleClearFilters}
                 style={{ marginTop:10, padding:'7px 18px', borderRadius:8, border:'none', background:'#fef3c7', color:'#d97706', fontWeight:600, cursor:'pointer' }}>
                 Xóa bộ lọc
               </button>
